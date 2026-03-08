@@ -11,12 +11,34 @@ use std::ops::BitXor;
 
 mod constants;
 mod encrypt_round;
+mod decrypt_round;
 mod operations;
 
 // fn encrypt_round(x: &mut u32, y: &mut u32, k: u32) {
 //     *x = x.rotate_right(ALPHA).wrapping_add(*y).bitxor(k);
 //     *y = y.rotate_left(BETA).bitxor(*x);
 // }
+
+macro_rules! word_ty {
+    (16) => {
+        u16
+    };
+    (24) => {
+        u32
+    };
+    (32) => {
+        u32
+    };
+    (48) => {
+        u64
+    };
+    (64) => {
+        u64
+    };
+}
+
+pub(crate) use word_ty;
+use crate::decrypt_round::decrypt_round_32;
 
 fn encrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     unsafe {
@@ -51,10 +73,10 @@ fn encrypt_round_avx512(x: &mut __m512i, y: &mut __m512i, k: __m512i) {
     }
 }
 
-fn decrypt_round(x: &mut u32, y: &mut u32, k: u32) {
-    *y = y.bitxor(*x).rotate_right(BETA_32);
-    *x = x.bitxor(k).wrapping_sub(*y).rotate_left(ALPHA_32);
-}
+// fn decrypt_round(x: &mut u32, y: &mut u32, k: u32) {
+//     *y = y.bitxor(*x).rotate_right(BETA_32);
+//     *x = x.bitxor(k).wrapping_sub(*y).rotate_left(ALPHA_32);
+// }
 
 fn decrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     unsafe {
@@ -258,7 +280,7 @@ pub fn decrypt_block(ct: [u32; 2], key: [u32; 4]) -> [u32; 2] {
     let mut y = ct[1];
 
     for &k in round_keys.iter().rev() {
-        decrypt_round(&mut x, &mut y, k);
+        decrypt_round_32(&mut x, &mut y, k);
     }
 
     [x, y]

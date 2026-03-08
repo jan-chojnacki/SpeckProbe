@@ -1,24 +1,7 @@
+use crate::word_ty;
 use crate::constants::*;
 use crate::operations::*;
 use paste::paste;
-
-macro_rules! word_ty {
-    (16) => {
-        u16
-    };
-    (24) => {
-        u32
-    };
-    (32) => {
-        u32
-    };
-    (48) => {
-        u64
-    };
-    (64) => {
-        u64
-    };
-}
 
 macro_rules! define_encrypt_round {
     ($w:literal) => {
