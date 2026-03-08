@@ -24,7 +24,7 @@ macro_rules! define_encrypt_round {
     ($w:literal) => {
         paste! {
             #[inline(always)]
-            fn [<encrypt_round_ $w>](
+            pub fn [<encrypt_round_ $w>](
                 x: &mut word_ty!($w),
                 y: &mut word_ty!($w),
                 k: word_ty!($w),
