@@ -6,15 +6,52 @@ use std::arch::x86_64::{
     _mm_sub_epi32, _mm_xor_epi32,
 };
 use std::ops::BitXor;
+use crate::operations::{add_u32, rol_u32, ror_u32, xor_u32};
+
+mod operations;
 
 const ALPHA: u32 = 8;
 const BETA: u32 = 3;
 const ROUNDS: usize = 27;
 
-fn encrypt_round(x: &mut u32, y: &mut u32, k: u32) {
-    *x = x.rotate_right(ALPHA).wrapping_add(*y).bitxor(k);
-    *y = y.rotate_left(BETA).bitxor(*x);
+// fn encrypt_round(x: &mut u32, y: &mut u32, k: u32) {
+//     *x = x.rotate_right(ALPHA).wrapping_add(*y).bitxor(k);
+//     *y = y.rotate_left(BETA).bitxor(*x);
+// }
+
+macro_rules! define_encrypt_round {
+    (
+        fn $name:ident,
+        type = $t:ty,
+        alpha = $alpha:expr,
+        beta  = $beta:expr,
+        ror = $ror:path,
+        rol = $rol:path,
+        add = $add:path,
+        xor = $xor:path $(,)?
+    ) => {
+        #[inline(always)]
+        fn $name(x: &mut $t, y: &mut $t, k: $t) {
+            let xr = $ror(*x, $alpha);
+            let s = $add(xr, *y);
+            *x = $xor(s, k);
+
+            let yl = $rol(*y, $beta);
+            *y = $xor(yl, *x);
+        }
+    };
 }
+
+define_encrypt_round!(
+    fn encrypt_round,
+    type = u32,
+    alpha = ALPHA,
+    beta  = BETA,
+    ror = ror_u32,
+    rol = rol_u32,
+    add = add_u32,
+    xor = xor_u32,
+);
 
 fn encrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     unsafe {
