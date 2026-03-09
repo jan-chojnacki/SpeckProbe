@@ -20,6 +20,8 @@ use crate::constants::{ALPHA_32, BETA_32};
 use core::arch::aarch64::{
     uint32x4_t, vaddq_u32, veorq_u32, vorrq_u32, vshlq_n_u32, vshrq_n_u32,
 };
+
+#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{uint16x8_t, uint64x2_t};
 
 #[cfg(target_arch = "aarch64")]
@@ -84,6 +86,8 @@ macro_rules! neon_word_ty {
 }
 
 pub(crate) use word_ty;
+
+#[cfg(target_arch = "aarch64")]
 pub(crate) use neon_word_ty;
 
 use crate::decrypt_round::decrypt_round_32;

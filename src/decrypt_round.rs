@@ -36,6 +36,7 @@ use core::arch::aarch64::{
 #[cfg(target_arch = "aarch64")]
 use crate::neon_word_ty;
 
+#[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_decrypt_round {
     ($w:literal) => {
         paste! {
@@ -56,6 +57,11 @@ macro_rules! define_neon_decrypt_round {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 define_neon_decrypt_round!(16);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_decrypt_round!(32);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_decrypt_round!(64);

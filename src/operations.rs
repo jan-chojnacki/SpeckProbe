@@ -1,4 +1,6 @@
 use std::ops::BitXor;
+
+#[cfg(target_arch = "aarch64")]
 use crate::neon_word_ty;
 
 #[inline(always)]
@@ -145,6 +147,7 @@ use core::arch::aarch64::*;
 use paste::paste;
 use crate::constants::*;
 
+#[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_ror {
     ($word:literal) => {
         paste! {
@@ -165,10 +168,16 @@ macro_rules! define_neon_ror {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 define_neon_ror!(16);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_ror!(32);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_ror!(64);
 
+#[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_rol {
     ($word:literal) => {
         paste! {
@@ -189,10 +198,16 @@ macro_rules! define_neon_rol {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 define_neon_rol!(16);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_rol!(32);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_rol!(64);
 
+#[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_add {
     ($word:literal) => {
         paste! {
@@ -204,10 +219,16 @@ macro_rules! define_neon_add {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 define_neon_add!(16);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_add!(32);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_add!(64);
 
+#[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_sub {
     ($word:literal) => {
         paste! {
@@ -219,10 +240,16 @@ macro_rules! define_neon_sub {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 define_neon_sub!(16);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_sub!(32);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_sub!(64);
 
+#[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_xor {
     ($word:literal) => {
         paste! {
@@ -234,6 +261,11 @@ macro_rules! define_neon_xor {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 define_neon_xor!(16);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_xor!(32);
+
+#[cfg(target_arch = "aarch64")]
 define_neon_xor!(64);
