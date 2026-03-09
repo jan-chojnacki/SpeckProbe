@@ -222,3 +222,18 @@ macro_rules! define_neon_sub {
 define_neon_sub!(16);
 define_neon_sub!(32);
 define_neon_sub!(64);
+
+macro_rules! define_neon_xor {
+    ($word:literal) => {
+        paste! {
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_xor_u $word>](a: neon_word_ty!($word), b: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                [<veorq_u $word>](a, b)
+            }
+        }
+    };
+}
+
+define_neon_xor!(16);
+define_neon_xor!(32);
+define_neon_xor!(64);
