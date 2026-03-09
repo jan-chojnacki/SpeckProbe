@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use speck::{decrypt_block, encrypt_block};
+use speck::{decrypt_block_64_128, encrypt_block_64_128};
 
 #[cfg(target_arch = "x86_64")]
 use speck::{
@@ -33,14 +33,14 @@ fn scalar_bench(c: &mut Criterion) {
 
     group.bench_function("encrypt", |b| {
         b.iter(|| {
-            let out = encrypt_block(black_box(pt), black_box(key));
+            let out = encrypt_block_64_128(black_box(pt), black_box(key));
             black_box(out);
         })
     });
 
     group.bench_function("decrypt", |b| {
         b.iter(|| {
-            let out = decrypt_block(black_box(ct), black_box(key));
+            let out = decrypt_block_64_128(black_box(ct), black_box(key));
             black_box(out);
         })
     });

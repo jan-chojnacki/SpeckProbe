@@ -1,10 +1,9 @@
 use crate::word_ty;
-use crate::constants::*;
 use crate::operations::*;
 use paste::paste;
 
 macro_rules! define_decrypt_round {
-    ($w:literal) => {
+    ($w:literal, $alpha:literal, $beta:literal) => {
         paste! {
             #[inline(always)]
             pub fn [<decrypt_round_ $w>](
@@ -13,21 +12,21 @@ macro_rules! define_decrypt_round {
                 k: word_ty!($w),
             ) {
                 let yx = [<xor_u $w>](*y, *x);
-                *y     = [<ror_u $w>](yx, [<BETA_ $w>]);
+                *y     = [<ror_u $w>](yx, $beta);
 
                 let xx = [<xor_u $w>](*x, k);
                 let s  = [<sub_u $w>](xx, *y);
-                *x     = [<rol_u $w>](s, [<ALPHA_ $w>]);
+                *x     = [<rol_u $w>](s, $alpha);
             }
         }
     };
 }
 
-define_decrypt_round!(16);
-define_decrypt_round!(24);
-define_decrypt_round!(32);
-define_decrypt_round!(48);
-define_decrypt_round!(64);
+define_decrypt_round!(16, 7, 2);
+define_decrypt_round!(24, 8, 3);
+define_decrypt_round!(32, 8, 3);
+define_decrypt_round!(48, 8, 3);
+define_decrypt_round!(64, 8, 3);
 
 #[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::{

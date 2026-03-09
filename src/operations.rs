@@ -145,7 +145,6 @@ pub fn xor_u64(a: u64, b: u64) -> u64 {
 #[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::*;
 use paste::paste;
-use crate::constants::*;
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! define_neon_ror {
