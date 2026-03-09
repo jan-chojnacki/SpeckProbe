@@ -1,4 +1,5 @@
 use std::ops::BitXor;
+use crate::neon_word_ty;
 
 #[inline(always)]
 pub fn ror_u16(v: u16, n: u32) -> u16 {
@@ -138,3 +139,32 @@ pub fn sub_u64(a: u64, b: u64) -> u64 {
 pub fn xor_u64(a: u64, b: u64) -> u64 {
     a.bitxor(b)
 }
+
+#[cfg(target_arch = "aarch64")]
+use core::arch::aarch64::*;
+use paste::paste;
+use crate::constants::*;
+
+macro_rules! define_neon_ror {
+    ($word:literal) => {
+        paste! {
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_ror_alpha_u $word>](x: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                let hi = [<vshrq_n_u $word>]::<{ [<ALPHA_ $word>] as i32 }>(x);
+                let lo = [<vshlq_n_u $word>]::<{ $word - [<ALPHA_ $word>] as i32 }>(x);
+                [<vorrq_u $word>](hi, lo)
+            }
+
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_ror_beta_u $word>](x: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                let hi = [<vshrq_n_u $word>]::<{ [<BETA_ $word>] as i32 }>(x);
+                let lo = [<vshlq_n_u $word>]::<{ $word - [<BETA_ $word>] as i32 }>(x);
+                [<vorrq_u $word>](hi, lo)
+            }
+        }
+    };
+}
+
+define_neon_ror!(16);
+define_neon_ror!(32);
+define_neon_ror!(64);

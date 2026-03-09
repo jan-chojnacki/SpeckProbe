@@ -2,7 +2,7 @@ use crate::constants::{ROUNDS_64_128};
 use crate::encrypt_round::encrypt_round_32;
 
 #[cfg(target_arch = "x86_64")]
-use crate::constants::{ALPHA_32, BETA_32, ROUNDS_64_128};
+use crate::constants::{ALPHA_32, BETA_32};
 
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{
@@ -12,6 +12,35 @@ use std::arch::x86_64::{
     _mm_add_epi32, _mm_rol_epi32, _mm_ror_epi32, _mm_set1_epi32, _mm_setzero_si128,
     _mm_sub_epi32, _mm_xor_epi32,
 };
+
+#[cfg(target_arch = "aarch64")]
+use crate::constants::{ALPHA_32, BETA_32};
+
+#[cfg(target_arch = "aarch64")]
+use core::arch::aarch64::{
+    uint32x4_t, vaddq_u32, veorq_u32, vorrq_u32, vshlq_n_u32, vshrq_n_u32,
+};
+use std::arch::aarch64::{uint16x8_t, uint64x2_t};
+
+#[cfg(target_arch = "aarch64")]
+#[inline(always)]
+fn encrypt_round_neon(x: &mut uint32x4_t, y: &mut uint32x4_t, k: uint32x4_t) {
+    unsafe {
+        // x = (x ror ALPHA_32) + y ^ k
+        let xr = vorrq_u32(
+            vshrq_n_u32(*x, ALPHA_32 as i32),
+            vshlq_n_u32(*x, (32 - ALPHA_32) as i32),
+        );
+        *x = veorq_u32(vaddq_u32(xr, *y), k);
+
+        // y = (y rol BETA_32) ^ x
+        let yl = vorrq_u32(
+            vshlq_n_u32(*y, BETA_32 as i32),
+            vshrq_n_u32(*y, (32 - BETA_32) as i32),
+        );
+        *y = veorq_u32(yl, *x);
+    }
+}
 
 mod constants;
 mod encrypt_round;
@@ -41,7 +70,22 @@ macro_rules! word_ty {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
+macro_rules! neon_word_ty {
+    (16) => {
+        uint16x8_t
+    };
+    (32) => {
+        uint32x4_t
+    };
+    (64) => {
+        uint64x2_t
+    };
+}
+
 pub(crate) use word_ty;
+pub(crate) use neon_word_ty;
+
 use crate::decrypt_round::decrypt_round_32;
 
 #[cfg(target_arch = "x86_64")]
