@@ -1,5 +1,10 @@
-use crate::constants::{ALPHA_32, BETA_32, ROUNDS_64_128};
+use crate::constants::{ROUNDS_64_128};
 use crate::encrypt_round::encrypt_round_32;
+
+#[cfg(target_arch = "x86_64")]
+use crate::constants::{ALPHA_32, BETA_32, ROUNDS_64_128};
+
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{
     __m128i, __m256i, __m512i, _mm256_add_epi32, _mm256_rol_epi32, _mm256_ror_epi32, _mm256_set1_epi32,
     _mm256_setzero_si256, _mm256_sub_epi32, _mm256_xor_epi32, _mm512_add_epi32, _mm512_rol_epi32,
@@ -7,7 +12,6 @@ use std::arch::x86_64::{
     _mm_add_epi32, _mm_rol_epi32, _mm_ror_epi32, _mm_set1_epi32, _mm_setzero_si128,
     _mm_sub_epi32, _mm_xor_epi32,
 };
-use std::ops::BitXor;
 
 mod constants;
 mod encrypt_round;
@@ -40,6 +44,7 @@ macro_rules! word_ty {
 pub(crate) use word_ty;
 use crate::decrypt_round::decrypt_round_32;
 
+#[cfg(target_arch = "x86_64")]
 fn encrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     unsafe {
         *x = _mm_ror_epi32(*x, ALPHA_32 as i32);
@@ -51,6 +56,7 @@ fn encrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 fn encrypt_round_avx2(x: &mut __m256i, y: &mut __m256i, k: __m256i) {
     unsafe {
         *x = _mm256_ror_epi32(*x, ALPHA_32 as i32);
@@ -62,6 +68,7 @@ fn encrypt_round_avx2(x: &mut __m256i, y: &mut __m256i, k: __m256i) {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 fn encrypt_round_avx512(x: &mut __m512i, y: &mut __m512i, k: __m512i) {
     unsafe {
         *x = _mm512_ror_epi32(*x, ALPHA_32 as i32);
@@ -78,6 +85,7 @@ fn encrypt_round_avx512(x: &mut __m512i, y: &mut __m512i, k: __m512i) {
 //     *x = x.bitxor(k).wrapping_sub(*y).rotate_left(ALPHA_32);
 // }
 
+#[cfg(target_arch = "x86_64")]
 fn decrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     unsafe {
         *y = _mm_xor_epi32(*y, *x);
@@ -89,6 +97,7 @@ fn decrypt_round_avx(x: &mut __m128i, y: &mut __m128i, k: __m128i) {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 fn decrypt_round_avx2(x: &mut __m256i, y: &mut __m256i, k: __m256i) {
     unsafe {
         *y = _mm256_xor_epi32(*y, *x);
@@ -100,6 +109,7 @@ fn decrypt_round_avx2(x: &mut __m256i, y: &mut __m256i, k: __m256i) {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 fn decrypt_round_avx512(x: &mut __m512i, y: &mut __m512i, k: __m512i) {
     unsafe {
         *y = _mm512_xor_epi32(*y, *x);
@@ -137,6 +147,7 @@ fn expand_key(key: [u32; 4]) -> [u32; ROUNDS_64_128] {
     round_keys
 }
 
+#[cfg(target_arch = "x86_64")]
 fn expand_key_avx(key: [__m128i; 4]) -> [__m128i; ROUNDS_64_128] {
     unsafe {
         let mut round_keys: [__m128i; ROUNDS_64_128] = [_mm_setzero_si128(); ROUNDS_64_128];
@@ -165,6 +176,7 @@ fn expand_key_avx(key: [__m128i; 4]) -> [__m128i; ROUNDS_64_128] {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 fn expand_key_avx2(key: [__m256i; 4]) -> [__m256i; ROUNDS_64_128] {
     unsafe {
         let mut round_keys: [__m256i; ROUNDS_64_128] = [_mm256_setzero_si256(); ROUNDS_64_128];
@@ -193,6 +205,7 @@ fn expand_key_avx2(key: [__m256i; 4]) -> [__m256i; ROUNDS_64_128] {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 fn expand_key_avx512(key: [__m512i; 4]) -> [__m512i; ROUNDS_64_128] {
     unsafe {
         let mut round_keys: [__m512i; ROUNDS_64_128] = [_mm512_setzero_si512(); ROUNDS_64_128];
@@ -234,6 +247,7 @@ pub fn encrypt_block(pt: [u32; 2], key: [u32; 4]) -> [u32; 2] {
     [x, y]
 }
 
+#[cfg(target_arch = "x86_64")]
 pub fn encrypt_block_avx(pt: [__m128i; 2], key: [__m128i; 4]) -> [__m128i; 2] {
     let round_keys = expand_key_avx(key);
 
@@ -247,6 +261,7 @@ pub fn encrypt_block_avx(pt: [__m128i; 2], key: [__m128i; 4]) -> [__m128i; 2] {
     [x, y]
 }
 
+#[cfg(target_arch = "x86_64")]
 pub fn encrypt_block_avx2(pt: [__m256i; 2], key: [__m256i; 4]) -> [__m256i; 2] {
     let round_keys = expand_key_avx2(key);
 
@@ -260,6 +275,7 @@ pub fn encrypt_block_avx2(pt: [__m256i; 2], key: [__m256i; 4]) -> [__m256i; 2] {
     [x, y]
 }
 
+#[cfg(target_arch = "x86_64")]
 pub fn encrypt_block_avx512(pt: [__m512i; 2], key: [__m512i; 4]) -> [__m512i; 2] {
     let round_keys = expand_key_avx512(key);
 
@@ -286,6 +302,7 @@ pub fn decrypt_block(ct: [u32; 2], key: [u32; 4]) -> [u32; 2] {
     [x, y]
 }
 
+#[cfg(target_arch = "x86_64")]
 pub fn decrypt_block_avx(ct: [__m128i; 2], key: [__m128i; 4]) -> [__m128i; 2] {
     let round_keys = expand_key_avx(key);
 
@@ -299,6 +316,7 @@ pub fn decrypt_block_avx(ct: [__m128i; 2], key: [__m128i; 4]) -> [__m128i; 2] {
     [x, y]
 }
 
+#[cfg(target_arch = "x86_64")]
 pub fn decrypt_block_avx2(ct: [__m256i; 2], key: [__m256i; 4]) -> [__m256i; 2] {
     let round_keys = expand_key_avx2(key);
 
@@ -312,6 +330,7 @@ pub fn decrypt_block_avx2(ct: [__m256i; 2], key: [__m256i; 4]) -> [__m256i; 2] {
     [x, y]
 }
 
+#[cfg(target_arch = "x86_64")]
 pub fn decrypt_block_avx512(ct: [__m512i; 2], key: [__m512i; 4]) -> [__m512i; 2] {
     let round_keys = expand_key_avx512(key);
 

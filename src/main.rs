@@ -1,4 +1,8 @@
-use speck::{decrypt_block, decrypt_block_avx2, encrypt_block, encrypt_block_avx2};
+use speck::{decrypt_block, encrypt_block};
+
+#[cfg(target_arch = "x86_64")]
+use speck::{decrypt_block_avx2, encrypt_block_avx2};
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::_mm256_set1_epi32;
 
 fn main() {
@@ -15,6 +19,7 @@ fn main() {
     println!("ciphertext = {:08x} {:08x}", ct[0], ct[1]);
     println!("plaintext = {:08x} {:08x}", pt[0], pt[1]);
 
+    #[cfg(target_arch = "x86_64")]
     unsafe {
         let key_avx = [
             _mm256_set1_epi32(0x1b1a1918),

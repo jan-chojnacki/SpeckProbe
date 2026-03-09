@@ -1,8 +1,13 @@
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use speck::{decrypt_block, encrypt_block};
+
+#[cfg(target_arch = "x86_64")]
 use speck::{
-    decrypt_block, decrypt_block_avx, decrypt_block_avx2, encrypt_block_avx, encrypt_block_avx2,
+    decrypt_block_avx, decrypt_block_avx2, decrypt_block_avx512, encrypt_block_avx,
+    encrypt_block_avx2, encrypt_block_avx512,
 };
-use speck::{decrypt_block_avx512, encrypt_block, encrypt_block_avx512};
+
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{_mm256_set1_epi32, _mm512_set1_epi32, _mm_set1_epi32};
 use std::hint::black_box;
 use std::time::Duration;
@@ -43,6 +48,7 @@ fn scalar_bench(c: &mut Criterion) {
     group.finish();
 }
 
+#[cfg(target_arch = "x86_64")]
 fn avx_bench(c: &mut Criterion) {
     let mut group = c.benchmark_group("avx");
     group.throughput(Throughput::Elements(4));
@@ -81,6 +87,7 @@ fn avx_bench(c: &mut Criterion) {
     group.finish();
 }
 
+#[cfg(target_arch = "x86_64")]
 fn avx2_bench(c: &mut Criterion) {
     let mut group = c.benchmark_group("avx2");
     group.throughput(Throughput::Elements(8));
@@ -119,6 +126,7 @@ fn avx2_bench(c: &mut Criterion) {
     group.finish();
 }
 
+#[cfg(target_arch = "x86_64")]
 fn avx512_bench(c: &mut Criterion) {
     let mut group = c.benchmark_group("avx512");
     group.throughput(Throughput::Elements(16));
@@ -159,8 +167,11 @@ fn avx512_bench(c: &mut Criterion) {
 
 fn benchmark(c: &mut Criterion) {
     scalar_bench(c);
+    #[cfg(target_arch = "x86_64")]
     avx_bench(c);
+    #[cfg(target_arch = "x86_64")]
     avx2_bench(c);
+    #[cfg(target_arch = "x86_64")]
     avx512_bench(c);
 }
 
