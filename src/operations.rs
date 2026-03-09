@@ -165,6 +165,10 @@ macro_rules! define_neon_ror {
     };
 }
 
+define_neon_ror!(16);
+define_neon_ror!(32);
+define_neon_ror!(64);
+
 macro_rules! define_neon_rol {
     ($word:literal) => {
         paste! {
@@ -185,10 +189,36 @@ macro_rules! define_neon_rol {
     };
 }
 
-define_neon_ror!(16);
-define_neon_ror!(32);
-define_neon_ror!(64);
-
 define_neon_rol!(16);
 define_neon_rol!(32);
 define_neon_rol!(64);
+
+macro_rules! define_neon_add {
+    ($word:literal) => {
+        paste! {
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_add_u $word>](a: neon_word_ty!($word), b: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                [<vaddq_u $word>](a, b)
+            }
+        }
+    };
+}
+
+define_neon_add!(16);
+define_neon_add!(32);
+define_neon_add!(64);
+
+macro_rules! define_neon_sub {
+    ($word:literal) => {
+        paste! {
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_sub_u $word>](a: neon_word_ty!($word), b: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                [<vsubq_u $word>](a, b)
+            }
+        }
+    };
+}
+
+define_neon_sub!(16);
+define_neon_sub!(32);
+define_neon_sub!(64);
