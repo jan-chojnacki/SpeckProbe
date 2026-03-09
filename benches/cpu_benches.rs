@@ -1,11 +1,10 @@
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use speck::{decrypt_block_64_128, encrypt_block_64_128};
+use speck::avx_decrypt_block_64_128;
+use speck::encrypt_block_64_128;
+use speck::{avx_encrypt_block_64_128, decrypt_block_64_128};
 
 #[cfg(target_arch = "x86_64")]
-use speck::{
-    decrypt_block_avx, decrypt_block_avx2, decrypt_block_avx512, encrypt_block_avx,
-    encrypt_block_avx2, encrypt_block_avx512,
-};
+use speck::{decrypt_block_avx2, decrypt_block_avx512, encrypt_block_avx2, encrypt_block_avx512};
 
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{_mm256_set1_epi32, _mm512_set1_epi32, _mm_set1_epi32};
@@ -48,38 +47,34 @@ fn scalar_bench(c: &mut Criterion) {
     group.finish();
 }
 
-#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx")]
 fn avx_bench(c: &mut Criterion) {
     let mut group = c.benchmark_group("avx");
     group.throughput(Throughput::Elements(4));
 
-    let key = unsafe {
-        [
-            _mm_set1_epi32(0x1b1a1918),
-            _mm_set1_epi32(0x13121110),
-            _mm_set1_epi32(0x0b0a0908),
-            _mm_set1_epi32(0x03020100),
-        ]
-    };
+    let key = [
+        _mm_set1_epi32(0x1b1a1918),
+        _mm_set1_epi32(0x13121110),
+        _mm_set1_epi32(0x0b0a0908),
+        _mm_set1_epi32(0x03020100),
+    ];
 
-    let pt = unsafe { [_mm_set1_epi32(0x3b726574), _mm_set1_epi32(0x7475432d)] };
-    let ct = unsafe {
-        [
-            _mm_set1_epi32(0x8c6fa548u32 as i32),
-            _mm_set1_epi32(0x454e028b),
-        ]
-    };
+    let pt = [_mm_set1_epi32(0x3b726574), _mm_set1_epi32(0x7475432d)];
+    let ct = [
+        _mm_set1_epi32(0x8c6fa548u32 as i32),
+        _mm_set1_epi32(0x454e028b),
+    ];
 
     group.bench_function("encrypt", |b| {
         b.iter(|| {
-            let out = encrypt_block_avx(black_box(pt), black_box(key));
+            let out = avx_encrypt_block_64_128(black_box(pt), black_box(key));
             black_box(out);
         })
     });
 
     group.bench_function("decrypt", |b| {
         b.iter(|| {
-            let out = decrypt_block_avx(black_box(ct), black_box(key));
+            let out = avx_decrypt_block_64_128(black_box(ct), black_box(key));
             black_box(out);
         })
     });
@@ -167,11 +162,8 @@ fn avx512_bench(c: &mut Criterion) {
 
 fn benchmark(c: &mut Criterion) {
     scalar_bench(c);
-    #[cfg(target_arch = "x86_64")]
-    avx_bench(c);
-    #[cfg(target_arch = "x86_64")]
+    unsafe { avx_bench(c) };
     avx2_bench(c);
-    #[cfg(target_arch = "x86_64")]
     avx512_bench(c);
 }
 

@@ -1,4 +1,4 @@
-use speck::{decrypt_block, encrypt_block};
+use speck::{decrypt_block_64_128, encrypt_block_64_128};
 
 #[cfg(target_arch = "x86_64")]
 use speck::{decrypt_block_avx2, encrypt_block_avx2};
@@ -13,8 +13,8 @@ fn main() {
     let key = [0x1b1a1918, 0x13121110, 0x0b0a0908, 0x03020100];
     let pt = [0x3b726574, 0x7475432d];
 
-    let ct = encrypt_block(pt, key);
-    let pt = decrypt_block(ct, key);
+    let ct = encrypt_block_64_128(pt, key);
+    let pt = decrypt_block_64_128(ct, key);
 
     println!("ciphertext = {:08x} {:08x}", ct[0], ct[1]);
     println!("plaintext = {:08x} {:08x}", pt[0], pt[1]);
