@@ -165,6 +165,30 @@ macro_rules! define_neon_ror {
     };
 }
 
+macro_rules! define_neon_rol {
+    ($word:literal) => {
+        paste! {
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_rol_alpha_u $word>](x: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                let hi = [<vshlq_n_u $word>]::<{ [<ALPHA_ $word>] as i32 }>(x);
+                let lo = [<vshrq_n_u $word>]::<{ $word - [<ALPHA_ $word>] as i32 }>(x);
+                [<vorrq_u $word>](hi, lo)
+            }
+
+            #[target_feature(enable = "neon")]
+            pub unsafe fn [<neon_rol_beta_u $word>](x: neon_word_ty!($word)) -> neon_word_ty!($word) {
+                let hi = [<vshlq_n_u $word>]::<{ [<BETA_ $word>] as i32 }>(x);
+                let lo = [<vshrq_n_u $word>]::<{ $word - [<BETA_ $word>] as i32 }>(x);
+                [<vorrq_u $word>](hi, lo)
+            }
+        }
+    };
+}
+
 define_neon_ror!(16);
 define_neon_ror!(32);
 define_neon_ror!(64);
+
+define_neon_rol!(16);
+define_neon_rol!(32);
+define_neon_rol!(64);
