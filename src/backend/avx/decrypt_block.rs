@@ -6,6 +6,7 @@ use paste::paste;
 macro_rules! impl_decrypt_block_avx {
     ($block:literal, $key:literal, $word:literal, $key_words:literal) => {
         paste! {
+            #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
             #[target_feature(enable = "avx")]
             pub fn [<avx_decrypt_block_ $block _ $key>](ct: [__m128i; 2], key: [__m128i; $key_words]) -> [__m128i; 2] {
                 let round_keys = [<avx_expand_key_ $block _ $key>](key);

@@ -1,170 +1,118 @@
+use criterion::measurement::WallTime;
+use criterion::BenchmarkGroup;
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
-use speck::avx_decrypt_block_64_128;
-use speck::encrypt_block_64_128;
-use speck::{avx_encrypt_block_64_128, decrypt_block_64_128};
-
-#[cfg(target_arch = "x86_64")]
-use speck::{decrypt_block_avx2, decrypt_block_avx512, encrypt_block_avx2, encrypt_block_avx512};
-
-#[cfg(target_arch = "x86_64")]
-use std::arch::x86_64::{_mm256_set1_epi32, _mm512_set1_epi32, _mm_set1_epi32};
 use std::hint::black_box;
-use std::time::Duration;
 
-fn criterion_config() -> Criterion {
-    Criterion::default()
-        .warm_up_time(Duration::from_secs(5))
-        .measurement_time(Duration::from_secs(15))
-        .sample_size(100)
-        .nresamples(100_000)
-        .confidence_level(0.95)
-        .significance_level(0.05)
-        .noise_threshold(0.02)
-}
+mod common;
+use crate::common::criterion_config;
+use common::define_cipher_bench;
 
-fn scalar_bench(c: &mut Criterion) {
-    let mut group = c.benchmark_group("scalar");
-    group.throughput(Throughput::Elements(1));
+define_cipher_bench!(
+    scalar_32_64_bench,
+    prefix = "32_64",
+    key = [0, 0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_32_64,
+    decrypt = speck::decrypt_block_32_64
+);
 
-    let key = [0x1b1a1918, 0x13121110, 0x0b0a0908, 0x03020100];
-    let pt = [0x3b726574, 0x7475432d];
-    let ct = [0x8c6fa548, 0x454e028b];
+define_cipher_bench!(
+    scalar_48_72_bench,
+    prefix = "48_72",
+    key = [0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_48_72,
+    decrypt = speck::decrypt_block_48_72
+);
 
-    group.bench_function("encrypt", |b| {
-        b.iter(|| {
-            let out = encrypt_block_64_128(black_box(pt), black_box(key));
-            black_box(out);
-        })
-    });
+define_cipher_bench!(
+    scalar_48_96_bench,
+    prefix = "48_96",
+    key = [0, 0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_48_96,
+    decrypt = speck::decrypt_block_48_96
+);
 
-    group.bench_function("decrypt", |b| {
-        b.iter(|| {
-            let out = decrypt_block_64_128(black_box(ct), black_box(key));
-            black_box(out);
-        })
-    });
+define_cipher_bench!(
+    scalar_64_96_bench,
+    prefix = "64_96",
+    key = [0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_64_96,
+    decrypt = speck::decrypt_block_64_96
+);
 
-    group.finish();
-}
+define_cipher_bench!(
+    scalar_64_128_bench,
+    prefix = "64_128",
+    key = [0, 0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_64_128,
+    decrypt = speck::decrypt_block_64_128
+);
 
-#[target_feature(enable = "avx")]
-fn avx_bench(c: &mut Criterion) {
-    let mut group = c.benchmark_group("avx");
-    group.throughput(Throughput::Elements(4));
+define_cipher_bench!(
+    scalar_96_96_bench,
+    prefix = "96_96",
+    key = [0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_96_96,
+    decrypt = speck::decrypt_block_96_96
+);
 
-    let key = [
-        _mm_set1_epi32(0x1b1a1918),
-        _mm_set1_epi32(0x13121110),
-        _mm_set1_epi32(0x0b0a0908),
-        _mm_set1_epi32(0x03020100),
-    ];
+define_cipher_bench!(
+    scalar_96_144_bench,
+    prefix = "96_144",
+    key = [0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_96_144,
+    decrypt = speck::decrypt_block_96_144
+);
 
-    let pt = [_mm_set1_epi32(0x3b726574), _mm_set1_epi32(0x7475432d)];
-    let ct = [
-        _mm_set1_epi32(0x8c6fa548u32 as i32),
-        _mm_set1_epi32(0x454e028b),
-    ];
+define_cipher_bench!(
+    scalar_128_128_bench,
+    prefix = "128_128",
+    key = [0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_128_128,
+    decrypt = speck::decrypt_block_128_128
+);
 
-    group.bench_function("encrypt", |b| {
-        b.iter(|| {
-            let out = avx_encrypt_block_64_128(black_box(pt), black_box(key));
-            black_box(out);
-        })
-    });
+define_cipher_bench!(
+    scalar_128_192_bench,
+    prefix = "128_192",
+    key = [0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_128_192,
+    decrypt = speck::decrypt_block_128_192
+);
 
-    group.bench_function("decrypt", |b| {
-        b.iter(|| {
-            let out = avx_decrypt_block_64_128(black_box(ct), black_box(key));
-            black_box(out);
-        })
-    });
-
-    group.finish();
-}
-
-#[cfg(target_arch = "x86_64")]
-fn avx2_bench(c: &mut Criterion) {
-    let mut group = c.benchmark_group("avx2");
-    group.throughput(Throughput::Elements(8));
-
-    let key = unsafe {
-        [
-            _mm256_set1_epi32(0x1b1a1918),
-            _mm256_set1_epi32(0x13121110),
-            _mm256_set1_epi32(0x0b0a0908),
-            _mm256_set1_epi32(0x03020100),
-        ]
-    };
-
-    let pt = unsafe { [_mm256_set1_epi32(0x3b726574), _mm256_set1_epi32(0x7475432d)] };
-    let ct = unsafe {
-        [
-            _mm256_set1_epi32(0x8c6fa548u32 as i32),
-            _mm256_set1_epi32(0x454e028b),
-        ]
-    };
-
-    group.bench_function("encrypt", |b| {
-        b.iter(|| {
-            let out = encrypt_block_avx2(black_box(pt), black_box(key));
-            black_box(out);
-        })
-    });
-
-    group.bench_function("decrypt", |b| {
-        b.iter(|| {
-            let out = decrypt_block_avx2(black_box(ct), black_box(key));
-            black_box(out);
-        })
-    });
-
-    group.finish();
-}
-
-#[cfg(target_arch = "x86_64")]
-fn avx512_bench(c: &mut Criterion) {
-    let mut group = c.benchmark_group("avx512");
-    group.throughput(Throughput::Elements(16));
-
-    let key = unsafe {
-        [
-            _mm512_set1_epi32(0x1b1a1918),
-            _mm512_set1_epi32(0x13121110),
-            _mm512_set1_epi32(0x0b0a0908),
-            _mm512_set1_epi32(0x03020100),
-        ]
-    };
-
-    let pt = unsafe { [_mm512_set1_epi32(0x3b726574), _mm512_set1_epi32(0x7475432d)] };
-    let ct = unsafe {
-        [
-            _mm512_set1_epi32(0x8c6fa548u32 as i32),
-            _mm512_set1_epi32(0x454e028b),
-        ]
-    };
-
-    group.bench_function("encrypt", |b| {
-        b.iter(|| {
-            let out = encrypt_block_avx512(black_box(pt), black_box(key));
-            black_box(out);
-        })
-    });
-
-    group.bench_function("decrypt", |b| {
-        b.iter(|| {
-            let out = decrypt_block_avx512(black_box(ct), black_box(key));
-            black_box(out);
-        })
-    });
-
-    group.finish();
-}
+define_cipher_bench!(
+    scalar_128_256_bench,
+    prefix = "128_256",
+    key = [0, 0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_128_256,
+    decrypt = speck::decrypt_block_128_256
+);
 
 fn benchmark(c: &mut Criterion) {
-    scalar_bench(c);
-    unsafe { avx_bench(c) };
-    avx2_bench(c);
-    avx512_bench(c);
+    let mut g = c.benchmark_group("scalar");
+    g.throughput(Throughput::Elements(4));
+
+    scalar_32_64_bench(&mut g);
+    scalar_48_72_bench(&mut g);
+    scalar_48_96_bench(&mut g);
+    scalar_64_96_bench(&mut g);
+    scalar_64_128_bench(&mut g);
+    scalar_96_96_bench(&mut g);
+    scalar_96_144_bench(&mut g);
+    scalar_128_128_bench(&mut g);
+    scalar_128_192_bench(&mut g);
+    scalar_128_256_bench(&mut g);
+
+    g.finish()
 }
 
 criterion_group! {

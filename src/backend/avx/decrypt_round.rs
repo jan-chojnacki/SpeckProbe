@@ -5,6 +5,7 @@ use std::arch::x86_64::__m128i;
 macro_rules! define_decrypt_round_avx {
     ($word:literal, $alpha:literal, $beta:literal) => {
         paste! {
+            #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
             #[target_feature(enable = "avx")]
             pub(crate) fn [<avx_decrypt_round_ $word>](x: &mut __m128i, y: &mut __m128i, k: __m128i) {
                 *y = [<avx_xor_u $word>](*y, *x);

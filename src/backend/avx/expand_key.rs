@@ -35,6 +35,7 @@ macro_rules! word_ty {
 macro_rules! impl_expand_key_avx {
     ($block:literal, $key:literal, $word:literal, $avx_word: literal, $key_words:literal, $rounds:literal) => {
         paste! {
+            #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
             #[target_feature(enable = "avx")]
             pub fn [<avx_expand_key_ $block _ $key>](key: [__m128i; $key_words]) -> [__m128i; $rounds ] {
                 let mut rk: [__m128i; $rounds] = [_mm_setzero_si128(); $rounds];
