@@ -1,6 +1,6 @@
-use std::arch::x86_64::*;
 use crate::backend::avx2::encrypt_round::*;
 use paste::paste;
+use std::arch::x86_64::*;
 
 macro_rules! l_words {
     ($key:expr, 2) => {

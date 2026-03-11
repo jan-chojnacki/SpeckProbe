@@ -1,5 +1,22 @@
 use paste::paste;
-use std::arch::x86_64::*;
+use std::arch::x86_64::__m128i;
+use std::arch::x86_64::_mm_add_epi16;
+use std::arch::x86_64::_mm_add_epi32;
+use std::arch::x86_64::_mm_add_epi64;
+use std::arch::x86_64::_mm_and_si128;
+use std::arch::x86_64::_mm_or_si128;
+use std::arch::x86_64::_mm_set1_epi32;
+use std::arch::x86_64::_mm_set1_epi64x;
+use std::arch::x86_64::_mm_slli_epi16;
+use std::arch::x86_64::_mm_slli_epi32;
+use std::arch::x86_64::_mm_slli_epi64;
+use std::arch::x86_64::_mm_srli_epi16;
+use std::arch::x86_64::_mm_srli_epi32;
+use std::arch::x86_64::_mm_srli_epi64;
+use std::arch::x86_64::_mm_sub_epi16;
+use std::arch::x86_64::_mm_sub_epi32;
+use std::arch::x86_64::_mm_sub_epi64;
+use std::arch::x86_64::_mm_xor_si128;
 
 macro_rules! define_avx_ror {
     (24, $n:expr) => {

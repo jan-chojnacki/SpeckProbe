@@ -1,7 +1,7 @@
-use std::arch::x86_64::__m256i;
 use crate::backend::avx2::decrypt_round::*;
 use crate::backend::avx2::expand_key::*;
 use paste::paste;
+use std::arch::x86_64::__m256i;
 
 macro_rules! impl_decrypt_block_avx2 {
     ($block:literal, $key:literal, $word:literal, $key_words:literal) => {

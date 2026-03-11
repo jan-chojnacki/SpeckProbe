@@ -1,5 +1,22 @@
+use crate::__m256i;
 use paste::paste;
-use std::arch::x86_64::*;
+use std::arch::x86_64::_mm256_add_epi16;
+use std::arch::x86_64::_mm256_add_epi32;
+use std::arch::x86_64::_mm256_add_epi64;
+use std::arch::x86_64::_mm256_and_si256;
+use std::arch::x86_64::_mm256_or_si256;
+use std::arch::x86_64::_mm256_set1_epi32;
+use std::arch::x86_64::_mm256_set1_epi64x;
+use std::arch::x86_64::_mm256_slli_epi16;
+use std::arch::x86_64::_mm256_slli_epi32;
+use std::arch::x86_64::_mm256_slli_epi64;
+use std::arch::x86_64::_mm256_srli_epi16;
+use std::arch::x86_64::_mm256_srli_epi32;
+use std::arch::x86_64::_mm256_srli_epi64;
+use std::arch::x86_64::_mm256_sub_epi16;
+use std::arch::x86_64::_mm256_sub_epi32;
+use std::arch::x86_64::_mm256_sub_epi64;
+use std::arch::x86_64::_mm256_xor_si256;
 
 macro_rules! define_avx2_ror {
     (24, $n:expr) => {
