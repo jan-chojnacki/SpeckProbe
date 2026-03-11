@@ -21,3 +21,11 @@ harness = false
 [[bench]]
 name = "avx_benches"
 harness = false
+
+[[bench]]
+name = "avx2_benches"
+harness = false
+
+[[bench]]
+name = "avx512_benches"
+harness = false

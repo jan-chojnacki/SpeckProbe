@@ -31,10 +31,9 @@ macro_rules! define_cipher_bench {
     };
 }
 
-use criterion::{BenchmarkGroup, Criterion};
-use std::time::Duration;
-use criterion::measurement::WallTime;
+use criterion::Criterion;
 pub(crate) use define_cipher_bench;
+use std::time::Duration;
 
 pub(crate) fn criterion_config() -> Criterion {
     Criterion::default()
