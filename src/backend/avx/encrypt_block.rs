@@ -1,6 +1,7 @@
 use crate::backend::avx::encrypt_round::*;
 use crate::backend::avx::expand_key::*;
 use paste::paste;
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::__m128i;
 
 macro_rules! impl_encrypt_block_avx {

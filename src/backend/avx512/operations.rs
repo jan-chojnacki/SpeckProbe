@@ -1,22 +1,11 @@
-use crate::__m512i;
 use paste::paste;
-use std::arch::x86_64::_mm512_add_epi16;
-use std::arch::x86_64::_mm512_add_epi32;
-use std::arch::x86_64::_mm512_add_epi64;
-use std::arch::x86_64::_mm512_and_si512;
-use std::arch::x86_64::_mm512_or_si512;
-use std::arch::x86_64::_mm512_rol_epi32;
-use std::arch::x86_64::_mm512_rol_epi64;
-use std::arch::x86_64::_mm512_ror_epi32;
-use std::arch::x86_64::_mm512_ror_epi64;
-use std::arch::x86_64::_mm512_set1_epi32;
-use std::arch::x86_64::_mm512_set1_epi64;
-use std::arch::x86_64::_mm512_slli_epi16;
-use std::arch::x86_64::_mm512_srli_epi16;
-use std::arch::x86_64::_mm512_sub_epi16;
-use std::arch::x86_64::_mm512_sub_epi32;
-use std::arch::x86_64::_mm512_sub_epi64;
-use std::arch::x86_64::_mm512_xor_si512;
+#[cfg(target_arch = "x86_64")]
+use std::arch::x86_64::{
+    _mm512_add_epi16, _mm512_add_epi32, _mm512_add_epi64, _mm512_and_si512, _mm512_or_si512,
+    _mm512_rol_epi32, _mm512_rol_epi64, _mm512_ror_epi32, _mm512_ror_epi64, _mm512_set1_epi32,
+    _mm512_set1_epi64, _mm512_slli_epi16, _mm512_srli_epi16, _mm512_sub_epi16, _mm512_sub_epi32,
+    _mm512_sub_epi64, _mm512_xor_si512, __m512i
+};
 
 macro_rules! define_avx512_ror {
     (16, $n:expr) => {
