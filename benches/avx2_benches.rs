@@ -159,14 +159,18 @@ define_cipher_bench!(
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 fn benchmark(c: &mut Criterion) {
     let mut g = c.benchmark_group("avx2");
-    g.throughput(Throughput::Elements(8));
 
     unsafe {
+        g.throughput(Throughput::Elements(16));
         avx2_32_64_bench(&mut g);
+
+        g.throughput(Throughput::Elements(8));
         avx2_48_72_bench(&mut g);
         avx2_48_96_bench(&mut g);
         avx2_64_96_bench(&mut g);
         avx2_64_128_bench(&mut g);
+
+        g.throughput(Throughput::Elements(4));
         avx2_96_96_bench(&mut g);
         avx2_96_144_bench(&mut g);
         avx2_128_128_bench(&mut g);
