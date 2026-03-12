@@ -1,6 +1,8 @@
 use crate::backend::neon::encrypt_round::*;
+#[cfg(target_arch = "aarch64")]
 use crate::backend::neon::neon_word_ty;
 use paste::paste;
+#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t, vdupq_n_u16, vdupq_n_u32, vdupq_n_u64};
 
 

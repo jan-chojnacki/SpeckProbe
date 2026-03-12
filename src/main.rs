@@ -1,7 +1,7 @@
 use speck::{decrypt_block_64_128, encrypt_block_64_128};
 
 #[cfg(target_arch = "x86_64")]
-use speck::{decrypt_block_avx2, encrypt_block_avx2};
+use speck::{avx2_decrypt_block_64_128, avx2_encrypt_block_64_128};
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::_mm256_set1_epi32;
 
@@ -30,8 +30,8 @@ fn main() {
 
         let pt_avx = [_mm256_set1_epi32(0x3b726574), _mm256_set1_epi32(0x7475432d)];
 
-        let ct_avx = encrypt_block_avx2(pt_avx, key_avx);
-        let pt_avx = decrypt_block_avx2(ct_avx, key_avx);
+        let ct_avx = avx2_encrypt_block_64_128(pt_avx, key_avx);
+        let pt_avx = avx2_decrypt_block_64_128(ct_avx, key_avx);
 
         println!(
             "ciphertext_avx2[0] = {:08x?}\nciphertext_avx2[1] = {:08x?}",

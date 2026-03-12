@@ -8,6 +8,7 @@ mod operations;
 pub use decrypt_block::*;
 pub use encrypt_block::*;
 
+#[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::*;
 
 #[cfg(target_arch = "aarch64")]
@@ -29,4 +30,5 @@ macro_rules! neon_word_ty {
     };
 }
 
+#[cfg(target_arch = "aarch64")]
 pub(crate) use neon_word_ty;

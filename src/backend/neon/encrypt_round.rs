@@ -1,6 +1,8 @@
+#[cfg(target_arch = "aarch64")]
 use crate::backend::neon::neon_word_ty;
 use crate::backend::neon::operations::*;
 use paste::paste;
+#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 macro_rules! define_encrypt_round_neon {
