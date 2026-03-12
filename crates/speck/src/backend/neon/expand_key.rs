@@ -49,6 +49,7 @@ macro_rules! impl_expand_key_neon {
                 let mut i = 0usize;
                 while i < $rounds {
                     rk[i] = k;
+                    #[allow(clippy::modulo_one)]
                     let idx = i % ($key_words - 1);
                     [<neon_encrypt_round_ $word>](&mut l[idx], &mut k, [<vdupq_n_u $neon_word>](i as word_ty!($word)));
                     i += 1;

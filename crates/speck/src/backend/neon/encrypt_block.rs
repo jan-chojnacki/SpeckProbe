@@ -10,6 +10,18 @@ use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 macro_rules! impl_encrypt_block_neon {
     ($block:literal, $key:literal, $word:literal, $key_words:literal) => {
         paste! {
+            #[doc = concat!(
+                "Encrypts one Speck block (",
+                stringify!($block),
+                "/",
+                stringify!($key),
+                ") using NEON."
+            )]
+            #[doc = ""]
+            #[doc = "# Safety"]
+            #[doc = concat!(
+                "Caller must ensure CPU support for `neon` before calling this function."
+            )]
             #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
             #[target_feature(enable = "neon")]
             pub fn [<neon_encrypt_block_ $block _ $key>](ct: [neon_word_ty!($word); 2], key: [neon_word_ty!($word); $key_words]) -> [neon_word_ty!($word); 2] {

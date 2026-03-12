@@ -46,6 +46,7 @@ macro_rules! impl_expand_key_avx2 {
                 let mut i = 0usize;
                 while i < $rounds {
                     rk[i] = k;
+                    #[allow(clippy::modulo_one)]
                     let idx = i % ($key_words - 1);
                     [<avx2_encrypt_round_ $word>](&mut l[idx], &mut k, [<_mm256_set1_epi $avx_word>](i as word_ty!($word)));
                     i += 1;

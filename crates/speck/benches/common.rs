@@ -38,7 +38,7 @@ use std::time::Duration;
 pub(crate) fn criterion_config() -> Criterion {
     Criterion::default()
         .warm_up_time(Duration::from_secs(1))
-        .measurement_time(Duration::from_secs(5))
+        .measurement_time(Duration::from_secs(1))
         .sample_size(100)
         .nresamples(100_000)
         .confidence_level(0.95)

@@ -7,6 +7,20 @@ use std::arch::x86_64::__m512i;
 macro_rules! impl_encrypt_block_avx512 {
     ($block:literal, $key:literal, $word:literal, $key_words:literal, $feature:literal) => {
         paste! {
+            #[doc = concat!(
+                "Encrypts one Speck block (",
+                stringify!($block),
+                "/",
+                stringify!($key),
+                ") using AVX-512."
+            )]
+            #[doc = ""]
+            #[doc = "# Safety"]
+            #[doc = concat!(
+                "Caller must ensure CPU support for `",
+                $feature,
+                "` before calling this function."
+            )]
             #[cfg(all(target_arch = "x86_64", target_feature = $feature))]
             #[target_feature(enable = $feature)]
             pub fn [<avx512_encrypt_block_ $block _ $key>](ct: [__m512i; 2], key: [__m512i; $key_words]) -> [__m512i; 2] {

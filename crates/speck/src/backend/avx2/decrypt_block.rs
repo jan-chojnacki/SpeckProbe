@@ -7,6 +7,18 @@ use std::arch::x86_64::__m256i;
 macro_rules! impl_decrypt_block_avx2 {
     ($block:literal, $key:literal, $word:literal, $key_words:literal) => {
         paste! {
+            #[doc = concat!(
+                "Decrypts one Speck block (",
+                stringify!($block),
+                "/",
+                stringify!($key),
+                ") using AVX2."
+            )]
+            #[doc = ""]
+            #[doc = "# Safety"]
+            #[doc = concat!(
+                "Caller must ensure CPU support for `avx2` before calling this function."
+            )]
             #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
             #[target_feature(enable = "avx2")]
             pub fn [<avx2_decrypt_block_ $block _ $key>](ct: [__m256i; 2], key: [__m256i; $key_words]) -> [__m256i; 2] {
