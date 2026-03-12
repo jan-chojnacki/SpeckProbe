@@ -13,7 +13,7 @@ macro_rules! define_encrypt_round_avx {
                 *x = [<avx_add_u $word>](*x, *y);
                 *x = [<avx_xor_u $word>](*x, k);
 
-                *y = [<avx_ror_ $beta _u $word>](*y);
+                *y = [<avx_rol_ $beta _u $word>](*y);
                 *y = [<avx_xor_u $word>](*y, *x);
             }
         }

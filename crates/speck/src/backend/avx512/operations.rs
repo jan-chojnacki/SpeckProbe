@@ -107,10 +107,15 @@ macro_rules! define_avx512_rol {
 }
 
 define_avx512_rol!(16, 7);
+define_avx512_rol!(16, 2);
 define_avx512_rol!(24, 8);
+define_avx512_rol!(24, 3);
 define_avx512_rol!(32, 8);
+define_avx512_rol!(32, 3);
 define_avx512_rol!(48, 8);
+define_avx512_rol!(48, 3);
 define_avx512_rol!(64, 8);
+define_avx512_rol!(64, 3);
 
 macro_rules! define_avx512_add {
     (24) => {

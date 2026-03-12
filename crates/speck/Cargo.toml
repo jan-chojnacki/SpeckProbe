@@ -8,6 +8,7 @@ paste = "1"
 
 [dev-dependencies]
 criterion = "0.8"
+bytemuck = "1"
 
 [[bench]]
 name = "cpu_benches"

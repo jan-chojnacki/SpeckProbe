@@ -99,10 +99,15 @@ macro_rules! define_avx_rol {
 }
 
 define_avx_rol!(16, 7);
+define_avx_rol!(16, 2);
 define_avx_rol!(24, 8);
+define_avx_rol!(24, 3);
 define_avx_rol!(32, 8);
+define_avx_rol!(32, 3);
 define_avx_rol!(48, 8);
+define_avx_rol!(48, 3);
 define_avx_rol!(64, 8);
+define_avx_rol!(64, 3);
 
 macro_rules! define_avx_add {
     (24) => {
