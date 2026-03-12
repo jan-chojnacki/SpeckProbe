@@ -1,6 +1,6 @@
-use criterion::measurement::WallTime;
 use criterion::BenchmarkGroup;
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use criterion::measurement::WallTime;
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
@@ -31,7 +31,11 @@ define_cipher_bench!(
     #[target_feature(enable = "avx512f")]
     avx512_48_72_bench,
     prefix = "48_72",
-    key = [_mm512_set1_epi32(0), _mm512_set1_epi32(0), _mm512_set1_epi32(0),],
+    key = [
+        _mm512_set1_epi32(0),
+        _mm512_set1_epi32(0),
+        _mm512_set1_epi32(0),
+    ],
     pt = [_mm512_set1_epi32(0), _mm512_set1_epi32(0)],
     encrypt = speck::avx512_encrypt_block_48_72,
     decrypt = speck::avx512_decrypt_block_48_72
@@ -58,7 +62,11 @@ define_cipher_bench!(
     #[target_feature(enable = "avx512f")]
     avx512_64_96_bench,
     prefix = "64_96",
-    key = [_mm512_set1_epi32(0), _mm512_set1_epi32(0), _mm512_set1_epi32(0),],
+    key = [
+        _mm512_set1_epi32(0),
+        _mm512_set1_epi32(0),
+        _mm512_set1_epi32(0),
+    ],
     pt = [_mm512_set1_epi32(0), _mm512_set1_epi32(0)],
     encrypt = speck::avx512_encrypt_block_64_96,
     decrypt = speck::avx512_decrypt_block_64_96
@@ -96,7 +104,11 @@ define_cipher_bench!(
     #[target_feature(enable = "avx512f")]
     avx512_96_144_bench,
     prefix = "96_144",
-    key = [_mm512_set1_epi64(0), _mm512_set1_epi64(0), _mm512_set1_epi64(0),],
+    key = [
+        _mm512_set1_epi64(0),
+        _mm512_set1_epi64(0),
+        _mm512_set1_epi64(0),
+    ],
     pt = [_mm512_set1_epi64(0), _mm512_set1_epi64(0)],
     encrypt = speck::avx512_encrypt_block_96_144,
     decrypt = speck::avx512_decrypt_block_96_144
@@ -118,7 +130,11 @@ define_cipher_bench!(
     #[target_feature(enable = "avx512f")]
     avx512_128_192_bench,
     prefix = "128_192",
-    key = [_mm512_set1_epi64(0), _mm512_set1_epi64(0), _mm512_set1_epi64(0),],
+    key = [
+        _mm512_set1_epi64(0),
+        _mm512_set1_epi64(0),
+        _mm512_set1_epi64(0),
+    ],
     pt = [_mm512_set1_epi64(0), _mm512_set1_epi64(0),],
     encrypt = speck::avx512_encrypt_block_128_192,
     decrypt = speck::avx512_decrypt_block_128_192
@@ -161,7 +177,11 @@ fn benchmark(c: &mut Criterion) {
     g.finish();
 }
 
-#[cfg(not(all(target_arch = "x86_64", target_feature = "avx512f", target_feature = "avx512bw")))]
+#[cfg(not(all(
+    target_arch = "x86_64",
+    target_feature = "avx512f",
+    target_feature = "avx512bw"
+)))]
 fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
