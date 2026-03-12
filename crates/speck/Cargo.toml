@@ -1,0 +1,30 @@
+[package]
+name = "speck"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+paste = "1"
+
+[dev-dependencies]
+criterion = "0.8"
+
+[[bench]]
+name = "cpu_benches"
+harness = false
+
+[[bench]]
+name = "avx_benches"
+harness = false
+
+[[bench]]
+name = "avx2_benches"
+harness = false
+
+[[bench]]
+name = "avx512_benches"
+harness = false
+
+[[bench]]
+name = "neon_benches"
+harness = false
