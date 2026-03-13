@@ -3,7 +3,7 @@ mod common;
 #[cfg(test)]
 #[cfg(target_arch = "aarch64")]
 mod test {
-    use crate::common::define_speck_test_simd;
+    use crate::common::define_speck_test_aarch64_simd;
     use speck::{
         neon_decrypt_block_128_128, neon_decrypt_block_128_192, neon_decrypt_block_128_256,
         neon_decrypt_block_32_64, neon_decrypt_block_48_72, neon_decrypt_block_48_96,
@@ -15,7 +15,7 @@ mod test {
     };
     use std::arch::aarch64::{vdupq_n_u16, vdupq_n_u32, vdupq_n_u64};
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_32_64",
         neon_encrypt_block_32_64,
         "aarch64",
@@ -30,7 +30,7 @@ mod test {
         expected = [vdupq_n_u16(0xa868u16), vdupq_n_u16(0x42f2)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_48_72",
         neon_encrypt_block_48_72,
         "aarch64",
@@ -44,7 +44,7 @@ mod test {
         expected = [vdupq_n_u32(0xc049a5), vdupq_n_u32(0x385adc)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_48_96",
         neon_encrypt_block_48_96,
         "aarch64",
@@ -59,7 +59,7 @@ mod test {
         expected = [vdupq_n_u32(0x735e10), vdupq_n_u32(0xb6445d)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_64_96",
         neon_encrypt_block_64_96,
         "aarch64",
@@ -73,7 +73,7 @@ mod test {
         expected = [vdupq_n_u32(0x9f7952ec), vdupq_n_u32(0x4175946c)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_64_128",
         neon_encrypt_block_64_128,
         "aarch64",
@@ -88,7 +88,7 @@ mod test {
         expected = [vdupq_n_u32(0x8c6fa548), vdupq_n_u32(0x454e028b)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_96_96",
         neon_encrypt_block_96_96,
         "aarch64",
@@ -98,7 +98,7 @@ mod test {
         expected = [vdupq_n_u64(0x9e4d09ab7178), vdupq_n_u64(0x62bdde8f79aa)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_96_144",
         neon_encrypt_block_96_144,
         "aarch64",
@@ -112,7 +112,7 @@ mod test {
         expected = [vdupq_n_u64(0x2bf31072228a), vdupq_n_u64(0x7ae440252ee6)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_128_128",
         neon_encrypt_block_128_128,
         "aarch64",
@@ -131,7 +131,7 @@ mod test {
         ]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_128_192",
         neon_encrypt_block_128_192,
         "aarch64",
@@ -151,7 +151,7 @@ mod test {
         ]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_encrypt_block_128_256",
         neon_encrypt_block_128_256,
         "aarch64",
@@ -172,7 +172,7 @@ mod test {
         ]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_32_64",
         neon_decrypt_block_32_64,
         "aarch64",
@@ -187,7 +187,7 @@ mod test {
         expected = [vdupq_n_u16(0x6574), vdupq_n_u16(0x694c)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_48_72",
         neon_decrypt_block_48_72,
         "aarch64",
@@ -201,7 +201,7 @@ mod test {
         expected = [vdupq_n_u32(0x20796c), vdupq_n_u32(0x6c6172)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_48_96",
         neon_decrypt_block_48_96,
         "aarch64",
@@ -216,7 +216,7 @@ mod test {
         expected = [vdupq_n_u32(0x6d2073), vdupq_n_u32(0x696874)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_64_96",
         neon_decrypt_block_64_96,
         "aarch64",
@@ -230,7 +230,7 @@ mod test {
         expected = [vdupq_n_u32(0x74614620), vdupq_n_u32(0x736e6165)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_64_128",
         neon_decrypt_block_64_128,
         "aarch64",
@@ -245,7 +245,7 @@ mod test {
         expected = [vdupq_n_u32(0x3b726574), vdupq_n_u32(0x7475432d)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_96_96",
         neon_decrypt_block_96_96,
         "aarch64",
@@ -255,7 +255,7 @@ mod test {
         expected = [vdupq_n_u64(0x65776f68202c), vdupq_n_u64(0x656761737520)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_96_144",
         neon_decrypt_block_96_144,
         "aarch64",
@@ -269,7 +269,7 @@ mod test {
         expected = [vdupq_n_u64(0x656d6974206e), vdupq_n_u64(0x69202c726576)]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_128_128",
         neon_decrypt_block_128_128,
         "aarch64",
@@ -288,7 +288,7 @@ mod test {
         ]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_128_192",
         neon_decrypt_block_128_192,
         "aarch64",
@@ -308,7 +308,7 @@ mod test {
         ]
     );
 
-    define_speck_test_simd!(
+    define_speck_test_aarch64_simd!(
         "neon_decrypt_block_128_256",
         neon_decrypt_block_128_256,
         "aarch64",

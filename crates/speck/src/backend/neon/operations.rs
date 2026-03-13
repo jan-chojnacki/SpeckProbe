@@ -12,8 +12,8 @@ macro_rules! define_neon_ror {
             #[target_feature(enable = "neon")]
             pub fn [<neon_ror_ $n _u24>](v: neon_word_ty!(24)) -> neon_word_ty!(24) {
                 let hi = vshrq_n_u32::<$n>(v);
-                let lo = vshlq_n_u32::<{ 32 - $n }>(v);
-                vorrq_u32(hi, lo)
+                let lo = vshlq_n_u32::<{ 24 - $n }>(v);
+                vandq_u32(vorrq_u32(hi, lo), vdupq_n_u32(0x00FF_FFFF))
             }
         }
     };
@@ -24,8 +24,8 @@ macro_rules! define_neon_ror {
             #[target_feature(enable = "neon")]
             pub fn [<neon_ror_ $n _u48>](v: neon_word_ty!(48)) -> neon_word_ty!(48) {
                 let hi = vshrq_n_u64::<$n>(v);
-                let lo = vshlq_n_u64::<{ 64 - $n }>(v);
-                vorrq_u64(hi, lo)
+                let lo = vshlq_n_u64::<{ 48 - $n }>(v);
+                vandq_u64(vorrq_u64(hi, lo), vdupq_n_u64(0x0000_FFFF_FFFF_FFFF))
             }
         }
     };
@@ -36,7 +36,7 @@ macro_rules! define_neon_ror {
             #[target_feature(enable = "neon")]
             pub fn [<neon_ror_ $n _u $word>](v: neon_word_ty!($word)) -> neon_word_ty!($word) {
                 let hi = [<vshrq_n_u $word>]::<$n>(v);
-                let lo = [<vshlq_n_u $word>]::<$n>(v);
+                let lo = [<vshlq_n_u $word>]::<{ $word - $n }>(v);
                 [<vorrq_u $word>](hi, lo)
             }
         }
@@ -71,8 +71,8 @@ macro_rules! define_neon_rol {
             #[target_feature(enable = "neon")]
             pub fn [<neon_rol_ $n _u24>](v: neon_word_ty!(24)) -> neon_word_ty!(24) {
                 let hi = vshlq_n_u32::<$n>(v);
-                let lo = vshrq_n_u32::<{ 32 - $n }>(v);
-                vorrq_u32(hi, lo)
+                let lo = vshrq_n_u32::<{ 24 - $n }>(v);
+                vandq_u32(vorrq_u32(hi, lo), vdupq_n_u32(0x00FF_FFFF))
             }
         }
     };
@@ -83,8 +83,8 @@ macro_rules! define_neon_rol {
             #[target_feature(enable = "neon")]
             pub fn [<neon_rol_ $n _u48>](v: neon_word_ty!(48)) -> neon_word_ty!(48) {
                 let hi = vshlq_n_u64::<$n>(v);
-                let lo = vshrq_n_u64::<{ 64 - $n }>(v);
-                vorrq_u64(hi, lo)
+                let lo = vshrq_n_u64::<{ 48 - $n }>(v);
+                vandq_u64(vorrq_u64(hi, lo), vdupq_n_u64(0x0000_FFFF_FFFF_FFFF))
             }
         }
     };
@@ -95,7 +95,7 @@ macro_rules! define_neon_rol {
             #[target_feature(enable = "neon")]
             pub fn [<neon_rol_ $n _u $word>](v: neon_word_ty!($word)) -> neon_word_ty!($word) {
                 let hi = [<vshlq_n_u $word>]::<$n>(v);
-                let lo = [<vshrq_n_u $word>]::<$n>(v);
+                let lo = [<vshrq_n_u $word>]::<{ $word - $n }>(v);
                 [<vorrq_u $word>](hi, lo)
             }
         }
