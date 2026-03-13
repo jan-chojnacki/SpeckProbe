@@ -41,26 +41,16 @@ macro_rules! define_neon_ror {
     };
 }
 
-define_neon_ror!(16, 8);
 define_neon_ror!(16, 7);
-define_neon_ror!(16, 3);
 define_neon_ror!(16, 2);
 define_neon_ror!(24, 8);
-define_neon_ror!(24, 7);
 define_neon_ror!(24, 3);
-define_neon_ror!(24, 2);
 define_neon_ror!(32, 8);
-define_neon_ror!(32, 7);
 define_neon_ror!(32, 3);
-define_neon_ror!(32, 2);
 define_neon_ror!(48, 8);
-define_neon_ror!(48, 7);
 define_neon_ror!(48, 3);
-define_neon_ror!(48, 2);
 define_neon_ror!(64, 8);
-define_neon_ror!(64, 7);
 define_neon_ror!(64, 3);
-define_neon_ror!(64, 2);
 
 macro_rules! define_neon_rol {
     (24, $n:expr) => {
@@ -100,26 +90,16 @@ macro_rules! define_neon_rol {
     };
 }
 
-define_neon_rol!(16, 8);
 define_neon_rol!(16, 7);
-define_neon_rol!(16, 3);
 define_neon_rol!(16, 2);
 define_neon_rol!(24, 8);
-define_neon_rol!(24, 7);
 define_neon_rol!(24, 3);
-define_neon_rol!(24, 2);
 define_neon_rol!(32, 8);
-define_neon_rol!(32, 7);
 define_neon_rol!(32, 3);
-define_neon_rol!(32, 2);
 define_neon_rol!(48, 8);
-define_neon_rol!(48, 7);
 define_neon_rol!(48, 3);
-define_neon_rol!(48, 2);
 define_neon_rol!(64, 8);
-define_neon_rol!(64, 7);
 define_neon_rol!(64, 3);
-define_neon_rol!(64, 2);
 
 macro_rules! define_neon_add {
     (24) => {
