@@ -10,15 +10,11 @@ mod encrypt_round;
 mod expand_key;
 #[cfg(target_arch = "aarch64")]
 mod operations;
-#[cfg(target_arch = "aarch64")]
 
 #[cfg(target_arch = "aarch64")]
 pub use decrypt_block::*;
 #[cfg(target_arch = "aarch64")]
 pub use encrypt_block::*;
-
-#[cfg(target_arch = "aarch64")]
-use core::arch::aarch64::*;
 
 #[cfg(target_arch = "aarch64")]
 macro_rules! neon_word_ty {
