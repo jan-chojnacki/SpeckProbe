@@ -23,7 +23,7 @@ macro_rules! define_speck_test_x86_64_simd {
             #[test]
             #[cfg(target_arch = "x86_64")]
             fn [<$name _test>]() {
-                if !std::x86_64::is_x86_feature_detected!($feature) {
+                if !std::is_x86_feature_detected!($feature) {
                     return;
                 }
                 unsafe { [<$name _test_unsafe>]() }
