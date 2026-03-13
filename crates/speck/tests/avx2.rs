@@ -1,6 +1,7 @@
 mod common;
 
 #[cfg(test)]
+#[cfg(target_arch = "x86_64")]
 mod test {
     use crate::common::define_speck_test_simd;
     use speck::{
