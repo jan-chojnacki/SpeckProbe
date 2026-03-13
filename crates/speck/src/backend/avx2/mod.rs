@@ -10,7 +10,6 @@ mod encrypt_round;
 mod expand_key;
 #[cfg(target_arch = "x86_64")]
 mod operations;
-#[cfg(target_arch = "x86_64")]
 
 #[cfg(target_arch = "x86_64")]
 pub use decrypt_block::*;
