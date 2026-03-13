@@ -1,8 +1,6 @@
 use paste::paste;
 
-#[cfg(target_arch = "aarch64")]
 use crate::backend::neon::neon_word_ty;
-#[cfg(target_arch = "aarch64")]
 use core::arch::aarch64::*;
 
 macro_rules! define_neon_ror {

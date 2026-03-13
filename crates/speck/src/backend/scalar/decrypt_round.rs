@@ -1,4 +1,4 @@
-use crate::backend::scalar::operaions::*;
+use crate::backend::scalar::operations::*;
 use crate::backend::scalar::word_ty;
 use paste::paste;
 

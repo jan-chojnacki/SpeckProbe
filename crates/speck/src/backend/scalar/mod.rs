@@ -2,8 +2,8 @@ mod decrypt_block;
 mod decrypt_round;
 mod encrypt_block;
 mod encrypt_round;
-mod exapnd_key;
-mod operaions;
+mod expand_key;
+mod operations;
 
 macro_rules! word_ty {
     (16) => {

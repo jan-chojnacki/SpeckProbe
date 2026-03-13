@@ -1,9 +1,7 @@
 use crate::backend::neon::decrypt_round::*;
 use crate::backend::neon::expand_key::*;
-#[cfg(target_arch = "aarch64")]
 use crate::backend::neon::neon_word_ty;
 use paste::paste;
-#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 macro_rules! impl_decrypt_block_neon {

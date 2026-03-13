@@ -1,6 +1,5 @@
 use crate::backend::avx::encrypt_round::*;
 use paste::paste;
-#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::*;
 
 macro_rules! l_words {

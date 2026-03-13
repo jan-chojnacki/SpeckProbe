@@ -1,5 +1,4 @@
 use paste::paste;
-#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{
     __m128i, _mm_add_epi16, _mm_add_epi32, _mm_add_epi64, _mm_and_si128, _mm_or_si128,
     _mm_set1_epi32, _mm_set1_epi64x, _mm_slli_epi16, _mm_slli_epi32, _mm_slli_epi64,

@@ -1,6 +1,5 @@
 use crate::backend::avx512::operations::*;
 use paste::paste;
-#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::__m512i;
 
 macro_rules! define_decrypt_round_avx512 {

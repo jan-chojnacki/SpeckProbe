@@ -1,5 +1,5 @@
 use crate::backend::scalar::encrypt_round::*;
-use crate::backend::scalar::exapnd_key::*;
+use crate::backend::scalar::expand_key::*;
 use crate::backend::scalar::word_ty;
 use paste::paste;
 

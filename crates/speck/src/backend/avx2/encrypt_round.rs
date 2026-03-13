@@ -1,6 +1,5 @@
 use crate::backend::avx2::operations::*;
 use paste::paste;
-#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::__m256i;
 
 macro_rules! define_encrypt_round_avx2 {
