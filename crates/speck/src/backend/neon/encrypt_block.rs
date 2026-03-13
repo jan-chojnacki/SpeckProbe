@@ -1,5 +1,3 @@
-use crate::backend::neon::encrypt_round::*;
-use crate::backend::neon::expand_key::*;
 #[cfg(target_arch = "aarch64")]
 use crate::backend::neon::neon_word_ty;
 use paste::paste;

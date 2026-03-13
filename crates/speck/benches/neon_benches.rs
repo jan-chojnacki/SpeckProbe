@@ -1,9 +1,6 @@
+use criterion::{criterion_group, criterion_main, Criterion};
 #[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{vdupq_n_u16, vdupq_n_u32, vdupq_n_u64};
-use criterion::BenchmarkGroup;
-use criterion::measurement::WallTime;
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
-use std::hint::black_box;
 
 mod common;
 use crate::common::criterion_config;

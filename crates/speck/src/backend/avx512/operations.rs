@@ -1,4 +1,8 @@
 use paste::paste;
+use std::arch::x86_64::_mm512_slli_epi32;
+use std::arch::x86_64::_mm512_slli_epi64;
+use std::arch::x86_64::_mm512_srli_epi32;
+use std::arch::x86_64::_mm512_srli_epi64;
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{
     __m512i, _mm512_add_epi16, _mm512_add_epi32, _mm512_add_epi64, _mm512_and_si512,
@@ -13,7 +17,7 @@ macro_rules! define_avx512_ror {
             #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
             #[target_feature(enable = "avx512bw")]
             pub fn [<avx512_ror_ $n _u16>](v: __m512i) -> __m512i {
-                _mm512_or_si512(_mm512_srli_epi16(v, $n), _mm512_slli_epi16(v, 24 - $n))
+                _mm512_or_si512(_mm512_srli_epi16(v, $n), _mm512_slli_epi16(v, 16 - $n))
             }
         }
     };
@@ -23,7 +27,10 @@ macro_rules! define_avx512_ror {
             #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
             #[target_feature(enable = "avx512f")]
             pub fn [<avx512_ror_ $n _u24>](v: __m512i) -> __m512i {
-                let r = _mm512_ror_epi32(v, $n);
+                let r = _mm512_or_si512(
+                    _mm512_srli_epi32(v, $n),
+                    _mm512_slli_epi32(v, 24 - $n),
+                );
                 _mm512_and_si512(r, _mm512_set1_epi32(0x00FF_FFFFu32 as i32))
             }
         }
@@ -34,7 +41,10 @@ macro_rules! define_avx512_ror {
             #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
             #[target_feature(enable = "avx512f")]
             pub fn [<avx512_ror_ $n _u48>](v: __m512i) -> __m512i {
-                let r = _mm512_ror_epi64(v, $n);
+                let r = _mm512_or_si512(
+                    _mm512_srli_epi64(v, $n),
+                    _mm512_slli_epi64(v, 48 - $n),
+                );
                 _mm512_and_si512(r, _mm512_set1_epi64(0x0000_FFFF_FFFF_FFFFu64 as i64))
             }
         }
@@ -68,7 +78,7 @@ macro_rules! define_avx512_rol {
             #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
             #[target_feature(enable = "avx512bw")]
             pub fn [<avx512_rol_ $n _u16>](v: __m512i) -> __m512i {
-                _mm512_or_si512(_mm512_slli_epi16(v, $n), _mm512_srli_epi16(v, 24 - $n))
+                _mm512_or_si512(_mm512_slli_epi16(v, $n), _mm512_srli_epi16(v, 16 - $n))
             }
         }
     };
@@ -78,7 +88,10 @@ macro_rules! define_avx512_rol {
             #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
             #[target_feature(enable = "avx512f")]
             pub fn [<avx512_rol_ $n _u24>](v: __m512i) -> __m512i {
-                let r = _mm512_rol_epi32(v, $n);
+                let r = _mm512_or_si512(
+                    _mm512_slli_epi32(v, $n),
+                    _mm512_srli_epi32(v, 24 - $n),
+                );
                 _mm512_and_si512(r, _mm512_set1_epi32(0x00FF_FFFFu32 as i32))
             }
         }
@@ -89,7 +102,10 @@ macro_rules! define_avx512_rol {
             #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
             #[target_feature(enable = "avx512f")]
             pub fn [<avx512_rol_ $n _u48>](v: __m512i) -> __m512i {
-                let r = _mm512_rol_epi64(v, $n);
+                let r = _mm512_or_si512(
+                    _mm512_slli_epi64(v, $n),
+                    _mm512_srli_epi64(v, 48 - $n),
+                );
                 _mm512_and_si512(r, _mm512_set1_epi64(0x0000_FFFF_FFFF_FFFFu64 as i64))
             }
         }

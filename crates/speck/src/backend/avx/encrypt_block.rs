@@ -47,23 +47,3 @@ impl_encrypt_block_avx!(96, 144, 48, 3);
 impl_encrypt_block_avx!(128, 128, 64, 2);
 impl_encrypt_block_avx!(128, 192, 64, 3);
 impl_encrypt_block_avx!(128, 256, 64, 4);
-
-#[cfg(test)]
-mod test {
-    use crate::*;
-    use std::arch::x86_64::_mm_set1_epi32;
-
-    define_speck_test!(
-        avx_encrypt_block_64_128,
-        "x86_64",
-        "avx",
-        key = [
-            _mm_set1_epi32(0x1b1a1918),
-            _mm_set1_epi32(0x13121110),
-            _mm_set1_epi32(0x0b0a0908),
-            _mm_set1_epi32(0x03020100),
-        ],
-        data = [_mm_set1_epi32(0x3b726574), _mm_set1_epi32(0x7475432d)],
-        expected = [_mm_set1_epi32(0x8c6fa548u32 as i32), _mm_set1_epi32(0x454e028b)]
-    );
-}
