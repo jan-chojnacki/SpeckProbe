@@ -1,4 +1,23 @@
+#[allow(unused_macros)]
 macro_rules! define_speck_test {
+    ($name:literal, $function:path, key = $key:expr, data = $data:expr, expected = $expected:expr) => {
+        paste::paste! {
+            #[test]
+            fn [<$name _test_unsafe>]() {
+                let key = $key;
+                let data = $data;
+                let expected = $expected;
+
+                let result = $function(data, key);
+
+                assert_eq!(bytemuck::bytes_of(&result), bytemuck::bytes_of(&expected));
+            }
+        }
+    };
+}
+
+#[allow(unused_macros)]
+macro_rules! define_speck_test_simd {
     ($name:literal, $function:path, $arch:literal, $feature:literal, key = $key:expr, data = $data:expr, expected = $expected:expr) => {
         paste::paste! {
             #[test]
@@ -25,4 +44,7 @@ macro_rules! define_speck_test {
     };
 }
 
+#[allow(unused_imports)]
 pub(crate) use define_speck_test;
+#[allow(unused_imports)]
+pub(crate) use define_speck_test_simd;
