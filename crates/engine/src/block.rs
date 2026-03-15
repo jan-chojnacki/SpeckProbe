@@ -1,5 +1,5 @@
-use thiserror::Error;
 use crate::speck_version::SpeckVersion;
+use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum BlockError {
