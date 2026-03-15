@@ -2,19 +2,15 @@ use crate::block::{Block, BlockError};
 use crate::speck_version::SpeckVersion;
 use thiserror::Error;
 
-#[derive(Debug, Error)]
-pub enum RequestError {
-    #[error("invalid data length {source}")]
-    InvalidDataLength {
-        #[source]
-        source: BlockError,
-    },
+pub enum Operation {
+    Encrypt,
+    Decrypt,
+}
 
-    #[error("invalid expected length {source}")]
-    InvalidExpectedLength {
-        #[source]
-        source: BlockError,
-    },
+#[derive(Debug, Error, Eq, PartialEq)]
+pub enum RequestError {
+    #[error(transparent)]
+    BlockError(#[from] BlockError),
 }
 
 pub struct SearchRangeRequest {
@@ -24,4 +20,5 @@ pub struct SearchRangeRequest {
     pub prefix: Vec<u8>,
     pub data_bytes: Block,
     pub expected_bytes: Block,
+    pub operation: Operation,
 }
