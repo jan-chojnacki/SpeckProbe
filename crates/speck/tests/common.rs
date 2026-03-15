@@ -75,6 +75,6 @@ macro_rules! define_speck_test_aarch64_simd {
 #[allow(unused_imports)]
 pub(crate) use define_speck_test;
 #[allow(unused_imports)]
-pub(crate) use define_speck_test_x86_64_simd;
-#[allow(unused_imports)]
 pub(crate) use define_speck_test_aarch64_simd;
+#[allow(unused_imports)]
+pub(crate) use define_speck_test_x86_64_simd;

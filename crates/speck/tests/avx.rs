@@ -5,13 +5,13 @@ mod common;
 mod test {
     use crate::common::define_speck_test_x86_64_simd;
     use speck::{
-        avx_decrypt_block_128_128, avx_decrypt_block_128_192, avx_decrypt_block_128_256,
         avx_decrypt_block_32_64, avx_decrypt_block_48_72, avx_decrypt_block_48_96,
-        avx_decrypt_block_64_128, avx_decrypt_block_64_96, avx_decrypt_block_96_144,
-        avx_decrypt_block_96_96, avx_encrypt_block_128_128, avx_encrypt_block_128_192,
-        avx_encrypt_block_128_256, avx_encrypt_block_32_64, avx_encrypt_block_48_72,
-        avx_encrypt_block_48_96, avx_encrypt_block_64_128, avx_encrypt_block_64_96,
-        avx_encrypt_block_96_144, avx_encrypt_block_96_96,
+        avx_decrypt_block_64_96, avx_decrypt_block_64_128, avx_decrypt_block_96_96,
+        avx_decrypt_block_96_144, avx_decrypt_block_128_128, avx_decrypt_block_128_192,
+        avx_decrypt_block_128_256, avx_encrypt_block_32_64, avx_encrypt_block_48_72,
+        avx_encrypt_block_48_96, avx_encrypt_block_64_96, avx_encrypt_block_64_128,
+        avx_encrypt_block_96_96, avx_encrypt_block_96_144, avx_encrypt_block_128_128,
+        avx_encrypt_block_128_192, avx_encrypt_block_128_256,
     };
     use std::arch::x86_64::{_mm_set1_epi16, _mm_set1_epi32, _mm_set1_epi64x};
 

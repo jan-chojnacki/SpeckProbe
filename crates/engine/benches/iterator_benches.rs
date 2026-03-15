@@ -1,4 +1,4 @@
-use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
+use criterion::{BatchSize, Criterion, Throughput, criterion_group, criterion_main};
 use engine::key_iterator::KeyIterator;
 use engine::speck_version::SpeckVersion;
 use std::hint::black_box;

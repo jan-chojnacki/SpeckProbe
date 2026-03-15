@@ -5,13 +5,13 @@ mod common;
 mod test {
     use crate::common::define_speck_test_x86_64_simd;
     use speck::{
-        avx512_decrypt_block_128_128, avx512_decrypt_block_128_192, avx512_decrypt_block_128_256,
         avx512_decrypt_block_32_64, avx512_decrypt_block_48_72, avx512_decrypt_block_48_96,
-        avx512_decrypt_block_64_128, avx512_decrypt_block_64_96, avx512_decrypt_block_96_144,
-        avx512_decrypt_block_96_96, avx512_encrypt_block_128_128, avx512_encrypt_block_128_192,
-        avx512_encrypt_block_128_256, avx512_encrypt_block_32_64, avx512_encrypt_block_48_72,
-        avx512_encrypt_block_48_96, avx512_encrypt_block_64_128, avx512_encrypt_block_64_96,
-        avx512_encrypt_block_96_144, avx512_encrypt_block_96_96,
+        avx512_decrypt_block_64_96, avx512_decrypt_block_64_128, avx512_decrypt_block_96_96,
+        avx512_decrypt_block_96_144, avx512_decrypt_block_128_128, avx512_decrypt_block_128_192,
+        avx512_decrypt_block_128_256, avx512_encrypt_block_32_64, avx512_encrypt_block_48_72,
+        avx512_encrypt_block_48_96, avx512_encrypt_block_64_96, avx512_encrypt_block_64_128,
+        avx512_encrypt_block_96_96, avx512_encrypt_block_96_144, avx512_encrypt_block_128_128,
+        avx512_encrypt_block_128_192, avx512_encrypt_block_128_256,
     };
     use std::arch::x86_64::{_mm512_set1_epi16, _mm512_set1_epi32, _mm512_set1_epi64};
 
@@ -27,7 +27,10 @@ mod test {
             _mm512_set1_epi16(0x0100),
         ],
         data = [_mm512_set1_epi16(0x6574), _mm512_set1_epi16(0x694c)],
-        expected = [_mm512_set1_epi16(0xa868u16 as i16), _mm512_set1_epi16(0x42f2)]
+        expected = [
+            _mm512_set1_epi16(0xa868u16 as i16),
+            _mm512_set1_epi16(0x42f2)
+        ]
     );
 
     define_speck_test_x86_64_simd!(
@@ -204,7 +207,10 @@ mod test {
             _mm512_set1_epi16(0x0908),
             _mm512_set1_epi16(0x0100),
         ],
-        data = [_mm512_set1_epi16(0xa868u16 as i16), _mm512_set1_epi16(0x42f2)],
+        data = [
+            _mm512_set1_epi16(0xa868u16 as i16),
+            _mm512_set1_epi16(0x42f2)
+        ],
         expected = [_mm512_set1_epi16(0x6574), _mm512_set1_epi16(0x694c)]
     );
 

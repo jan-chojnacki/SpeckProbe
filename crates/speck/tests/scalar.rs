@@ -4,11 +4,11 @@ mod common;
 mod test {
     use crate::common::define_speck_test;
     use speck::{
-        decrypt_block_128_128, decrypt_block_128_192, decrypt_block_128_256, decrypt_block_32_64,
-        decrypt_block_48_72, decrypt_block_48_96, decrypt_block_64_128, decrypt_block_64_96,
-        decrypt_block_96_144, decrypt_block_96_96, encrypt_block_128_128, encrypt_block_128_192,
-        encrypt_block_128_256, encrypt_block_32_64, encrypt_block_48_72, encrypt_block_48_96,
-        encrypt_block_64_128, encrypt_block_64_96, encrypt_block_96_144, encrypt_block_96_96,
+        decrypt_block_32_64, decrypt_block_48_72, decrypt_block_48_96, decrypt_block_64_96,
+        decrypt_block_64_128, decrypt_block_96_96, decrypt_block_96_144, decrypt_block_128_128,
+        decrypt_block_128_192, decrypt_block_128_256, encrypt_block_32_64, encrypt_block_48_72,
+        encrypt_block_48_96, encrypt_block_64_96, encrypt_block_64_128, encrypt_block_96_96,
+        encrypt_block_96_144, encrypt_block_128_128, encrypt_block_128_192, encrypt_block_128_256,
     };
 
     define_speck_test!(

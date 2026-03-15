@@ -1,6 +1,6 @@
-use criterion::measurement::WallTime;
 use criterion::BenchmarkGroup;
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use criterion::measurement::WallTime;
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
 mod common;

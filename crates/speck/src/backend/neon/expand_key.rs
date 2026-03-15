@@ -1,8 +1,9 @@
+use crate::backend::neon::encrypt_round::*;
 use crate::backend::neon::neon_word_ty;
 use paste::paste;
-use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t, vdupq_n_u16, vdupq_n_u32, vdupq_n_u64};
-use crate::backend::neon::encrypt_round::*;
-
+use std::arch::aarch64::{
+    uint16x8_t, uint32x4_t, uint64x2_t, vdupq_n_u16, vdupq_n_u32, vdupq_n_u64,
+};
 
 macro_rules! l_words {
     ($key:expr, 2) => {
