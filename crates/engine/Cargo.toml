@@ -5,11 +5,12 @@ edition = "2024"
 
 [dependencies]
 speck = { path = "../speck" }
-multiversion = "0.8.0"
-thiserror = "2.0.18"
+multiversion = "0.8"
+thiserror = "2"
 
 [dev-dependencies]
 criterion = "0.8"
+rstest = "0.26"
 
 [[bench]]
 name = "iterator_benches"

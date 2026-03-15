@@ -21,7 +21,7 @@ fn benchmark(c: &mut Criterion) {
     let version = SpeckVersion::Speck128_256;
     let prefix = [0xAA; 24];
 
-    for i in 1..10 {
+    for i in 1..9 {
         let iters = 10u64.pow(i);
         g.throughput(Throughput::Elements(iters));
 
