@@ -1,5 +1,5 @@
-use crate::speck_version::SpeckVersion;
 use thiserror::Error;
+use crate::api::version::SpeckVersion;
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum BlockError {
@@ -152,7 +152,6 @@ impl Block {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::speck_version::SpeckVersion;
     use rstest::rstest;
 
     fn block(bytes: &[u8]) -> Block {

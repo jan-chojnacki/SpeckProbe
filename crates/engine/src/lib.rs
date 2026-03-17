@@ -1,15 +1,12 @@
-pub mod block;
-pub mod key;
-pub mod key_iterator;
-pub mod search_engine_scalar;
-mod search_range_request;
-pub mod speck_version;
+pub mod api;
+pub mod backend;
+pub mod domain;
 
-use crate::block::BlockError;
-use crate::key::Key;
-use crate::key_iterator::KeyIteratorError;
-use search_range_request::SearchRangeRequest;
+use domain::block::BlockError;
+use domain::key::Key;
+use domain::key_iterator::KeyIteratorError;
 use thiserror::Error;
+use crate::api::request::SearchRangeRequest;
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum SearchEngineBackendError {

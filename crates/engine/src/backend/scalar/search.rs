@@ -1,7 +1,5 @@
-use crate::key::Key;
-use crate::key_iterator::KeyIterator;
-use crate::search_range_request::{Operation, SearchRangeRequest};
-use crate::speck_version::SpeckVersion;
+use crate::domain::key::Key;
+use crate::domain::key_iterator::KeyIterator;
 use crate::{SearchEngineBackend, SearchEngineBackendError};
 use speck::{
     decrypt_block_128_128, decrypt_block_128_192, decrypt_block_128_256, decrypt_block_32_64,
@@ -10,6 +8,8 @@ use speck::{
     encrypt_block_128_256, encrypt_block_32_64, encrypt_block_48_72, encrypt_block_48_96,
     encrypt_block_64_128, encrypt_block_64_96, encrypt_block_96_144, encrypt_block_96_96,
 };
+use crate::api::request::{Operation, SearchRangeRequest};
+use crate::api::version::SpeckVersion;
 
 pub struct SearchEngineScalar {}
 

@@ -1,6 +1,6 @@
-use crate::key::Key;
-use crate::speck_version::SpeckVersion;
+use crate::domain::key::Key;
 use thiserror::Error;
+use crate::api::version::SpeckVersion;
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum KeyIteratorError {
@@ -82,7 +82,6 @@ impl KeyIterator {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::speck_version::SpeckVersion;
     use rstest::rstest;
 
     #[rstest]

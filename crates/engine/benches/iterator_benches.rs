@@ -1,8 +1,8 @@
 use criterion::{BatchSize, Criterion, Throughput, criterion_group, criterion_main};
-use engine::key_iterator::KeyIterator;
-use engine::speck_version::SpeckVersion;
 use std::hint::black_box;
 use std::time::Duration;
+use engine::api::version::SpeckVersion;
+use engine::domain::key_iterator::KeyIterator;
 
 pub(crate) fn criterion_config() -> Criterion {
     Criterion::default()

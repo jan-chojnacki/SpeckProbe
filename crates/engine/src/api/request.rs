@@ -1,16 +1,9 @@
-use crate::block::{Block, BlockError};
-use crate::speck_version::SpeckVersion;
-use thiserror::Error;
+use crate::api::version::SpeckVersion;
+use crate::domain::block::Block;
 
 pub enum Operation {
     Encrypt,
     Decrypt,
-}
-
-#[derive(Debug, Error, Eq, PartialEq)]
-pub enum RequestError {
-    #[error(transparent)]
-    BlockError(#[from] BlockError),
 }
 
 pub struct SearchRangeRequest {
