@@ -2,11 +2,11 @@ pub mod api;
 pub mod backend;
 pub mod domain;
 
+use crate::api::request::SearchRangeRequest;
 use domain::block::BlockError;
 use domain::key::Key;
 use domain::key_iterator::KeyIteratorError;
 use thiserror::Error;
-use crate::api::request::SearchRangeRequest;
 
 #[derive(Debug, Error, Eq, PartialEq)]
 pub enum SearchEngineBackendError {
