@@ -1,5 +1,6 @@
 use crate::api::version::SpeckVersion;
 use crate::domain::key::Key;
+use crate::domain::simd_key::SimdKey;
 use thiserror::Error;
 
 #[derive(Debug, Error, Eq, PartialEq)]
@@ -65,13 +66,31 @@ impl KeyIterator {
         )
     }
 
+    pub fn new_simd_key<const T: usize>(&self) -> SimdKey<T> {
+        let v = std::array::from_fn(|i| self.current + i as u64);
+        SimdKey::new(&self.prefix[..self.prefix_len], self.prefix_len, v)
+    }
+
     pub fn next_into(&mut self, out: &mut Key) -> Option<()> {
         if self.current >= self.end {
             return None;
         }
 
         let v = self.current;
-        self.current += 1;
+        self.current = self.current.saturating_add(1);
+
+        out.update(v);
+
+        Some(())
+    }
+
+    pub fn simd_next_into<const T: usize>(&mut self, out: &mut SimdKey<T>) -> Option<()> {
+        if self.current >= self.end {
+            return None;
+        }
+
+        let v = std::array::from_fn(|i| self.current + i as u64);
+        self.current = self.current.saturating_add(T as u64);
 
         out.update(v);
 
@@ -83,6 +102,19 @@ impl KeyIterator {
 mod tests {
     use super::*;
     use rstest::rstest;
+
+    fn assert_simd_matches_scalar_sequence<const T: usize>(
+        simd: &SimdKey<T>,
+        prefix: &[u8],
+        start: u64,
+    ) {
+        for lane in 0..T {
+            assert_eq!(
+                simd.as_bytes()[lane],
+                Key::new(prefix, prefix.len(), start.saturating_add(lane as u64)).as_bytes()
+            );
+        }
+    }
 
     #[rstest]
     #[case(SpeckVersion::Speck32_64, vec![])]
@@ -207,11 +239,59 @@ mod tests {
 
         let mut iter = KeyIterator::new(123, 0, &prefix, &version).unwrap();
         let mut out = iter.new_key();
+        let before = out.to_vec();
 
         assert_eq!(iter.next_into(&mut out), None);
-        assert_eq!(
-            out.as_bytes(),
-            Key::new(&prefix, prefix.len(), 123).as_bytes()
-        );
+        assert_eq!(out.to_vec(), before);
+    }
+
+    #[rstest]
+    #[case(vec![], SpeckVersion::Speck32_64, 0)]
+    #[case(vec![0xAA, 0xBB, 0xCC, 0xDD], SpeckVersion::Speck64_96, 5)]
+    #[case(vec![0x7F; 24], SpeckVersion::Speck128_256, 0x1122334455667788)]
+    fn new_simd_key_builds_lanes_for_current_value(
+        #[case] prefix: Vec<u8>,
+        #[case] version: SpeckVersion,
+        #[case] start: u64,
+    ) {
+        let iter = KeyIterator::new(start, 8, &prefix, &version).unwrap();
+        let simd = iter.new_simd_key::<4>();
+
+        assert_simd_matches_scalar_sequence(&simd, &prefix, start);
+    }
+
+    #[rstest]
+    #[case(vec![], SpeckVersion::Speck32_64, 0, 8)]
+    #[case(vec![0x10, 0x20, 0x30, 0x40], SpeckVersion::Speck64_96, 5, 8)]
+    fn simd_next_into_iterates_in_simd_chunks(
+        #[case] prefix: Vec<u8>,
+        #[case] version: SpeckVersion,
+        #[case] start: u64,
+        #[case] count: u64,
+    ) {
+        let mut iter = KeyIterator::new(start, count, &prefix, &version).unwrap();
+        let mut out = iter.new_simd_key::<4>();
+
+        assert_eq!(iter.simd_next_into(&mut out), Some(()));
+        assert_simd_matches_scalar_sequence(&out, &prefix, start);
+
+        assert_eq!(iter.simd_next_into(&mut out), Some(()));
+        assert_simd_matches_scalar_sequence(&out, &prefix, start + 4);
+
+        assert_eq!(iter.simd_next_into(&mut out), None);
+        assert_eq!(iter.simd_next_into(&mut out), None);
+    }
+
+    #[test]
+    fn simd_next_into_returns_none_for_empty_iterator() {
+        let prefix = [0xAA; 8];
+        let version = SpeckVersion::Speck64_128;
+
+        let mut iter = KeyIterator::new(123, 0, &prefix, &version).unwrap();
+        let mut out = iter.new_simd_key::<4>();
+        let before = out.to_vec();
+
+        assert_eq!(iter.simd_next_into(&mut out), None);
+        assert_eq!(out.to_vec(), before);
     }
 }

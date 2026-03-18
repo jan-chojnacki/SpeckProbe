@@ -230,9 +230,10 @@ impl<const T: usize> SimdKey<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::domain::key::Key;
     use rstest::rstest;
 
-    fn key(bytes: &[u8]) -> SimdKey {
+    fn key(bytes: &[u8]) -> SimdKey<1> {
         assert!(bytes.len() >= 8);
         assert!(bytes.len() <= 32);
 
@@ -240,137 +241,218 @@ mod tests {
         let prefix = &bytes[..prefix_len];
         let value = u64::from_le_bytes(bytes[prefix_len..].try_into().unwrap());
 
-        SimdKey::new(prefix, prefix_len, value)
+        SimdKey::new(prefix, prefix_len, [value])
+    }
+
+    fn broadcast_key<const T: usize>(bytes: &[u8]) -> SimdKey<T> {
+        assert!(bytes.len() >= 8);
+        assert!(bytes.len() <= 32);
+
+        let prefix_len = bytes.len() - 8;
+        let prefix = &bytes[..prefix_len];
+        let value = u64::from_le_bytes(bytes[prefix_len..].try_into().unwrap());
+
+        SimdKey::new(prefix, prefix_len, [value; T])
+    }
+
+    fn scalar_key(bytes: &[u8]) -> Key {
+        assert!(bytes.len() >= 8);
+        assert!(bytes.len() <= 32);
+
+        let prefix_len = bytes.len() - 8;
+        let prefix = &bytes[..prefix_len];
+        let value = u64::from_le_bytes(bytes[prefix_len..].try_into().unwrap());
+
+        Key::new(prefix, prefix_len, value)
+    }
+
+    fn assert_lane_matches_scalar<const T: usize>(simd: &SimdKey<T>, lane: usize, scalar: &Key) {
+        assert_eq!(simd.as_bytes()[lane], scalar.as_bytes());
+        assert_eq!(simd.to_vec()[lane], scalar.to_vec());
+        match scalar.as_bytes().len() {
+            8 => {
+                let parsed = simd.as_u16x4_le();
+                let lane_values = [
+                    u16::from_le_bytes(parsed[0][lane]),
+                    u16::from_le_bytes(parsed[1][lane]),
+                    u16::from_le_bytes(parsed[2][lane]),
+                    u16::from_le_bytes(parsed[3][lane]),
+                ];
+                assert_eq!(lane_values, scalar.as_u16x4_le());
+            }
+            9 => {
+                let parsed = simd.as_u24x3_le();
+                let lane_values = [
+                    u32::from_le_bytes(parsed[0][lane]),
+                    u32::from_le_bytes(parsed[1][lane]),
+                    u32::from_le_bytes(parsed[2][lane]),
+                ];
+                assert_eq!(lane_values, scalar.as_u24x3_le());
+            }
+            12 => {
+                let parsed_u24 = simd.as_u24x4_le();
+                let parsed_u32 = simd.as_u32x3_le();
+                let parsed_u48 = simd.as_u48x2_le();
+                let lane_u24 = [
+                    u32::from_le_bytes(parsed_u24[0][lane]),
+                    u32::from_le_bytes(parsed_u24[1][lane]),
+                    u32::from_le_bytes(parsed_u24[2][lane]),
+                    u32::from_le_bytes(parsed_u24[3][lane]),
+                ];
+                let lane_u32 = [
+                    u32::from_le_bytes(parsed_u32[0][lane]),
+                    u32::from_le_bytes(parsed_u32[1][lane]),
+                    u32::from_le_bytes(parsed_u32[2][lane]),
+                ];
+                let lane_u48 = [
+                    u64::from_le_bytes(parsed_u48[0][lane]),
+                    u64::from_le_bytes(parsed_u48[1][lane]),
+                ];
+                assert_eq!(lane_u24, scalar.as_u24x4_le());
+                assert_eq!(lane_u32, scalar.as_u32x3_le());
+                assert_eq!(lane_u48, scalar.as_u48x2_le());
+            }
+            16 => {
+                let parsed_u32 = simd.as_u32x4_le();
+                let parsed_u64 = simd.as_u64x2_le();
+                let lane_u32 = [
+                    u32::from_le_bytes(parsed_u32[0][lane]),
+                    u32::from_le_bytes(parsed_u32[1][lane]),
+                    u32::from_le_bytes(parsed_u32[2][lane]),
+                    u32::from_le_bytes(parsed_u32[3][lane]),
+                ];
+                let lane_u64 = [
+                    u64::from_le_bytes(parsed_u64[0][lane]),
+                    u64::from_le_bytes(parsed_u64[1][lane]),
+                ];
+                assert_eq!(lane_u32, scalar.as_u32x4_le());
+                assert_eq!(lane_u64, scalar.as_u64x2_le());
+            }
+            18 => {
+                let parsed = simd.as_u48x3_le();
+                let lane_values = [
+                    u64::from_le_bytes(parsed[0][lane]),
+                    u64::from_le_bytes(parsed[1][lane]),
+                    u64::from_le_bytes(parsed[2][lane]),
+                ];
+                assert_eq!(lane_values, scalar.as_u48x3_le());
+            }
+            24 => {
+                let parsed = simd.as_u64x3_le();
+                let lane_values = [
+                    u64::from_le_bytes(parsed[0][lane]),
+                    u64::from_le_bytes(parsed[1][lane]),
+                    u64::from_le_bytes(parsed[2][lane]),
+                ];
+                assert_eq!(lane_values, scalar.as_u64x3_le());
+            }
+            32 => {
+                let parsed = simd.as_u64x4_le();
+                let lane_values = [
+                    u64::from_le_bytes(parsed[0][lane]),
+                    u64::from_le_bytes(parsed[1][lane]),
+                    u64::from_le_bytes(parsed[2][lane]),
+                    u64::from_le_bytes(parsed[3][lane]),
+                ];
+                assert_eq!(lane_values, scalar.as_u64x4_le());
+            }
+            _ => panic!("unsupported test key length"),
+        }
+    }
+
+    fn assert_all_lanes_match_scalar<const T: usize>(simd: &SimdKey<T>, scalar: &Key) {
+        for lane in 0..T {
+            assert_lane_matches_scalar(simd, lane, scalar);
+        }
     }
 
     #[rstest]
-    #[case(vec![0xAA, 0xBB, 0xCC, 0xDD], 0x1122334455667788,
-        vec![0xAA, 0xBB, 0xCC, 0xDD, 0x88, 0x77, 0x66, 0x55, 0x44, 0x33, 0x22, 0x11])]
-    #[case(vec![], 0x0807060504030201,
-        vec![0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08])]
-    #[case(vec![0xA5; 24], 0x1817161514131211,
-        vec![0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5,
-             0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0xA5, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18])]
-    fn new_builds_key_from_prefix_and_value(
+    #[case(vec![0x34, 0x12, 0x78, 0x56, 0xBC, 0x9A, 0xF0, 0xDE])]
+    #[case(vec![0x03, 0x02, 0x01, 0x06, 0x05, 0x04, 0x09, 0x08, 0x07])]
+    #[case(vec![0x03, 0x02, 0x01, 0x06, 0x05, 0x04, 0x09, 0x08, 0x07, 0x0C, 0x0B, 0x0A])]
+    #[case(vec![0x04, 0x03, 0x02, 0x01, 0x08, 0x07, 0x06, 0x05, 0x0C, 0x0B, 0x0A, 0x09, 0x10, 0x0F, 0x0E, 0x0D])]
+    #[case(vec![
+        0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x12, 0x11,
+        0x10, 0x0F, 0x0E, 0x0D,
+    ])]
+    #[case(vec![
+        0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
+        0x0A, 0x09, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11,
+    ])]
+    #[case(vec![
+        0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
+        0x0A, 0x09, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11, 0x20, 0x1F, 0x1E, 0x1D,
+        0x1C, 0x1B, 0x1A, 0x19,
+    ])]
+    fn simd_key_lane0_matches_key_views(#[case] bytes: Vec<u8>) {
+        let simd = key(&bytes);
+        let scalar = scalar_key(&bytes);
+
+        assert_all_lanes_match_scalar(&simd, &scalar);
+    }
+
+    #[rstest]
+    #[case(vec![0x34, 0x12, 0x78, 0x56, 0xBC, 0x9A, 0xF0, 0xDE])]
+    #[case(vec![0x03, 0x02, 0x01, 0x06, 0x05, 0x04, 0x09, 0x08, 0x07])]
+    #[case(vec![0x03, 0x02, 0x01, 0x06, 0x05, 0x04, 0x09, 0x08, 0x07, 0x0C, 0x0B, 0x0A])]
+    #[case(vec![0x04, 0x03, 0x02, 0x01, 0x08, 0x07, 0x06, 0x05, 0x0C, 0x0B, 0x0A, 0x09, 0x10, 0x0F, 0x0E, 0x0D])]
+    #[case(vec![
+        0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x12, 0x11,
+        0x10, 0x0F, 0x0E, 0x0D,
+    ])]
+    #[case(vec![
+        0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
+        0x0A, 0x09, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11,
+    ])]
+    #[case(vec![
+        0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B,
+        0x0A, 0x09, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11, 0x20, 0x1F, 0x1E, 0x1D,
+        0x1C, 0x1B, 0x1A, 0x19,
+    ])]
+    fn simd_key_broadcast_matches_key_on_all_lanes(#[case] bytes: Vec<u8>) {
+        let simd = broadcast_key::<4>(&bytes);
+        let scalar = scalar_key(&bytes);
+
+        assert_all_lanes_match_scalar(&simd, &scalar);
+    }
+
+    #[rstest]
+    #[case(
+        vec![0xAA, 0xBB, 0xCC, 0xDD],
+        [
+            0x0102030405060708u64,
+            0x1112131415161718u64,
+            0xFFEEDDCCBBAA9988u64,
+            0x8877665544332211u64,
+        ]
+    )]
+    #[case(
+        vec![],
+        [
+            0x0000000000000000u64,
+            0x0001020304050607u64,
+            0xD9E8F7A6B5C4D3E2u64,
+            0xFFFFFFFFFFFFFFFFu64,
+        ]
+    )]
+    #[case(
+        vec![0x5A; 24],
+        [
+            0x0101010101010101u64,
+            0x1234567890ABCDEFu64,
+            0x0F1E2D3C4B5A6978u64,
+            0x8877665544332211u64,
+        ]
+    )]
+    fn simd_key_multi_lane_different_values_matches_scalar_per_lane(
         #[case] prefix: Vec<u8>,
-        #[case] value: u64,
-        #[case] expected: Vec<u8>,
+        #[case] values: [u64; 4],
     ) {
-        let key = SimdKey::new(&prefix, prefix.len(), value);
-        assert_eq!(key.as_bytes(), expected);
-        assert_eq!(key.to_vec(), key.as_bytes().to_vec());
-    }
+        let simd = SimdKey::<4>::new(&prefix, prefix.len(), values);
+        let scalars = values.map(|v| Key::new(&prefix, prefix.len(), v));
 
-    #[rstest]
-    #[case(vec![0x10, 0x20, 0x30, 0x40], 0x0102030405060708, 0x1112131415161718,
-        vec![0x10, 0x20, 0x30, 0x40, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11])]
-    #[case(vec![], 0x0000000000000000, 0x0807060504030201,
-        vec![0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08])]
-    #[case(vec![0x7F; 24], 0x0102030405060708, 0xA8A7A6A5A4A3A2A1,
-        vec![0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F,
-             0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7, 0xA8])]
-    fn update_replaces_only_value_bytes(
-        #[case] prefix: Vec<u8>,
-        #[case] initial: u64,
-        #[case] updated: u64,
-        #[case] expected: Vec<u8>,
-    ) {
-        let mut key = SimdKey::new(&prefix, prefix.len(), initial);
-        key.update(updated);
-        assert_eq!(key.as_bytes(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x34, 0x12, 0x78, 0x56, 0xBC, 0x9A, 0xF0, 0xDE]), [0x1234, 0x5678, 0x9ABC, 0xDEF0])]
-    #[case(key(&[0x00, 0x00, 0x01, 0x00, 0xFE, 0xFF, 0x10, 0x27]), [0x0000, 0x0001, 0xFFFE, 0x2710])]
-    fn as_u16x4_le_parses_values(#[case] key: SimdKey, #[case] expected: [u16; 4]) {
-        assert_eq!(key.as_u16x4_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x03, 0x02, 0x01, 0x06, 0x05, 0x04, 0x09, 0x08, 0x07]), [0x010203, 0x040506, 0x070809])]
-    #[case(key(&[0x56, 0x34, 0x12, 0xBC, 0x9A, 0x78, 0x21, 0x43, 0x65]), [0x123456, 0x789ABC, 0x654321])]
-    fn as_u24x3_le_parses_values(#[case] key: SimdKey, #[case] expected: [u32; 3]) {
-        assert_eq!(key.as_u24x3_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x03, 0x02, 0x01, 0x06, 0x05, 0x04, 0x09, 0x08, 0x07, 0x0C, 0x0B, 0x0A]),
-        [0x010203, 0x040506, 0x070809, 0x0A0B0C])]
-    #[case(key(&[0x01, 0x00, 0x00, 0x34, 0x12, 0x00, 0xCD, 0xAB, 0x00, 0xFF, 0xEE, 0xDD]),
-        [0x000001, 0x001234, 0x00ABCD, 0xDDEEFF])]
-    fn as_u24x4_le_parses_values(#[case] key: SimdKey, #[case] expected: [u32; 4]) {
-        assert_eq!(key.as_u24x4_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x04, 0x03, 0x02, 0x01, 0x08, 0x07, 0x06, 0x05, 0x0C, 0x0B, 0x0A, 0x09]),
-        [0x01020304, 0x05060708, 0x090A0B0C])]
-    #[case(key(&[0xFF, 0x00, 0x00, 0x00, 0x10, 0x32, 0x54, 0x76, 0x89, 0xAB, 0xCD, 0xEF]),
-        [0x000000FF, 0x76543210, 0xEFCDAB89])]
-    fn as_u32x3_le_parses_values(#[case] key: SimdKey, #[case] expected: [u32; 3]) {
-        assert_eq!(key.as_u32x3_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x04, 0x03, 0x02, 0x01, 0x08, 0x07, 0x06, 0x05, 0x0C, 0x0B, 0x0A, 0x09, 0x10, 0x0F, 0x0E, 0x0D]),
-        [0x01020304, 0x05060708, 0x090A0B0C, 0x0D0E0F10])]
-    #[case(key(&[0x01, 0x00, 0x00, 0x80, 0xFF, 0xFF, 0xFF, 0x7F, 0x11, 0x22, 0x33, 0x44, 0x78, 0x56, 0x34, 0x12]),
-        [0x80000001, 0x7FFFFFFF, 0x44332211, 0x12345678])]
-    fn as_u32x4_le_parses_values(#[case] key: SimdKey, #[case] expected: [u32; 4]) {
-        assert_eq!(key.as_u32x4_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07]),
-        [0x010203040506, 0x0708090A0B0C])]
-    #[case(key(&[0x56, 0x34, 0x12, 0x90, 0x78, 0x56, 0xBC, 0x9A, 0x78, 0x56, 0x34, 0x12]),
-        [0x567890123456, 0x123456789ABC])]
-    fn as_u48x2_le_parses_values(#[case] key: SimdKey, #[case] expected: [u64; 2]) {
-        assert_eq!(key.as_u48x2_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x0C, 0x0B, 0x0A,
-                 0x09, 0x08, 0x07, 0x12, 0x11, 0x10, 0x0F, 0x0E, 0x0D,]),
-        [0x010203040506, 0x0708090A0B0C, 0x0D0E0F101112])]
-    #[case(key(&[0xFF, 0xEE, 0xDD, 0xCC, 0xBB, 0xAA, 0x01, 0x23, 0x45,
-                 0x67, 0x89, 0xAB, 0x10, 0x32, 0x54, 0x76, 0x98, 0xBA,]),
-        [0xAABBCCDDEEFF, 0xAB8967452301, 0xBA9876543210])]
-    fn as_u48x3_le_parses_values(#[case] key: SimdKey, #[case] expected: [u64; 3]) {
-        assert_eq!(key.as_u48x3_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01,
-                 0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0A, 0x09,]),
-        [0x0102030405060708, 0x090A0B0C0D0E0F10])]
-    #[case(key(&[0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
-                 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF,]),
-        [0x7766554433221100, 0xFFEEDDCCBBAA9988])]
-    fn as_u64x2_le_parses_values(#[case] key: SimdKey, #[case] expected: [u64; 2]) {
-        assert_eq!(key.as_u64x2_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x10, 0x0F, 0x0E, 0x0D,
-                 0x0C, 0x0B, 0x0A, 0x09, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11,]),
-        [0x0102030405060708, 0x090A0B0C0D0E0F10, 0x1112131415161718])]
-    #[case(key(&[0xAA, 0x00, 0xBB, 0x11, 0xCC, 0x22, 0xDD, 0x33, 0xEE, 0x44, 0xFF, 0x55,
-                 0x10, 0x66, 0x20, 0x77, 0x30, 0x88, 0x40, 0x99, 0x50, 0xAA, 0x60, 0xBB,]),
-        [0x33DD22CC11BB00AA, 0x7720661055FF44EE, 0xBB60AA5099408830])]
-    fn as_u64x3_le_parses_values(#[case] key: SimdKey, #[case] expected: [u64; 3]) {
-        assert_eq!(key.as_u64x3_le(), expected);
-    }
-
-    #[rstest]
-    #[case(key(&[0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x10, 0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0A, 0x09,
-                 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11, 0x20, 0x1F, 0x1E, 0x1D, 0x1C, 0x1B, 0x1A, 0x19,]),
-        [0x0102030405060708, 0x090A0B0C0D0E0F10, 0x1112131415161718, 0x191A1B1C1D1E1F20])]
-    #[case(key(&[0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
-                 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,]),
-        [0x0706050403020100, 0x0F0E0D0C0B0A0908, 0x1716151413121110, 0x1F1E1D1C1B1A1918])]
-    fn as_u64x4_le_parses_values(#[case] key: SimdKey, #[case] expected: [u64; 4]) {
-        assert_eq!(key.as_u64x4_le(), expected);
+        for (lane, scalar) in scalars.iter().enumerate() {
+            assert_lane_matches_scalar(&simd, lane, scalar);
+        }
     }
 }
