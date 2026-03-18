@@ -7,7 +7,7 @@ use crate::backend::scalar::version_dispatch::{
 };
 use crate::domain::key::Key;
 
-pub fn search_range_impl(
+pub fn avx_search_range_impl(
     req: SearchRangeRequest,
 ) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
     let results = match req.speck_version {

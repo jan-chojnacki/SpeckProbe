@@ -1,4 +1,4 @@
-use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
+use criterion::{BatchSize, Criterion, Throughput, criterion_group, criterion_main};
 use engine::api::version::SpeckVersion;
 use engine::domain::key_iterator::KeyIterator;
 use std::hint::black_box;

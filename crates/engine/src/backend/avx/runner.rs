@@ -3,7 +3,7 @@ use crate::api::request::SearchRangeRequest;
 use crate::domain::key::Key;
 use crate::domain::key_iterator::KeyIterator;
 
-pub fn run_search<R, K, FK, FC>(
+pub fn avx_run_search<R, K, FK, FC>(
     req: &SearchRangeRequest,
     data: R,
     expected: R,
