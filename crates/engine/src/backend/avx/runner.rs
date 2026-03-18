@@ -2,18 +2,21 @@ use crate::SearchEngineBackendError;
 use crate::api::request::SearchRangeRequest;
 use crate::domain::key::Key;
 use crate::domain::key_iterator::KeyIterator;
+use crate::domain::simd_key::SimdKey;
+use std::arch::x86_64::__m128i;
 
-pub fn avx_run_search<R, K, FK, FC>(
+pub fn run_avx_search<E, FK, FW, FC, const T: usize, const W: usize>(
     req: &SearchRangeRequest,
-    data: R,
-    expected: R,
+    data: [__m128i; 2],
+    expected: E,
+    comparator: FC,
     key_words: FK,
-    cipher: FC,
+    cipher: FW,
 ) -> Result<Vec<Key>, SearchEngineBackendError>
 where
-    R: Copy + Eq,
-    FK: Fn(&Key) -> K,
-    FC: Fn(R, K) -> R,
+    FK: Fn(&SimdKey<T>) -> [__m128i; W],
+    FW: Fn([__m128i; 2], [__m128i; W]) -> [__m128i; 2],
+    FC: Fn(&E, [__m128i; 2]) -> Option<Vec<usize>>,
 {
     let mut iterator = KeyIterator::new(
         req.start_key,
@@ -22,12 +25,18 @@ where
         &req.speck_version,
     )?;
 
-    let mut key = iterator.new_key();
+    let mut key: SimdKey<T> = iterator.new_simd_key();
     let mut results = Vec::new();
 
-    while iterator.next_into(&mut key).is_some() {
-        if cipher(data, key_words(&key)) == expected {
-            results.push(key);
+    while iterator.simd_next_into(&mut key).is_some() {
+        let r = cipher(data, key_words(&key));
+        match comparator(&expected, r) {
+            None => {}
+            Some(keys) => {
+                for k in keys {
+                    results.push(key.get(k))
+                }
+            }
         }
     }
 
