@@ -99,7 +99,7 @@ define_cipher_bench!(
 
 fn benchmark(c: &mut Criterion) {
     let mut g = c.benchmark_group("scalar");
-    g.throughput(Throughput::Elements(4));
+    g.throughput(Throughput::Elements(1));
 
     scalar_32_64_bench(&mut g);
     scalar_48_72_bench(&mut g);
