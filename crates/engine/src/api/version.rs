@@ -13,6 +13,10 @@ pub enum SpeckVersion {
 }
 
 impl SpeckVersion {
+    pub fn word_size_bytes(&self) -> usize {
+        self.block_size_bytes() / 2
+    }
+
     pub fn block_size_bytes(&self) -> usize {
         match self {
             SpeckVersion::Speck32_64 => 4,

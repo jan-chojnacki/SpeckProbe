@@ -1,4 +1,4 @@
-use criterion::{BatchSize, Criterion, Throughput, criterion_group, criterion_main};
+use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
 use engine::api::version::SpeckVersion;
 use engine::domain::key_iterator::KeyIterator;
 use std::hint::black_box;
@@ -28,7 +28,7 @@ fn iterator_bench(c: &mut Criterion) {
         g.bench_function(format!("{}", iters), |b| {
             b.iter_batched_ref(
                 || {
-                    let it = KeyIterator::new(0, iters, &prefix, &version).unwrap();
+                    let it = KeyIterator::new(0, iters, &prefix, version).unwrap();
                     let key = it.new_key();
                     (it, key)
                 },
@@ -45,6 +45,8 @@ fn iterator_bench(c: &mut Criterion) {
     g.finish();
 }
 
+#[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
+#[target_feature(enable = "avx")]
 fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
     let mut g = c.benchmark_group("simd_iterator");
 
@@ -58,8 +60,8 @@ fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
         g.bench_function(format!("{}_lanes/{}", T, iters), |b| {
             b.iter_batched_ref(
                 || {
-                    let it = KeyIterator::new(0, iters, &prefix, &version).unwrap();
-                    let key = it.new_simd_key::<T>();
+                    let it = KeyIterator::new(0, iters, &prefix, version).unwrap();
+                    let key = it.new_avx_key::<T>();
                     (it, key)
                 },
                 |(it, key)| {
@@ -77,11 +79,15 @@ fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
 
 fn benchmark(c: &mut Criterion) {
     iterator_bench(c);
-    simd_iterator_bench::<2>(c);
-    simd_iterator_bench::<4>(c);
-    simd_iterator_bench::<8>(c);
-    simd_iterator_bench::<16>(c);
-    simd_iterator_bench::<32>(c);
+
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
+    unsafe {
+        simd_iterator_bench::<2>(c);
+        simd_iterator_bench::<4>(c);
+        simd_iterator_bench::<8>(c);
+        simd_iterator_bench::<16>(c);
+        simd_iterator_bench::<32>(c);
+    }
 }
 
 criterion_group! {

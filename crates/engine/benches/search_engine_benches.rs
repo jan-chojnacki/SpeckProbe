@@ -12,7 +12,7 @@ pub(crate) fn criterion_config() -> Criterion {
     Criterion::default()
         .warm_up_time(Duration::from_secs(1))
         .measurement_time(Duration::from_secs(5))
-        .sample_size(10)
+        .sample_size(100)
         .nresamples(100_000)
         .confidence_level(0.95)
         .significance_level(0.05)
@@ -21,12 +21,12 @@ pub(crate) fn criterion_config() -> Criterion {
 
 fn generate_request(n: u64, operation: Operation) -> SearchRangeRequest {
     SearchRangeRequest {
-        speck_version: SpeckVersion::Speck64_128,
+        speck_version: SpeckVersion::Speck32_64,
         start_key: 0,
         key_count: n,
-        prefix: vec![0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07],
-        data_bytes: Block::new(&[0, 0, 0, 0, 0, 0, 0, 0], &SpeckVersion::Speck64_128).unwrap(),
-        expected_bytes: Block::new(&[0, 0, 0, 0, 0, 0, 0, 0], &SpeckVersion::Speck64_128).unwrap(),
+        prefix: vec![],
+        data_bytes: Block::new(&[0, 0, 0, 0], &SpeckVersion::Speck32_64).unwrap(),
+        expected_bytes: Block::new(&[0, 0, 0, 0], &SpeckVersion::Speck32_64).unwrap(),
         operation,
     }
 }
@@ -34,7 +34,7 @@ fn generate_request(n: u64, operation: Operation) -> SearchRangeRequest {
 fn scalar_engine_bench(c: &mut Criterion) {
     let mut g = c.benchmark_group("scalar_engine");
 
-    for i in 1..9 {
+    for i in 1..6 {
         let iters = 10u64.pow(i);
         g.throughput(Throughput::Elements(iters));
 
@@ -71,7 +71,7 @@ fn scalar_engine_bench(c: &mut Criterion) {
 fn avx_engine_bench(c: &mut Criterion) {
     let mut g = c.benchmark_group("avx_engine");
 
-    for i in 1..9 {
+    for i in 1..6 {
         let iters = 10u64.pow(i);
         g.throughput(Throughput::Elements(iters));
 
