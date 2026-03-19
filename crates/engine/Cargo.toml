@@ -15,3 +15,7 @@ rstest = "0.26"
 [[bench]]
 name = "iterator_benches"
 harness = false
+
+[[bench]]
+name = "search_engine_benches"
+harness = false

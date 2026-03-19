@@ -9,12 +9,12 @@ impl SearchEngineBackend for SearchEngineAvx {
     fn search_range_encrypt(
         search_range_request: SearchRangeRequest,
     ) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
-        avx_search_range_impl(search_range_request)
+        unsafe { avx_search_range_impl(search_range_request) }
     }
 
     fn search_range_decrypt(
         search_range_request: SearchRangeRequest,
     ) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
-        avx_search_range_impl(search_range_request)
+        unsafe { avx_search_range_impl(search_range_request) }
     }
 }
