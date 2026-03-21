@@ -1,8 +1,15 @@
+use crate::backend::avx::key_converter::AvxSimdKey;
+use crate::domain::key::Key;
 use std::arch::x86_64::{__m128i, _mm_cmpeq_epi16, _mm_cmpeq_epi32, _mm_movemask_epi8};
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
-pub fn block_compare_u16(e: &[__m128i; 2], v: &[__m128i; 2]) -> Option<Vec<usize>> {
+pub fn block_compare_u16(
+    e: &[__m128i; 2],
+    v: &[__m128i; 2],
+    key: &AvxSimdKey<8>,
+    out: &mut Vec<Key>,
+) {
     let cmp_lo = _mm_cmpeq_epi16(e[0], v[0]);
     let cmp_hi = _mm_cmpeq_epi16(e[1], v[1]);
 
@@ -14,19 +21,22 @@ pub fn block_compare_u16(e: &[__m128i; 2], v: &[__m128i; 2]) -> Option<Vec<usize
 
     let mut lanes = (lanes_lo & lanes_hi) & 0x00FF;
 
-    let mut out = Vec::with_capacity(8);
     while lanes != 0 {
         let i = lanes.trailing_zeros() as usize;
-        out.push(i);
+        let k = key.get(i);
+        out.push(k);
         lanes &= lanes - 1;
     }
-
-    (!out.is_empty()).then_some(out)
 }
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
-pub fn block_compare_u32(e: &[__m128i; 2], v: &[__m128i; 2]) -> Option<Vec<usize>> {
+pub fn block_compare_u32(
+    e: &[__m128i; 2],
+    v: &[__m128i; 2],
+    key: &AvxSimdKey<4>,
+    out: &mut Vec<Key>,
+) {
     let cmp_lo = _mm_cmpeq_epi32(e[0], v[0]);
     let cmp_hi = _mm_cmpeq_epi32(e[1], v[1]);
 
@@ -47,19 +57,22 @@ pub fn block_compare_u32(e: &[__m128i; 2], v: &[__m128i; 2]) -> Option<Vec<usize
 
     let mut lanes = (lane_bits_lo & lane_bits_hi) & 0x0F;
 
-    let mut out = Vec::with_capacity(4);
     while lanes != 0 {
         let i = lanes.trailing_zeros() as usize;
-        out.push(i);
+        let k = key.get(i);
+        out.push(k);
         lanes &= lanes - 1;
     }
-
-    (!out.is_empty()).then_some(out)
 }
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
-pub fn block_compare_u64(e: &[__m128i; 2], v: &[__m128i; 2]) -> Option<Vec<usize>> {
+pub fn block_compare_u64(
+    e: &[__m128i; 2],
+    v: &[__m128i; 2],
+    key: &AvxSimdKey<2>,
+    out: &mut Vec<Key>,
+) {
     let cmp_lo = _mm_cmpeq_epi32(e[0], v[0]);
     let cmp_hi = _mm_cmpeq_epi32(e[1], v[1]);
 
@@ -88,12 +101,10 @@ pub fn block_compare_u64(e: &[__m128i; 2], v: &[__m128i; 2]) -> Option<Vec<usize
 
     let mut lanes = (lane_bits_lo & lane_bits_hi) & 0x03;
 
-    let mut out = Vec::with_capacity(2);
     while lanes != 0 {
         let i = lanes.trailing_zeros() as usize;
-        out.push(i);
+        let k = key.get(i);
+        out.push(k);
         lanes &= lanes - 1;
     }
-
-    (!out.is_empty()).then_some(out)
 }
