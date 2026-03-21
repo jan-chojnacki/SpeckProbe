@@ -45,8 +45,8 @@ fn iterator_bench(c: &mut Criterion) {
     g.finish();
 }
 
-#[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
-#[target_feature(enable = "avx")]
+#[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+#[target_feature(enable = "sse2")]
 fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
     let mut g = c.benchmark_group("simd_iterator");
 
@@ -61,7 +61,7 @@ fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
             b.iter_batched_ref(
                 || {
                     let it = KeyIterator::new(0, iters, &prefix, version).unwrap();
-                    let key = it.new_avx_key::<T>();
+                    let key = it.new_sse2_key::<T>();
                     (it, key)
                 },
                 |(it, key)| {
@@ -80,7 +80,7 @@ fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
 fn benchmark(c: &mut Criterion) {
     iterator_bench(c);
 
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
+    #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     unsafe {
         simd_iterator_bench::<2>(c);
         simd_iterator_bench::<4>(c);

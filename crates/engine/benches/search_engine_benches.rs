@@ -7,8 +7,8 @@ use engine::api::version::SpeckVersion::{
     Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
     Speck128_128, Speck128_192, Speck128_256,
 };
-use engine::backend::avx::engine::SearchEngineAvx;
 use engine::backend::scalar::engine::SearchEngineScalar;
+use engine::backend::sse2::engine::SearchEngineSSE2;
 use engine::domain::block::Block;
 use std::hint::black_box;
 use std::sync::LazyLock;
@@ -82,13 +82,13 @@ fn scalar_engine_bench(c: &mut Criterion) {
 }
 
 fn avx_engine_bench(c: &mut Criterion) {
-    let mut g = c.benchmark_group("avx_engine");
+    let mut g = c.benchmark_group("sse2_engine");
     g.throughput(Throughput::Elements(ITERATIONS));
 
     for r in REQUESTS.iter() {
         g.bench_function(format!("{}/{}", r.speck_version, r.operation), |b| {
             b.iter(|| {
-                let out = SearchEngineAvx::handle_request(black_box(r.clone())).unwrap();
+                let out = SearchEngineSSE2::handle_request(black_box(r.clone())).unwrap();
                 black_box(out);
             })
         });

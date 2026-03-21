@@ -5,21 +5,21 @@ mod common;
 mod test {
     use crate::common::define_speck_test_x86_64_simd;
     use speck::{
-        avx_decrypt_block_32_64, avx_decrypt_block_48_72, avx_decrypt_block_48_96,
-        avx_decrypt_block_64_96, avx_decrypt_block_64_128, avx_decrypt_block_96_96,
-        avx_decrypt_block_96_144, avx_decrypt_block_128_128, avx_decrypt_block_128_192,
-        avx_decrypt_block_128_256, avx_encrypt_block_32_64, avx_encrypt_block_48_72,
-        avx_encrypt_block_48_96, avx_encrypt_block_64_96, avx_encrypt_block_64_128,
-        avx_encrypt_block_96_96, avx_encrypt_block_96_144, avx_encrypt_block_128_128,
-        avx_encrypt_block_128_192, avx_encrypt_block_128_256,
+        sse2_decrypt_block_32_64, sse2_decrypt_block_48_72, sse2_decrypt_block_48_96,
+        sse2_decrypt_block_64_96, sse2_decrypt_block_64_128, sse2_decrypt_block_96_96,
+        sse2_decrypt_block_96_144, sse2_decrypt_block_128_128, sse2_decrypt_block_128_192,
+        sse2_decrypt_block_128_256, sse2_encrypt_block_32_64, sse2_encrypt_block_48_72,
+        sse2_encrypt_block_48_96, sse2_encrypt_block_64_96, sse2_encrypt_block_64_128,
+        sse2_encrypt_block_96_96, sse2_encrypt_block_96_144, sse2_encrypt_block_128_128,
+        sse2_encrypt_block_128_192, sse2_encrypt_block_128_256,
     };
     use std::arch::x86_64::{_mm_set1_epi16, _mm_set1_epi32, _mm_set1_epi64x};
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_32_64",
-        avx_encrypt_block_32_64,
+        "sse2_encrypt_block_32_64",
+        sse2_encrypt_block_32_64,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi16(0x1918),
             _mm_set1_epi16(0x1110),
@@ -31,10 +31,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_48_72",
-        avx_encrypt_block_48_72,
+        "sse2_encrypt_block_48_72",
+        sse2_encrypt_block_48_72,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x121110),
             _mm_set1_epi32(0x0a0908),
@@ -45,10 +45,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_48_96",
-        avx_encrypt_block_48_96,
+        "sse2_encrypt_block_48_96",
+        sse2_encrypt_block_48_96,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x1a1918),
             _mm_set1_epi32(0x121110),
@@ -60,10 +60,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_64_96",
-        avx_encrypt_block_64_96,
+        "sse2_encrypt_block_64_96",
+        sse2_encrypt_block_64_96,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x13121110),
             _mm_set1_epi32(0x0b0a0908),
@@ -77,10 +77,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_64_128",
-        avx_encrypt_block_64_128,
+        "sse2_encrypt_block_64_128",
+        sse2_encrypt_block_64_128,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x1b1a1918),
             _mm_set1_epi32(0x13121110),
@@ -95,10 +95,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_96_96",
-        avx_encrypt_block_96_96,
+        "sse2_encrypt_block_96_96",
+        sse2_encrypt_block_96_96,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x0d0c0b0a0908),
             _mm_set1_epi64x(0x050403020100),
@@ -114,10 +114,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_96_144",
-        avx_encrypt_block_96_144,
+        "sse2_encrypt_block_96_144",
+        sse2_encrypt_block_96_144,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x151413121110),
             _mm_set1_epi64x(0x0d0c0b0a0908),
@@ -134,10 +134,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_128_128",
-        avx_encrypt_block_128_128,
+        "sse2_encrypt_block_128_128",
+        sse2_encrypt_block_128_128,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x0f0e0d0c0b0a0908),
             _mm_set1_epi64x(0x0706050403020100),
@@ -153,10 +153,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_128_192",
-        avx_encrypt_block_128_192,
+        "sse2_encrypt_block_128_192",
+        sse2_encrypt_block_128_192,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x1716151413121110),
             _mm_set1_epi64x(0x0f0e0d0c0b0a0908),
@@ -173,10 +173,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_encrypt_block_128_256",
-        avx_encrypt_block_128_256,
+        "sse2_encrypt_block_128_256",
+        sse2_encrypt_block_128_256,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x1f1e1d1c1b1a1918),
             _mm_set1_epi64x(0x1716151413121110),
@@ -194,10 +194,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_32_64",
-        avx_decrypt_block_32_64,
+        "sse2_decrypt_block_32_64",
+        sse2_decrypt_block_32_64,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi16(0x1918),
             _mm_set1_epi16(0x1110),
@@ -209,10 +209,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_48_72",
-        avx_decrypt_block_48_72,
+        "sse2_decrypt_block_48_72",
+        sse2_decrypt_block_48_72,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x121110),
             _mm_set1_epi32(0x0a0908),
@@ -223,10 +223,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_48_96",
-        avx_decrypt_block_48_96,
+        "sse2_decrypt_block_48_96",
+        sse2_decrypt_block_48_96,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x1a1918),
             _mm_set1_epi32(0x121110),
@@ -238,10 +238,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_64_96",
-        avx_decrypt_block_64_96,
+        "sse2_decrypt_block_64_96",
+        sse2_decrypt_block_64_96,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x13121110),
             _mm_set1_epi32(0x0b0a0908),
@@ -255,10 +255,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_64_128",
-        avx_decrypt_block_64_128,
+        "sse2_decrypt_block_64_128",
+        sse2_decrypt_block_64_128,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi32(0x1b1a1918),
             _mm_set1_epi32(0x13121110),
@@ -273,10 +273,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_96_96",
-        avx_decrypt_block_96_96,
+        "sse2_decrypt_block_96_96",
+        sse2_decrypt_block_96_96,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x0d0c0b0a0908),
             _mm_set1_epi64x(0x050403020100),
@@ -292,10 +292,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_96_144",
-        avx_decrypt_block_96_144,
+        "sse2_decrypt_block_96_144",
+        sse2_decrypt_block_96_144,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x151413121110),
             _mm_set1_epi64x(0x0d0c0b0a0908),
@@ -312,10 +312,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_128_128",
-        avx_decrypt_block_128_128,
+        "sse2_decrypt_block_128_128",
+        sse2_decrypt_block_128_128,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x0f0e0d0c0b0a0908),
             _mm_set1_epi64x(0x0706050403020100),
@@ -331,10 +331,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_128_192",
-        avx_decrypt_block_128_192,
+        "sse2_decrypt_block_128_192",
+        sse2_decrypt_block_128_192,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x1716151413121110),
             _mm_set1_epi64x(0x0f0e0d0c0b0a0908),
@@ -351,10 +351,10 @@ mod test {
     );
 
     define_speck_test_x86_64_simd!(
-        "avx_decrypt_block_128_256",
-        avx_decrypt_block_128_256,
+        "sse2_decrypt_block_128_256",
+        sse2_decrypt_block_128_256,
         "x86_64",
-        "avx",
+        "sse2",
         key = [
             _mm_set1_epi64x(0x1f1e1d1c1b1a1918),
             _mm_set1_epi64x(0x1716151413121110),
