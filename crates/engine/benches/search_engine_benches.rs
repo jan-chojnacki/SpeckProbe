@@ -8,6 +8,7 @@ use engine::api::version::SpeckVersion::{
     Speck128_128, Speck128_192, Speck128_256,
 };
 use engine::backend::avx2::engine::SearchEngineAVX2;
+use engine::backend::avx512::engine::SearchEngineAVX512;
 use engine::backend::scalar::engine::SearchEngineScalar;
 use engine::backend::sse2::engine::SearchEngineSSE2;
 use engine::domain::block::Block;
@@ -110,10 +111,25 @@ fn avx2_engine_bench(c: &mut Criterion) {
     }
 }
 
+fn avx512_engine_bench(c: &mut Criterion) {
+    let mut g = c.benchmark_group("avx512_engine");
+    g.throughput(Throughput::Elements(ITERATIONS));
+
+    for r in REQUESTS.iter() {
+        g.bench_function(format!("{}/{}", r.speck_version, r.operation), |b| {
+            b.iter(|| {
+                let out = SearchEngineAVX512::handle_request(black_box(r.clone())).unwrap();
+                black_box(out);
+            })
+        });
+    }
+}
+
 fn benchmark(c: &mut Criterion) {
     scalar_engine_bench(c);
     sse2_engine_bench(c);
     avx2_engine_bench(c);
+    avx512_engine_bench(c);
 }
 
 criterion_group! {
