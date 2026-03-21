@@ -1,4 +1,4 @@
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
 pub enum SpeckVersion {
     Speck32_64,
     Speck48_72,

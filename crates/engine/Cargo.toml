@@ -7,6 +7,7 @@ edition = "2024"
 speck = { path = "../speck" }
 multiversion = "0.8"
 thiserror = "2"
+strum = { version = "0.28", features = ["derive"] }
 
 [dev-dependencies]
 criterion = "0.8"

@@ -1,11 +1,13 @@
 use crate::api::version::SpeckVersion;
 use crate::domain::block::Block;
 
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
 pub enum Operation {
     Encrypt,
     Decrypt,
 }
 
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct SearchRangeRequest {
     pub speck_version: SpeckVersion,
     pub start_key: u64,

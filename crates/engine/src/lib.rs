@@ -2,7 +2,7 @@ pub mod api;
 pub mod backend;
 pub mod domain;
 
-use crate::api::request::SearchRangeRequest;
+use crate::api::request::{Operation, SearchRangeRequest};
 use domain::block::BlockError;
 use domain::key::Key;
 use domain::key_iterator::KeyIteratorError;
@@ -17,6 +17,14 @@ pub enum SearchEngineBackendError {
 }
 
 pub trait SearchEngineBackend {
+    fn handle_request(
+        search_range_request: SearchRangeRequest,
+    ) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+        match search_range_request.operation {
+            Operation::Encrypt => Self::search_range_encrypt(search_range_request),
+            Operation::Decrypt => Self::search_range_decrypt(search_range_request),
+        }
+    }
     fn search_range_encrypt(
         search_range_request: SearchRangeRequest,
     ) -> Result<Option<Vec<Key>>, SearchEngineBackendError>;

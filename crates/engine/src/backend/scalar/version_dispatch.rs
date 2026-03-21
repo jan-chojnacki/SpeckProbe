@@ -77,8 +77,8 @@ pub fn search_48_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBa
 }
 
 pub fn search_64_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = req.data_bytes.as_u24x2_le()?;
-    let expected = req.expected_bytes.as_u24x2_le()?;
+    let data = req.data_bytes.as_u32x2_le()?;
+    let expected = req.expected_bytes.as_u32x2_le()?;
 
     match req.operation {
         Operation::Encrypt => run_search(

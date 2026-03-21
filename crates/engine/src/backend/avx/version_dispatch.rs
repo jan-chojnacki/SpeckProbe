@@ -97,8 +97,8 @@ pub fn search_48_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBa
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
 pub fn search_64_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = u32x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
-    let expected = u32x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
+    let data = u32x2_block_to_avx_vec(req.data_bytes.as_u32x2_le()?);
+    let expected = u32x2_block_to_avx_vec(req.expected_bytes.as_u32x2_le()?);
 
     match req.operation {
         Operation::Encrypt => run_avx_search(
