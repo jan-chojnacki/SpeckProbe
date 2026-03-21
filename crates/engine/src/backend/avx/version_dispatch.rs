@@ -1,8 +1,7 @@
 use crate::SearchEngineBackendError;
 use crate::api::request::{Operation, SearchRangeRequest};
 use crate::backend::avx::block_converter::{
-    u16x2_block_to_avx_vec, u24x2_block_to_avx_vec, u32x2_block_to_avx_vec, u48x2_block_to_avx_vec,
-    u64x2_block_to_avx_vec,
+    u16x2_block_to_avx_vec, u32x2_block_to_avx_vec, u64x2_block_to_avx_vec,
 };
 use crate::backend::avx::comparator::{block_compare_u16, block_compare_u32, block_compare_u64};
 use crate::backend::avx::runner::run_avx_search;
@@ -46,8 +45,8 @@ pub fn search_32_64(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBa
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
 pub fn search_48_72(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = u24x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
-    let expected = u24x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
+    let data = u32x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
+    let expected = u32x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
 
     match req.operation {
         Operation::Encrypt => run_avx_search(
@@ -72,8 +71,8 @@ pub fn search_48_72(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBa
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
 pub fn search_48_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = u24x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
-    let expected = u24x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
+    let data = u32x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
+    let expected = u32x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
 
     match req.operation {
         Operation::Encrypt => run_avx_search(
@@ -98,8 +97,8 @@ pub fn search_48_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBa
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
 pub fn search_64_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = u24x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
-    let expected = u24x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
+    let data = u32x2_block_to_avx_vec(req.data_bytes.as_u24x2_le()?);
+    let expected = u32x2_block_to_avx_vec(req.expected_bytes.as_u24x2_le()?);
 
     match req.operation {
         Operation::Encrypt => run_avx_search(
@@ -150,8 +149,8 @@ pub fn search_64_128(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineB
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
 pub fn search_96_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = u48x2_block_to_avx_vec(req.data_bytes.as_u48x2_le()?);
-    let expected = u48x2_block_to_avx_vec(req.expected_bytes.as_u48x2_le()?);
+    let data = u64x2_block_to_avx_vec(req.data_bytes.as_u48x2_le()?);
+    let expected = u64x2_block_to_avx_vec(req.expected_bytes.as_u48x2_le()?);
 
     match req.operation {
         Operation::Encrypt => run_avx_search(
@@ -176,8 +175,8 @@ pub fn search_96_96(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBa
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
 pub fn search_96_144(req: &SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
-    let data = u48x2_block_to_avx_vec(req.data_bytes.as_u48x2_le()?);
-    let expected = u48x2_block_to_avx_vec(req.expected_bytes.as_u48x2_le()?);
+    let data = u64x2_block_to_avx_vec(req.data_bytes.as_u48x2_le()?);
+    let expected = u64x2_block_to_avx_vec(req.expected_bytes.as_u48x2_le()?);
 
     match req.operation {
         Operation::Encrypt => run_avx_search(

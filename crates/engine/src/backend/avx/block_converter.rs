@@ -8,20 +8,8 @@ pub fn u16x2_block_to_avx_vec(v: [u16; 2]) -> [__m128i; 2] {
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
 #[target_feature(enable = "avx")]
-pub fn u24x2_block_to_avx_vec(v: [u32; 2]) -> [__m128i; 2] {
-    v.map(|l| _mm_set1_epi32(l as i32))
-}
-
-#[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
-#[target_feature(enable = "avx")]
 pub fn u32x2_block_to_avx_vec(v: [u32; 2]) -> [__m128i; 2] {
     v.map(|l| _mm_set1_epi32(l as i32))
-}
-
-#[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
-#[target_feature(enable = "avx")]
-pub fn u48x2_block_to_avx_vec(v: [u64; 2]) -> [__m128i; 2] {
-    v.map(|l| _mm_set1_epi64x(l as i64))
 }
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
