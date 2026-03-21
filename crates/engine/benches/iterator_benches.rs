@@ -61,7 +61,7 @@ fn simd_iterator_bench<const T: usize>(c: &mut Criterion) {
             b.iter_batched_ref(
                 || {
                     let it = KeyIterator::new(0, iters, &prefix, version).unwrap();
-                    let key = it.new_sse2_key::<T>();
+                    let key = it.sse2_new_key::<T>();
                     (it, key)
                 },
                 |(it, key)| {

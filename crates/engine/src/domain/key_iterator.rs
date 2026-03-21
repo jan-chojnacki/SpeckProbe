@@ -1,6 +1,7 @@
 use crate::api::version::SpeckVersion;
-use crate::backend::sse2::key_converter::SSE2Key;
+use crate::backend::sse2::key::SSE2Key;
 use crate::domain::key::Key;
+use crate::domain::simd_key::SimdKey;
 use thiserror::Error;
 
 #[derive(Debug, Error, Eq, PartialEq)]
@@ -66,7 +67,7 @@ impl KeyIterator {
 
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
-    pub fn new_sse2_key<const T: usize>(&self) -> SSE2Key<T> {
+    pub fn sse2_new_key<const T: usize>(&self) -> SSE2Key<T> {
         let v = std::array::from_fn(|i| self.current + i as u64);
         SSE2Key::new(&self.prefix[..self.prefix_len], v, self.speck_version)
     }
@@ -84,7 +85,7 @@ impl KeyIterator {
         Some(())
     }
 
-    pub fn simd_next_into<const T: usize>(&mut self, out: &mut SSE2Key<T>) -> Option<()> {
+    pub fn simd_next_into<const T: usize>(&mut self, out: &mut impl SimdKey<T>) -> Option<()> {
         if self.current >= self.end {
             return None;
         }
