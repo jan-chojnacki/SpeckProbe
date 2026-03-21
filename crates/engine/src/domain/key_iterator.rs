@@ -1,4 +1,5 @@
 use crate::api::version::SpeckVersion;
+use crate::backend::avx2::key::AVX2Key;
 use crate::backend::sse2::key::SSE2Key;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
@@ -70,6 +71,13 @@ impl KeyIterator {
     pub fn sse2_new_key<const T: usize>(&self) -> SSE2Key<T> {
         let v = std::array::from_fn(|i| self.current + i as u64);
         SSE2Key::new(&self.prefix[..self.prefix_len], v, self.speck_version)
+    }
+
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[target_feature(enable = "avx2")]
+    pub fn avx2_new_key<const T: usize>(&self) -> AVX2Key<T> {
+        let v = std::array::from_fn(|i| self.current + i as u64);
+        AVX2Key::new(&self.prefix[..self.prefix_len], v, self.speck_version)
     }
 
     pub fn next_into(&mut self, out: &mut Key) -> Option<()> {

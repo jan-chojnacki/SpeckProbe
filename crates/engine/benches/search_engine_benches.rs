@@ -7,6 +7,7 @@ use engine::api::version::SpeckVersion::{
     Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
     Speck128_128, Speck128_192, Speck128_256,
 };
+use engine::backend::avx2::engine::SearchEngineAVX2;
 use engine::backend::scalar::engine::SearchEngineScalar;
 use engine::backend::sse2::engine::SearchEngineSSE2;
 use engine::domain::block::Block;
@@ -81,7 +82,7 @@ fn scalar_engine_bench(c: &mut Criterion) {
     }
 }
 
-fn avx_engine_bench(c: &mut Criterion) {
+fn sse2_engine_bench(c: &mut Criterion) {
     let mut g = c.benchmark_group("sse2_engine");
     g.throughput(Throughput::Elements(ITERATIONS));
 
@@ -95,9 +96,24 @@ fn avx_engine_bench(c: &mut Criterion) {
     }
 }
 
+fn avx2_engine_bench(c: &mut Criterion) {
+    let mut g = c.benchmark_group("avx2_engine");
+    g.throughput(Throughput::Elements(ITERATIONS));
+
+    for r in REQUESTS.iter() {
+        g.bench_function(format!("{}/{}", r.speck_version, r.operation), |b| {
+            b.iter(|| {
+                let out = SearchEngineAVX2::handle_request(black_box(r.clone())).unwrap();
+                black_box(out);
+            })
+        });
+    }
+}
+
 fn benchmark(c: &mut Criterion) {
     scalar_engine_bench(c);
-    avx_engine_bench(c);
+    sse2_engine_bench(c);
+    avx2_engine_bench(c);
 }
 
 criterion_group! {
