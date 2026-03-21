@@ -22,16 +22,11 @@ impl<const T: usize> SimdKey<T> for AvxSimdKey<T> {
 impl<const T: usize> AvxSimdKey<T> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx"))]
     #[target_feature(enable = "avx")]
-    pub fn new(
-        prefix: &[u8],
-        prefix_len: usize,
-        v: [u64; T],
-        speck_version: &SpeckVersion,
-    ) -> Self {
-        debug_assert!(prefix.len() <= 24);
+    pub fn new(prefix: &[u8], v: [u64; T], speck_version: SpeckVersion) -> Self {
+        let p = prefix.len();
+
         let mut bytes = [[0u8; 32]; T];
 
-        let p = prefix_len;
         let len = p + 8;
 
         for i in 0..T {
@@ -39,7 +34,7 @@ impl<const T: usize> AvxSimdKey<T> {
             bytes[i][p..len].copy_from_slice(&v[i].to_le_bytes());
         }
 
-        let prefix_len = p; //TODO
+        let prefix_len = p;
 
         let mut pa = _mm_setzero_si128();
         let mut pb = _mm_setzero_si128();
@@ -134,7 +129,7 @@ impl<const T: usize> AvxSimdKey<T> {
                 .expect("SimdKey invariant broken: value part must be 8 bytes"),
         );
 
-        Key::new(&row[..p], p, value)
+        Key::new(&row[..p], value)
     }
 
     pub fn as_bytes(&self) -> [&[u8]; T] {
