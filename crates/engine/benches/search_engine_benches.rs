@@ -1,10 +1,10 @@
-use criterion::{criterion_group, criterion_main, BatchSize, Criterion, Throughput};
+use criterion::{BatchSize, Criterion, Throughput, criterion_group, criterion_main};
+use engine::SearchEngineBackend;
 use engine::api::request::{Operation, SearchRangeRequest};
 use engine::api::version::SpeckVersion;
 use engine::backend::avx::engine::SearchEngineAvx;
 use engine::backend::scalar::engine::SearchEngineScalar;
 use engine::domain::block::Block;
-use engine::SearchEngineBackend;
 use std::hint::black_box;
 use std::time::Duration;
 

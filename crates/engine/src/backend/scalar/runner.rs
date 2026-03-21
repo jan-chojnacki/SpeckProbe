@@ -1,7 +1,7 @@
+use crate::SearchEngineBackendError;
 use crate::api::request::SearchRangeRequest;
 use crate::domain::key::Key;
 use crate::domain::key_iterator::KeyIterator;
-use crate::SearchEngineBackendError;
 
 pub fn run_search<R, K, FK, FC>(
     req: &SearchRangeRequest,
