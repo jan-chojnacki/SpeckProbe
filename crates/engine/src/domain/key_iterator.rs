@@ -1,6 +1,14 @@
 use crate::api::version::SpeckVersion;
+#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 use crate::backend::avx2::key::AVX2Key;
+#[cfg(all(
+    target_arch = "x86_64",
+    target_arch = "x86_64",
+    target_feature = "avx512bw"
+))]
 use crate::backend::avx512::key::AVX512Key;
+use crate::backend::neon::key::NEONKey;
+#[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 use crate::backend::sse2::key::SSE2Key;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
@@ -81,11 +89,22 @@ impl KeyIterator {
         AVX2Key::new(&self.prefix[..self.prefix_len], v, self.speck_version)
     }
 
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+    #[cfg(all(
+        target_arch = "x86_64",
+        target_arch = "x86_64",
+        target_feature = "avx512bw"
+    ))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_new_key<const T: usize>(&self) -> AVX512Key<T> {
         let v = std::array::from_fn(|i| self.current + i as u64);
         AVX512Key::new(&self.prefix[..self.prefix_len], v, self.speck_version)
+    }
+
+    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[target_feature(enable = "neon")]
+    pub fn neon_new_key<const T: usize>(&self) -> NEONKey<T> {
+        let v = std::array::from_fn(|i| self.current + i as u64);
+        NEONKey::new(&self.prefix[..self.prefix_len], v, self.speck_version)
     }
 
     pub fn next_into(&mut self, out: &mut Key) -> Option<()> {

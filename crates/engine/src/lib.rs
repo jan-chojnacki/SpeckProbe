@@ -7,6 +7,8 @@ use crate::api::request::{Operation, SearchRangeRequest};
 use crate::backend::avx2::engine::SearchEngineAVX2;
 #[cfg(target_arch = "x86_64")]
 use crate::backend::avx512::engine::SearchEngineAVX512;
+#[cfg(target_arch = "aarch64")]
+use crate::backend::neon::engine::SearchEngineNeon;
 use crate::backend::scalar::engine::SearchEngineScalar;
 #[cfg(target_arch = "x86_64")]
 use crate::backend::sse2::engine::SearchEngineSSE2;
@@ -94,6 +96,7 @@ pub fn search_range_with_backend(
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 #[multiversion::multiversion(targets("x86_64+avx512f+avx512bw", "x86_64+avx2", "x86_64+sse2"))]
 fn search_range_auto(
     search_range_request: SearchRangeRequest,
@@ -114,5 +117,24 @@ fn search_range_auto(
         return SearchEngineSSE2::handle_request(search_range_request);
     }
 
+    SearchEngineScalar::handle_request(search_range_request)
+}
+
+#[cfg(target_arch = "aarch64")]
+#[multiversion::multiversion(targets("aarch64+neon"))]
+fn search_range_auto(
+    search_range_request: SearchRangeRequest,
+) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+    if multiversion::target::target_cfg_f!(all(target_arch = "aarch64", target_feature = "neon")) {
+        return SearchEngineNeon::handle_request(search_range_request);
+    }
+
+    SearchEngineScalar::handle_request(search_range_request)
+}
+
+#[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
+fn search_range_auto(
+    search_range_request: SearchRangeRequest,
+) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
     SearchEngineScalar::handle_request(search_range_request)
 }
