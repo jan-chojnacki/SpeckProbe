@@ -1,10 +1,11 @@
-use criterion::{criterion_group, criterion_main, Criterion, Throughput};
+use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use engine::SearchEngineBackend;
 use engine::api::request::Operation::{Decrypt, Encrypt};
 use engine::api::request::{Operation, SearchRangeRequest};
 use engine::api::version::SpeckVersion;
 use engine::api::version::SpeckVersion::{
-    Speck128_128, Speck128_192, Speck128_256, Speck32_64, Speck48_72, Speck48_96, Speck64_128,
-    Speck64_96, Speck96_144, Speck96_96,
+    Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
+    Speck128_128, Speck128_192, Speck128_256,
 };
 #[cfg(target_arch = "x86_64")]
 use engine::backend::avx2::engine::SearchEngineAVX2;
@@ -16,7 +17,6 @@ use engine::backend::scalar::engine::SearchEngineScalar;
 #[cfg(target_arch = "x86_64")]
 use engine::backend::sse2::engine::SearchEngineSSE2;
 use engine::domain::block::Block;
-use engine::SearchEngineBackend;
 use std::hint::black_box;
 use std::sync::LazyLock;
 use std::time::Duration;
