@@ -1,0 +1,9 @@
+[package]
+name = "runtime"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+engine = { path = "../engine" }
+thiserror = "2"
+strum = { version = "0.28", features = ["derive"] }
