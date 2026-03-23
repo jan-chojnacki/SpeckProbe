@@ -4,7 +4,7 @@ use crate::codec::{
     write_u32_le, write_u48_le, write_u64_le,
 };
 use crate::error::SPECKError;
-use crate::types::SpeckVersion;
+use speck::SpeckVersion;
 use speck::{
     decrypt_block_32_64, decrypt_block_48_72, decrypt_block_48_96, decrypt_block_64_96,
     decrypt_block_64_128, decrypt_block_96_96, decrypt_block_96_144, decrypt_block_128_128,

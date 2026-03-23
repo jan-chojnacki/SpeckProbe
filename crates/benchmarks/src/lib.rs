@@ -1,3 +1,18 @@
+use criterion::Criterion;
+use std::time::Duration;
+
+pub fn criterion_config() -> Criterion {
+    Criterion::default()
+        .warm_up_time(Duration::from_secs(1))
+        .measurement_time(Duration::from_secs(5))
+        .sample_size(100)
+        .nresamples(100_000)
+        .confidence_level(0.95)
+        .significance_level(0.05)
+        .noise_threshold(0.02)
+}
+
+#[macro_export]
 macro_rules! define_cipher_bench {
     (
         $(#[$meta:meta])*
@@ -29,19 +44,4 @@ macro_rules! define_cipher_bench {
             });
         }
     };
-}
-
-use criterion::Criterion;
-pub(crate) use define_cipher_bench;
-use std::time::Duration;
-
-pub(crate) fn criterion_config() -> Criterion {
-    Criterion::default()
-        .warm_up_time(Duration::from_secs(1))
-        .measurement_time(Duration::from_secs(1))
-        .sample_size(100)
-        .nresamples(100_000)
-        .confidence_level(0.95)
-        .significance_level(0.05)
-        .noise_threshold(0.02)
 }

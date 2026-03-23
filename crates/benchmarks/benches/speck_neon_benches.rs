@@ -1,13 +1,9 @@
-use criterion::BenchmarkGroup;
-use criterion::measurement::WallTime;
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
 #[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{vdupq_n_u16, vdupq_n_u32, vdupq_n_u64};
-use std::hint::black_box;
 
-mod common;
-use crate::common::criterion_config;
-use common::define_cipher_bench;
+use benchmarks::criterion_config;
+use benchmarks::define_cipher_bench;
 
 define_cipher_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]

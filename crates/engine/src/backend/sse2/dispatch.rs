@@ -1,12 +1,12 @@
 use crate::SearchEngineBackendError;
 use crate::api::request::SearchRangeRequest;
-use crate::api::version::SpeckVersion;
 use crate::backend::sse2::version_dispatch::{
     sse2_search_32_64, sse2_search_48_72, sse2_search_48_96, sse2_search_64_96, sse2_search_64_128,
     sse2_search_96_96, sse2_search_96_144, sse2_search_128_128, sse2_search_128_192,
     sse2_search_128_256,
 };
 use crate::domain::key::Key;
+use speck::SpeckVersion;
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]

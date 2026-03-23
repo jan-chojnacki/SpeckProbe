@@ -6,9 +6,8 @@ use std::hint::black_box;
 #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
 use std::arch::x86_64::{_mm512_set1_epi16, _mm512_set1_epi32, _mm512_set1_epi64};
 
-mod common;
-use crate::common::criterion_config;
-use common::define_cipher_bench;
+use benchmarks::criterion_config;
+use benchmarks::define_cipher_bench;
 
 define_cipher_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]

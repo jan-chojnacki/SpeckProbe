@@ -1,4 +1,3 @@
-use crate::api::version::SpeckVersion;
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 use crate::backend::avx2::key::AVX2Key;
 #[cfg(all(
@@ -13,6 +12,7 @@ use crate::backend::neon::key::NEONKey;
 use crate::backend::sse2::key::SSE2Key;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
+use speck::SpeckVersion;
 use thiserror::Error;
 
 #[derive(Debug, Error, Eq, PartialEq)]

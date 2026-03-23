@@ -2,11 +2,6 @@ use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use engine::SearchEngineBackend;
 use engine::api::request::Operation::{Decrypt, Encrypt};
 use engine::api::request::{Operation, SearchRangeRequest};
-use engine::api::version::SpeckVersion;
-use engine::api::version::SpeckVersion::{
-    Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
-    Speck128_128, Speck128_192, Speck128_256,
-};
 #[cfg(target_arch = "x86_64")]
 use engine::backend::avx2::engine::SearchEngineAVX2;
 #[cfg(target_arch = "x86_64")]
@@ -17,20 +12,15 @@ use engine::backend::scalar::engine::SearchEngineScalar;
 #[cfg(target_arch = "x86_64")]
 use engine::backend::sse2::engine::SearchEngineSSE2;
 use engine::domain::block::Block;
+use speck::SpeckVersion;
+use speck::SpeckVersion::{
+    Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
+    Speck128_128, Speck128_192, Speck128_256,
+};
 use std::hint::black_box;
 use std::sync::LazyLock;
-use std::time::Duration;
 
-pub(crate) fn criterion_config() -> Criterion {
-    Criterion::default()
-        .warm_up_time(Duration::from_secs(1))
-        .measurement_time(Duration::from_secs(5))
-        .sample_size(100)
-        .nresamples(100_000)
-        .confidence_level(0.95)
-        .significance_level(0.05)
-        .noise_threshold(0.02)
-}
+use benchmarks::criterion_config;
 
 fn generate_request<const B: usize, const P: usize>(
     n: u64,

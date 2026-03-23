@@ -10,13 +10,4 @@ thiserror = "2"
 strum = { version = "0.28", features = ["derive"] }
 
 [dev-dependencies]
-criterion = "0.8"
 rstest = "0.26"
-
-[[bench]]
-name = "iterator_benches"
-harness = false
-
-[[bench]]
-name = "search_engine_benches"
-harness = false

@@ -1,6 +1,6 @@
-use crate::api::version::SpeckVersion;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
+use speck::SpeckVersion;
 
 #[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::uint8x16_t;

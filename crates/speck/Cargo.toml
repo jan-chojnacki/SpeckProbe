@@ -5,27 +5,7 @@ edition = "2024"
 
 [dependencies]
 paste = "1"
+strum = { version = "0.28", features = ["derive"] }
 
 [dev-dependencies]
-criterion = "0.8"
 bytemuck = { version = "1", features = ["avx512_simd", "aarch64_simd"] }
-
-[[bench]]
-name = "cpu_benches"
-harness = false
-
-[[bench]]
-name = "avx_benches"
-harness = false
-
-[[bench]]
-name = "avx2_benches"
-harness = false
-
-[[bench]]
-name = "avx512_benches"
-harness = false
-
-[[bench]]
-name = "neon_benches"
-harness = false

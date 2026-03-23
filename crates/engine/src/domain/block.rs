@@ -1,4 +1,4 @@
-use crate::api::version::SpeckVersion;
+use speck::SpeckVersion;
 use thiserror::Error;
 
 #[derive(Debug, Error, Eq, PartialEq)]

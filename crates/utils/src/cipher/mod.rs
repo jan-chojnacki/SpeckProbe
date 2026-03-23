@@ -1,9 +1,15 @@
 use crate::error::SPECKError;
 use crate::error::SPECKError::{InvalidIvLength, InvalidKeyLength, IvMissing};
-use crate::types::{CipherOperationMode, SpeckVersion};
+use speck::SpeckVersion;
 
 mod core;
 mod mode;
+
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
+pub enum CipherOperationMode {
+    ECB,
+    CBC,
+}
 
 pub struct SPECK {
     speck_version: SpeckVersion,

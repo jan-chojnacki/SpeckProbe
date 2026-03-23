@@ -1,0 +1,36 @@
+[package]
+name = "benchmarks"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+criterion = "0.8"
+
+[dev-dependencies]
+engine = { path = "../engine" }
+speck = { path = "../speck" }
+
+[[bench]]
+name = "engine_benches"
+harness = false
+
+[[bench]]
+name = "speck_scalar_benches"
+harness = false
+
+[[bench]]
+name = "speck_sse2_benches"
+harness = false
+
+[[bench]]
+name = "speck_avx2_benches"
+harness = false
+
+[[bench]]
+name = "speck_avx512_benches"
+harness = false
+
+[[bench]]
+name = "speck_neon_benches"
+harness = false

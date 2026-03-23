@@ -1,5 +1,5 @@
-use crate::api::version::SpeckVersion;
 use crate::domain::block::Block;
+use speck::SpeckVersion;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
 pub enum Operation {

@@ -46,4 +46,19 @@ impl SpeckVersion {
             SpeckVersion::Speck128_256 => 24,
         }
     }
+
+    pub fn key_size_bytes(&self) -> usize {
+        match self {
+            SpeckVersion::Speck32_64 => 8,
+            SpeckVersion::Speck48_72 => 9,
+            SpeckVersion::Speck48_96 => 12,
+            SpeckVersion::Speck64_96 => 12,
+            SpeckVersion::Speck64_128 => 16,
+            SpeckVersion::Speck96_96 => 12,
+            SpeckVersion::Speck96_144 => 18,
+            SpeckVersion::Speck128_128 => 16,
+            SpeckVersion::Speck128_192 => 24,
+            SpeckVersion::Speck128_256 => 32,
+        }
+    }
 }

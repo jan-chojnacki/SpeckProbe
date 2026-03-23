@@ -1,12 +1,12 @@
 use crate::SearchEngineBackendError;
 use crate::api::request::SearchRangeRequest;
-use crate::api::version::SpeckVersion;
 use crate::backend::avx512::version_dispatch::{
     avx512_search_32_64, avx512_search_48_72, avx512_search_48_96, avx512_search_64_96,
     avx512_search_64_128, avx512_search_96_96, avx512_search_96_144, avx512_search_128_128,
     avx512_search_128_192, avx512_search_128_256,
 };
 use crate::domain::key::Key;
+use speck::SpeckVersion;
 
 #[cfg(all(
     target_arch = "x86_64",

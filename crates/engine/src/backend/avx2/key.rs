@@ -1,6 +1,6 @@
-use crate::api::version::SpeckVersion;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
+use speck::SpeckVersion;
 use std::arch::x86_64::{__m256i, _mm256_loadu_si256, _mm256_setzero_si256};
 
 #[derive(Debug, Copy, Clone)]
