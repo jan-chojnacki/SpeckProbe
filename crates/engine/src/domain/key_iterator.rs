@@ -6,7 +6,7 @@ use crate::backend::avx2::key::AVX2Key;
     target_feature = "avx512bw"
 ))]
 use crate::backend::avx512::key::AVX512Key;
-#[cfg(all(target_arch = "aarch64"))]
+#[cfg(target_arch = "aarch64")]
 use crate::backend::neon::key::NEONKey;
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 use crate::backend::sse2::key::SSE2Key;
