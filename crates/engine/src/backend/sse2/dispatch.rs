@@ -12,7 +12,7 @@ use speck::SpeckVersion;
 #[target_feature(enable = "sse2")]
 pub fn sse2_search_range_impl(
     req: SearchRangeRequest,
-) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+) -> Result<Vec<Key>, SearchEngineBackendError> {
     let results = match req.speck_version {
         SpeckVersion::Speck32_64 => sse2_search_32_64(&req),
         SpeckVersion::Speck48_72 => sse2_search_48_72(&req),
@@ -26,5 +26,5 @@ pub fn sse2_search_range_impl(
         SpeckVersion::Speck128_256 => sse2_search_128_256(&req),
     }?;
 
-    Ok((!results.is_empty()).then_some(results))
+    Ok(results)
 }

@@ -7,9 +7,7 @@ use crate::backend::scalar::version_dispatch::{
 use crate::domain::key::Key;
 use speck::SpeckVersion;
 
-pub fn search_range_impl(
-    req: SearchRangeRequest,
-) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+pub fn search_range_impl(req: SearchRangeRequest) -> Result<Vec<Key>, SearchEngineBackendError> {
     let results = match req.speck_version {
         SpeckVersion::Speck32_64 => search_32_64(&req),
         SpeckVersion::Speck48_72 => search_48_72(&req),
@@ -23,5 +21,5 @@ pub fn search_range_impl(
         SpeckVersion::Speck128_256 => search_128_256(&req),
     }?;
 
-    Ok((!results.is_empty()).then_some(results))
+    Ok(results)
 }

@@ -17,7 +17,7 @@ use domain::key::Key;
 use domain::key_iterator::KeyIteratorError;
 use thiserror::Error;
 
-#[derive(Debug, Error, Eq, PartialEq)]
+#[derive(Debug, Clone, Error, Eq, PartialEq)]
 pub enum SearchEngineBackendError {
     #[error(transparent)]
     BlockError(#[from] BlockError),
@@ -28,7 +28,7 @@ pub enum SearchEngineBackendError {
 pub trait SearchEngineBackend {
     fn handle_request(
         search_range_request: SearchRangeRequest,
-    ) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+    ) -> Result<Vec<Key>, SearchEngineBackendError> {
         match search_range_request.operation {
             Operation::Encrypt => Self::search_range_encrypt(search_range_request),
             Operation::Decrypt => Self::search_range_decrypt(search_range_request),
@@ -36,10 +36,10 @@ pub trait SearchEngineBackend {
     }
     fn search_range_encrypt(
         search_range_request: SearchRangeRequest,
-    ) -> Result<Option<Vec<Key>>, SearchEngineBackendError>;
+    ) -> Result<Vec<Key>, SearchEngineBackendError>;
     fn search_range_decrypt(
         search_range_request: SearchRangeRequest,
-    ) -> Result<Option<Vec<Key>>, SearchEngineBackendError>;
+    ) -> Result<Vec<Key>, SearchEngineBackendError>;
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
@@ -61,15 +61,15 @@ impl Default for SearchBackend {
 }
 
 pub fn search_range(
-    search_range_request: SearchRangeRequest,
-) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
-    search_range_with_backend(search_range_request, SearchBackend::Auto)
+    search_range_request: &SearchRangeRequest,
+) -> Result<Vec<Key>, SearchEngineBackendError> {
+    search_range_with_backend(search_range_request.clone(), SearchBackend::Auto) //TODO zobaczyć czy da się usunąć clone
 }
 
 pub fn search_range_with_backend(
     search_range_request: SearchRangeRequest,
     backend: SearchBackend,
-) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+) -> Result<Vec<Key>, SearchEngineBackendError> {
     match backend {
         SearchBackend::Auto => search_range_auto(search_range_request),
         SearchBackend::Scalar => SearchEngineScalar::handle_request(search_range_request),
@@ -100,7 +100,7 @@ pub fn search_range_with_backend(
 #[multiversion::multiversion(targets("x86_64+avx512f+avx512bw", "x86_64+avx2", "x86_64+sse2"))]
 fn search_range_auto(
     search_range_request: SearchRangeRequest,
-) -> Result<Option<Vec<Key>>, SearchEngineBackendError> {
+) -> Result<Vec<Key>, SearchEngineBackendError> {
     if multiversion::target::target_cfg_f!(all(
         target_arch = "x86_64",
         target_feature = "avx512f",

@@ -15,7 +15,7 @@ use crate::domain::simd_key::SimdKey;
 use speck::SpeckVersion;
 use thiserror::Error;
 
-#[derive(Debug, Error, Eq, PartialEq)]
+#[derive(Debug, Clone, Error, Eq, PartialEq)]
 pub enum KeyIteratorError {
     #[error("expected {expected} bytes, got {got}")]
     InvalidPrefixLength { expected: usize, got: usize },

@@ -1,7 +1,7 @@
 use speck::SpeckVersion;
 use thiserror::Error;
 
-#[derive(Debug, Error, Eq, PartialEq)]
+#[derive(Debug, Clone, Error, Eq, PartialEq)]
 pub enum BlockError {
     #[error("expected {expected} bytes, got {got}")]
     InvalidLength { expected: usize, got: usize },
