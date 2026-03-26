@@ -17,3 +17,25 @@ pub struct SearchRangeRequest {
     pub expected_bytes: Block,
     pub operation: Operation,
 }
+
+impl SearchRangeRequest {
+    pub fn new(
+        speck_version: SpeckVersion,
+        start_key: u64,
+        key_count: u64,
+        prefix: Vec<u8>,
+        data_bytes: Block,
+        expected_bytes: Block,
+        operation: Operation,
+    ) -> Self {
+        Self {
+            speck_version,
+            start_key,
+            key_count,
+            prefix,
+            data_bytes,
+            expected_bytes,
+            operation,
+        }
+    }
+}

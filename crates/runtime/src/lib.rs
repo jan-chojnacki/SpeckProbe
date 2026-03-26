@@ -3,6 +3,7 @@ use engine::api::request::SearchRangeRequest;
 use engine::domain::key::Key;
 
 mod orchestrator;
+mod producer;
 mod worker;
 
 #[derive(Debug, Clone, Eq, PartialEq)]

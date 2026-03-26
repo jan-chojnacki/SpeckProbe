@@ -26,7 +26,7 @@ pub enum KeyIteratorError {
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct KeyIterator {
     current: u64,
-    end: u64,
+    remaining: u64,
     prefix: [u8; 24],
     prefix_len: usize,
     speck_version: SpeckVersion,
@@ -40,7 +40,6 @@ impl KeyIterator {
         speck_version: SpeckVersion,
     ) -> Result<Self, KeyIteratorError> {
         let expected = speck_version.prefix_size_bytes();
-
         let prefix_len = prefix.len();
 
         if prefix_len != expected {
@@ -52,21 +51,11 @@ impl KeyIterator {
 
         let mut new_prefix = [0u8; 24];
         new_prefix[..prefix_len].copy_from_slice(prefix);
-        let prefix = new_prefix;
-
-        let current = start;
-
-        let end = match start.checked_add(count) {
-            None => {
-                return Err(KeyIteratorError::InvalidKeyCount { start, count });
-            }
-            Some(s) => s,
-        };
 
         Ok(Self {
-            current,
-            end,
-            prefix,
+            current: start,
+            remaining: count,
+            prefix: new_prefix,
             prefix_len,
             speck_version,
         })
@@ -107,30 +96,30 @@ impl KeyIterator {
         let v = std::array::from_fn(|i| self.current + i as u64);
         NEONKey::new(&self.prefix[..self.prefix_len], v, self.speck_version)
     }
-
+    //TODO dodać testy czy nie robi 2 razy 0
     pub fn next_into(&mut self, out: &mut Key) -> Option<()> {
-        if self.current >= self.end {
+        if self.remaining == 0 {
             return None;
         }
 
         let v = self.current;
-        self.current = self.current.saturating_add(1);
+        self.current = self.current.wrapping_add(1);
+        self.remaining -= self.remaining.saturating_sub(1);
 
         out.update(v);
-
         Some(())
     }
 
     pub fn simd_next_into<const T: usize>(&mut self, out: &mut impl SimdKey<T>) -> Option<()> {
-        if self.current >= self.end {
+        if self.remaining == 0 {
             return None;
         }
 
         let v = std::array::from_fn(|i| self.current + i as u64);
-        self.current = self.current.saturating_add(T as u64);
+        self.current = self.current.wrapping_add(T as u64);
+        self.remaining = self.remaining.saturating_sub(T as u64);
 
         out.update(v);
-
         Some(())
     }
 }
