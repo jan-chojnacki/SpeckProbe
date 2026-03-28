@@ -1,14 +1,14 @@
-use crate::backend::sse2::key::SSE2Key;
+use crate::backend::x86_64::sse2::key::SSE2Key;
 use crate::domain::key::Key;
 use std::arch::x86_64::{__m128i, _mm_cmpeq_epi16, _mm_cmpeq_epi32, _mm_movemask_epi8};
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]
-pub fn sse2_block_compare_u16(
+pub fn sse2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[__m128i; 2],
     v: &[__m128i; 2],
-    key: &SSE2Key<8>,
-    out: &mut Vec<Key>,
+    key: &SSE2Key<8, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = _mm_cmpeq_epi16(e[0], v[0]);
     let cmp_hi = _mm_cmpeq_epi16(e[1], v[1]);
@@ -31,11 +31,11 @@ pub fn sse2_block_compare_u16(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]
-pub fn sse2_block_compare_u32(
+pub fn sse2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[__m128i; 2],
     v: &[__m128i; 2],
-    key: &SSE2Key<4>,
-    out: &mut Vec<Key>,
+    key: &SSE2Key<4, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = _mm_cmpeq_epi32(e[0], v[0]);
     let cmp_hi = _mm_cmpeq_epi32(e[1], v[1]);
@@ -67,11 +67,11 @@ pub fn sse2_block_compare_u32(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]
-pub fn sse2_block_compare_u64(
+pub fn sse2_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[__m128i; 2],
     v: &[__m128i; 2],
-    key: &SSE2Key<2>,
-    out: &mut Vec<Key>,
+    key: &SSE2Key<2, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = _mm_cmpeq_epi32(e[0], v[0]);
     let cmp_hi = _mm_cmpeq_epi32(e[1], v[1]);

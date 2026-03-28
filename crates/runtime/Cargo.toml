@@ -6,8 +6,4 @@ edition = "2024"
 [dependencies]
 engine = { path = "../engine" }
 speck = { path = "../speck" }
-thiserror = "2"
-strum = { version = "0.28", features = ["derive"] }
-tokio = { version = "1.50.0", features = ["rt-multi-thread", "sync"] }
-core_affinity = "0.8"
-primitive-types = "0.14"
+rayon = "1.11"

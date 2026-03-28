@@ -1,14 +1,14 @@
-use crate::backend::avx2::key::AVX2Key;
+use crate::backend::x86_64::avx2::key::AVX2Key;
 use crate::domain::key::Key;
 use std::arch::x86_64::{__m256i, _mm256_cmpeq_epi16, _mm256_cmpeq_epi32, _mm256_movemask_epi8};
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 #[target_feature(enable = "avx2")]
-pub fn avx2_block_compare_u16(
+pub fn avx2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[__m256i; 2],
     v: &[__m256i; 2],
-    key: &AVX2Key<16>,
-    out: &mut Vec<Key>,
+    key: &AVX2Key<16, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = _mm256_cmpeq_epi16(e[0], v[0]);
     let cmp_hi = _mm256_cmpeq_epi16(e[1], v[1]);
@@ -31,11 +31,11 @@ pub fn avx2_block_compare_u16(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 #[target_feature(enable = "avx2")]
-pub fn avx2_block_compare_u32(
+pub fn avx2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[__m256i; 2],
     v: &[__m256i; 2],
-    key: &AVX2Key<8>,
-    out: &mut Vec<Key>,
+    key: &AVX2Key<8, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = _mm256_cmpeq_epi32(e[0], v[0]);
     let cmp_hi = _mm256_cmpeq_epi32(e[1], v[1]);
@@ -75,11 +75,11 @@ pub fn avx2_block_compare_u32(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 #[target_feature(enable = "avx2")]
-pub fn avx2_block_compare_u64(
+pub fn avx2_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[__m256i; 2],
     v: &[__m256i; 2],
-    key: &AVX2Key<4>,
-    out: &mut Vec<Key>,
+    key: &AVX2Key<4, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = _mm256_cmpeq_epi32(e[0], v[0]);
     let cmp_hi = _mm256_cmpeq_epi32(e[1], v[1]);

@@ -1,40 +1,38 @@
+use crate::backend::x86_64::sse2::key::SSE2Key;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
 use speck::SpeckVersion;
 use std::arch::x86_64::{__m512i, _mm512_loadu_si512, _mm512_setzero_si512};
 
 #[derive(Debug, Copy, Clone)]
-pub struct AVX512Key<const T: usize> {
-    bytes: [[u8; 32]; T],
-    len: usize,
-    prefix_len: usize,
+pub struct AVX512Key<const LANES: usize, const BYTES: usize, const PREFIX: usize> {
+    bytes: [[u8; BYTES]; LANES],
     pa: __m512i,
     pb: __m512i,
     pc: __m512i,
 }
 
-impl<const T: usize> SimdKey<T> for AVX512Key<T> {
-    fn update(&mut self, v: [u64; T]) {
+impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> SimdKey<LANES>
+    for AVX512Key<LANES, BYTES, PREFIX>
+{
+    fn update(&mut self, v: [u64; LANES]) {
         self.update(v);
     }
 }
 
-impl<const T: usize> AVX512Key<T> {
+impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> AVX512Key<LANES, BYTES, PREFIX> {
+    const SUFFIX: usize = BYTES - PREFIX;
+
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
-    pub fn new(prefix: &[u8], v: [u64; T], speck_version: SpeckVersion) -> Self {
-        let p = prefix.len();
+    pub fn new(prefix: &[u8; PREFIX], v: [u64; LANES], speck_version: SpeckVersion) -> Self {
+        let mut bytes = [[0u8; BYTES]; LANES];
 
-        let mut bytes = [[0u8; 32]; T];
-
-        let len = p + 8;
-
-        for i in 0..T {
-            bytes[i][..p].copy_from_slice(prefix);
-            bytes[i][p..len].copy_from_slice(&v[i].to_le_bytes());
+        for i in 0..LANES {
+            bytes[i][Self::SUFFIX..].copy_from_slice(prefix);
+            let suffix = v[i].to_le_bytes();
+            bytes[i][..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
         }
-
-        let prefix_len = p;
 
         let mut pa = _mm512_setzero_si512();
         let mut pb = _mm512_setzero_si512();
@@ -42,42 +40,42 @@ impl<const T: usize> AVX512Key<T> {
 
         match speck_version {
             SpeckVersion::Speck48_96 => {
-                let a: [[u8; 4]; T] = bytes.map(|b| [b[0], b[1], b[2], 0]);
+                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], 0]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck64_96 => {
-                let a: [[u8; 4]; T] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
+                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck64_128 => {
-                let a: [[u8; 4]; T] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
-                let b: [[u8; 4]; T] = bytes.map(|b| [b[4], b[5], b[6], b[7]]);
+                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
+                let b: [[u8; 4]; LANES] = bytes.map(|b| [b[4], b[5], b[6], b[7]]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
                     pb = _mm512_loadu_si512(b.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck96_144 => {
-                let a: [[u8; 8]; T] = bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
+                let a: [[u8; 8]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck128_128 => {
-                let a: [[u8; 8]; T] =
+                let a: [[u8; 8]; LANES] =
                     bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck128_192 => {
-                let a: [[u8; 8]; T] =
+                let a: [[u8; 8]; LANES] =
                     bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                let b: [[u8; 8]; T] =
+                let b: [[u8; 8]; LANES] =
                     bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
@@ -85,11 +83,11 @@ impl<const T: usize> AVX512Key<T> {
                 }
             }
             SpeckVersion::Speck128_256 => {
-                let a: [[u8; 8]; T] =
+                let a: [[u8; 8]; LANES] =
                     bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                let b: [[u8; 8]; T] =
+                let b: [[u8; 8]; LANES] =
                     bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-                let c: [[u8; 8]; T] =
+                let c: [[u8; 8]; LANES] =
                     bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
                 unsafe {
                     pa = _mm512_loadu_si512(a.as_ptr().cast());
@@ -100,48 +98,31 @@ impl<const T: usize> AVX512Key<T> {
             _ => {}
         }
 
-        Self {
-            bytes,
-            len,
-            prefix_len,
-            pa,
-            pb,
-            pc,
+        Self { bytes, pa, pb, pc }
+    }
+
+    pub fn update(&mut self, v: [u64; LANES]) {
+        for i in 0..LANES {
+            let suffix = v[i].to_le_bytes();
+            self.bytes[i][..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
         }
     }
 
-    pub fn update(&mut self, v: [u64; T]) {
-        let p = self.prefix_len;
-        let len = self.len;
-
-        for i in 0..T {
-            self.bytes[i][p..len].copy_from_slice(&v[i].to_le_bytes());
-        }
-    }
-
-    pub fn get(&self, i: usize) -> Key {
-        let p = self.prefix_len;
+    pub fn get(&self, i: usize) -> Key<BYTES, PREFIX> {
         let row = &self.bytes[i];
-
-        let value = u64::from_le_bytes(
-            row[p..p + 8]
-                .try_into()
-                .expect("SimdKey invariant broken: value part must be 8 bytes"),
-        );
-
-        Key::new(&row[..p], value)
+        Key::new_from_bytes(row)
     }
 
-    pub fn as_bytes(&self) -> [&[u8]; T] {
-        self.bytes.each_ref().map(|b| &b[..self.len])
+    pub fn as_bytes(&self) -> &[[u8; BYTES]; LANES] {
+        &self.bytes
     }
 
-    pub fn to_vec(&self) -> [Vec<u8>; T] {
+    pub fn to_vec(&self) -> [Vec<u8>; LANES] {
         self.as_bytes().map(|b| b.to_vec())
     }
 }
 
-impl AVX512Key<32> {
+impl<const PREFIX: usize> AVX512Key<32, 8, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u16x4_key(&self) -> [__m512i; 4] {
@@ -160,7 +141,7 @@ impl AVX512Key<32> {
     }
 }
 
-impl AVX512Key<16> {
+impl<const PREFIX: usize> AVX512Key<16, 9, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u24x3_key(&self) -> [__m512i; 3] {
@@ -175,7 +156,9 @@ impl AVX512Key<16> {
             ]
         }
     }
+}
 
+impl<const PREFIX: usize> AVX512Key<16, 12, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u24x4_key(&self) -> [__m512i; 4] {
@@ -205,7 +188,9 @@ impl AVX512Key<16> {
             ]
         }
     }
+}
 
+impl<const PREFIX: usize> AVX512Key<16, 16, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u32x4_key(&self) -> [__m512i; 4] {
@@ -222,7 +207,7 @@ impl AVX512Key<16> {
     }
 }
 
-impl AVX512Key<8> {
+impl<const PREFIX: usize> AVX512Key<8, 12, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u48x2_key(&self) -> [__m512i; 2] {
@@ -239,7 +224,9 @@ impl AVX512Key<8> {
             ]
         }
     }
+}
 
+impl<const PREFIX: usize> AVX512Key<8, 18, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u48x3_key(&self) -> [__m512i; 3] {
@@ -257,7 +244,9 @@ impl AVX512Key<8> {
             ]
         }
     }
+}
 
+impl<const PREFIX: usize> AVX512Key<8, 16, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u64x2_key(&self) -> [__m512i; 2] {
@@ -266,7 +255,9 @@ impl AVX512Key<8> {
             .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
         unsafe { [self.pa, _mm512_loadu_si512(b.as_ptr().cast())] }
     }
+}
 
+impl<const PREFIX: usize> AVX512Key<8, 24, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u64x3_key(&self) -> [__m512i; 3] {
@@ -275,7 +266,9 @@ impl AVX512Key<8> {
             .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
         unsafe { [self.pa, self.pb, _mm512_loadu_si512(c.as_ptr().cast())] }
     }
+}
 
+impl<const PREFIX: usize> AVX512Key<8, 32, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
     #[target_feature(enable = "avx512f")]
     pub fn avx512_u64x4_key(&self) -> [__m512i; 4] {

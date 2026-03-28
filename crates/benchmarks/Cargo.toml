@@ -6,14 +6,11 @@ publish = false
 
 [dependencies]
 criterion = "0.8"
+rayon = "1.11"
 
 [dev-dependencies]
 engine = { path = "../engine" }
 speck = { path = "../speck" }
-
-[[bench]]
-name = "engine_benches"
-harness = false
 
 [[bench]]
 name = "speck_scalar_benches"
@@ -33,4 +30,8 @@ harness = false
 
 [[bench]]
 name = "speck_neon_benches"
+harness = false
+
+[[bench]]
+name = "task_producer_benches"
 harness = false
