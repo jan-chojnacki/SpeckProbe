@@ -2,6 +2,7 @@
 mod avx2;
 #[cfg(target_arch = "x86_64")]
 mod avx512;
+mod common;
 #[cfg(target_arch = "aarch64")]
 mod neon;
 mod scalar;
@@ -12,6 +13,7 @@ mod sse2;
 pub use avx2::*;
 #[cfg(target_arch = "x86_64")]
 pub use avx512::*;
+pub use common::*;
 #[cfg(target_arch = "aarch64")]
 pub use neon::*;
 pub use scalar::*;
