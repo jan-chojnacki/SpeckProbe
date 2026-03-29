@@ -7,6 +7,7 @@ use crate::backend::scalar::word_ty;
 macro_rules! impl_decrypt_block {
     ($block:literal, $key:literal, $word:literal, $key_words:literal) => {
         paste! {
+            #[inline(always)]
             pub fn [<decrypt_block_ $block _ $key>](ct: [word_ty!($word); 2], key: [word_ty!($word); $key_words]) -> [word_ty!($word); 2] {
                 let round_keys = [<expand_key_ $block _ $key>](key);
 

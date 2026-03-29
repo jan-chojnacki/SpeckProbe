@@ -6,6 +6,7 @@ pub struct Key<const BYTES: usize, const PREFIX: usize> {
 impl<const BYTES: usize, const PREFIX: usize> Key<BYTES, PREFIX> {
     const SUFFIX: usize = BYTES - PREFIX;
 
+    #[inline(always)]
     pub fn new(prefix: &[u8; PREFIX], v: u64) -> Self {
         let mut bytes = [0u8; BYTES];
 
@@ -16,25 +17,30 @@ impl<const BYTES: usize, const PREFIX: usize> Key<BYTES, PREFIX> {
         Self { bytes }
     }
 
+    #[inline(always)]
     pub fn new_from_bytes(bytes: &[u8; BYTES]) -> Self {
         Self { bytes: *bytes }
     }
 
+    #[inline(always)]
     pub fn update(&mut self, v: u64) {
         let suffix = v.to_le_bytes();
         self.bytes[..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
     }
 
+    #[inline(always)]
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes
     }
 
+    #[inline(always)]
     pub fn to_vec(&self) -> Vec<u8> {
         self.as_bytes().to_vec()
     }
 }
 
 impl<const PREFIX: usize> Key<8, PREFIX> {
+    #[inline(always)]
     pub fn as_u16x4_le(&self) -> [u16; 4] {
         let b = &self.bytes;
 
@@ -48,6 +54,7 @@ impl<const PREFIX: usize> Key<8, PREFIX> {
 }
 
 impl<const PREFIX: usize> Key<9, PREFIX> {
+    #[inline(always)]
     pub fn as_u24x3_le(&self) -> [u32; 3] {
         let b = &self.bytes;
 
@@ -60,6 +67,7 @@ impl<const PREFIX: usize> Key<9, PREFIX> {
 }
 
 impl<const PREFIX: usize> Key<12, PREFIX> {
+    #[inline(always)]
     pub fn as_u24x4_le(&self) -> [u32; 4] {
         let b = &self.bytes;
 
@@ -71,6 +79,7 @@ impl<const PREFIX: usize> Key<12, PREFIX> {
         ]
     }
 
+    #[inline(always)]
     pub fn as_u32x3_le(&self) -> [u32; 3] {
         let b = &self.bytes;
 
@@ -81,6 +90,7 @@ impl<const PREFIX: usize> Key<12, PREFIX> {
         ]
     }
 
+    #[inline(always)]
     pub fn as_u48x2_le(&self) -> [u64; 2] {
         let b = &self.bytes;
 
@@ -91,6 +101,7 @@ impl<const PREFIX: usize> Key<12, PREFIX> {
     }
 }
 impl<const PREFIX: usize> Key<16, PREFIX> {
+    #[inline(always)]
     pub fn as_u32x4_le(&self) -> [u32; 4] {
         let b = &self.bytes;
 
@@ -102,6 +113,7 @@ impl<const PREFIX: usize> Key<16, PREFIX> {
         ]
     }
 
+    #[inline(always)]
     pub fn as_u64x2_le(&self) -> [u64; 2] {
         let b = &self.bytes;
 
@@ -113,6 +125,7 @@ impl<const PREFIX: usize> Key<16, PREFIX> {
 }
 
 impl<const PREFIX: usize> Key<18, PREFIX> {
+    #[inline(always)]
     pub fn as_u48x3_le(&self) -> [u64; 3] {
         let b = &self.bytes;
 
@@ -125,6 +138,7 @@ impl<const PREFIX: usize> Key<18, PREFIX> {
 }
 
 impl<const PREFIX: usize> Key<24, PREFIX> {
+    #[inline(always)]
     pub fn as_u64x3_le(&self) -> [u64; 3] {
         let b = &self.bytes;
 
@@ -136,6 +150,7 @@ impl<const PREFIX: usize> Key<24, PREFIX> {
     }
 }
 impl<const PREFIX: usize> Key<32, PREFIX> {
+    #[inline(always)]
     pub fn as_u64x4_le(&self) -> [u64; 4] {
         let b = &self.bytes;
 

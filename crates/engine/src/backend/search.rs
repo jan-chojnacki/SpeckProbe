@@ -6,6 +6,7 @@ use speck::SpeckVersion;
 
 macro_rules! define_search {
     (name = $name:ident, version = $version:path, bytes = $bytes:literal, vector = $vector:ty, function = $function:path, comparator = $comparator:path, key_conversion = $key_conversion:ident) => {
+        #[inline(always)]
         pub fn $name<const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,

@@ -17,6 +17,7 @@ macro_rules! l_words {
 macro_rules! impl_expand_key {
     ($block:literal, $key:literal, $word:literal, $key_words:literal, $rounds:literal) => {
         paste! {
+            #[inline(always)]
             pub fn [<expand_key_ $block _ $key>](key: [word_ty!($word); $key_words]) -> [word_ty!($word); $rounds ] {
                 let mut rk: [word_ty!($word); $rounds] = [0; $rounds];
                 let mut l = l_words!(key, $key_words);

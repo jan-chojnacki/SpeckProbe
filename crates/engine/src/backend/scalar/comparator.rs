@@ -1,5 +1,6 @@
 use crate::domain::key::Key;
 
+#[inline(always)]
 pub fn block_compare<T, const BYTES: usize, const PREFIX: usize>(
     e: &[T; 2],
     v: &[T; 2],

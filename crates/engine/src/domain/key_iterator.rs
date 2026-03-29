@@ -33,6 +33,7 @@ pub struct KeyIterator<const BYTES: usize, const PREFIX: usize> {
 }
 
 impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
+    #[inline(always)]
     pub fn new(start: u64, end: u64, prefix: [u8; PREFIX], speck_version: SpeckVersion) -> Self {
         assert!(start <= end);
 
@@ -45,6 +46,7 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
         }
     }
 
+    #[inline(always)]
     pub fn new_key(&self) -> Key<BYTES, PREFIX> {
         Key::new(&self.prefix, self.current)
     }
@@ -81,6 +83,7 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
         NEONKey::new(&self.prefix[..self.prefix_len], v, self.speck_version)
     }
 
+    #[inline(always)]
     pub fn next_into(&mut self, out: &mut Key<BYTES, PREFIX>) -> Option<()> {
         if self.finished {
             return None;
@@ -97,6 +100,7 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
         Some(())
     }
 
+    #[inline(always)]
     pub fn simd_next_into<const LANES: usize>(
         &mut self,
         out: &mut impl SimdKey<LANES>,

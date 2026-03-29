@@ -4,9 +4,10 @@ use rayon::ThreadPoolBuilder;
 use rayon::prelude::*;
 use std::time::Instant;
 
+//base scalar: total: 705.452474ms
 fn main() {
     let start = [0, 0, 0, 0, 0, 0];
-    let end = [255, 0, 0, 0, 0, 0];
+    let end = [255, 10, 0, 0, 0, 0];
     let data = [0, 0];
     let expected = [0, 0];
 
@@ -23,7 +24,7 @@ fn main() {
     pool.install(|| {
         producer.par_bridge().into_par_iter().for_each(|i| {
             let mut out: Vec<Key<8, 6>> = Vec::new();
-            engine::backend::search::search_decrypt_32_64(i, &mut out);
+            engine::backend::search::search_encrypt_32_64(i, &mut out);
         });
     });
 

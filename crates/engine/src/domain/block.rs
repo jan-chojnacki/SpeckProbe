@@ -13,6 +13,7 @@ pub struct Block {
 }
 
 impl Block {
+    #[inline(always)]
     pub fn new(bytes: &[u8], version: &SpeckVersion) -> Result<Self, BlockError> {
         let expected = version.block_size_bytes();
 
@@ -28,10 +29,12 @@ impl Block {
         })
     }
 
+    #[inline(always)]
     pub fn as_bytes(&self) -> &[u8] {
         &self.bytes
     }
 
+    #[inline(always)]
     pub fn as_u16x2_le(&self) -> Result<[u16; 2], BlockError> {
         const EXPECTED: usize = 4;
 
@@ -48,6 +51,7 @@ impl Block {
         ])
     }
 
+    #[inline(always)]
     pub fn as_u24x2_le(&self) -> Result<[u32; 2], BlockError> {
         const EXPECTED: usize = 6;
 
@@ -64,6 +68,7 @@ impl Block {
         ])
     }
 
+    #[inline(always)]
     pub fn as_u32x2_le(&self) -> Result<[u32; 2], BlockError> {
         const EXPECTED: usize = 8;
 
@@ -80,6 +85,7 @@ impl Block {
         ])
     }
 
+    #[inline(always)]
     pub fn as_u48x2_le(&self) -> Result<[u64; 2], BlockError> {
         const EXPECTED: usize = 12;
 
@@ -114,6 +120,7 @@ impl Block {
         ])
     }
 
+    #[inline(always)]
     pub fn as_u64x2_le(&self) -> Result<[u64; 2], BlockError> {
         const EXPECTED: usize = 16;
 

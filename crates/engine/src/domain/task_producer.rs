@@ -16,6 +16,7 @@ impl<T, const BYTES: usize, const PREFIX: usize> TaskProducer<T, BYTES, PREFIX> 
         _ => u64::MAX,
     };
 
+    #[inline(always)]
     pub fn new(
         start_prefix: [u8; PREFIX],
         end_prefix: [u8; PREFIX],
@@ -51,6 +52,7 @@ where
 {
     type Item = Task<T, BYTES, PREFIX>;
 
+    #[inline(always)]
     fn next(&mut self) -> Option<Self::Item> {
         if self.finished {
             return None;
