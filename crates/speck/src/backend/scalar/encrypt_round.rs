@@ -22,6 +22,13 @@ macro_rules! define_encrypt_round {
     };
 }
 
+// macro_rules! define_encrypt_round {
+//     ($x:expr, $y:expr, $k:expr, $alpha:literal, $beta:literal) => {
+//         x.rotate_right($alpha).wrapping_add(y).bitxor(k);
+//         y.rotate_left($beta).bitxor(x);
+//     };
+// }
+
 define_encrypt_round!(16, 7, 2);
 define_encrypt_round!(24, 8, 3);
 define_encrypt_round!(32, 8, 3);

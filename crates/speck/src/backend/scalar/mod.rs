@@ -27,3 +27,5 @@ use word_ty;
 
 pub use decrypt_block::*;
 pub use encrypt_block::*;
+pub use operations::U24;
+pub use operations::U48;
