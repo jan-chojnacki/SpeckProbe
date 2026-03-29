@@ -6,37 +6,6 @@ use paste::paste;
 use seq_macro::seq;
 use std::ops::BitXor;
 
-macro_rules! impl_encrypt_block {
-    ($block:literal, $key:literal, $word:literal, $key_words:literal) => {
-        paste! {
-            #[inline(always)]
-            pub fn [<encrypt_block_ $block _ $key>](ct: [word_ty!($word); 2], key: [word_ty!($word); $key_words]) -> [word_ty!($word); 2] {
-                let round_keys = [<expand_key_ $block _ $key>](key);
-
-                let mut x = ct[0];
-                let mut y = ct[1];
-
-                for k in round_keys {
-                    [<encrypt_round_ $word>](&mut x, &mut y, k);
-                }
-
-                [x, y]
-            }
-        }
-    };
-}
-
-impl_encrypt_block!(32, 64, 16, 4);
-impl_encrypt_block!(48, 72, 24, 3);
-impl_encrypt_block!(48, 96, 24, 4);
-impl_encrypt_block!(64, 96, 32, 3);
-impl_encrypt_block!(64, 128, 32, 4);
-impl_encrypt_block!(96, 96, 48, 2);
-impl_encrypt_block!(96, 144, 48, 3);
-impl_encrypt_block!(128, 128, 64, 2);
-impl_encrypt_block!(128, 192, 64, 3);
-impl_encrypt_block!(128, 256, 64, 4);
-
 macro_rules! round_idx {
     (2, $i:literal) => {
         0
@@ -271,6 +240,53 @@ macro_rules! define_encrypt_round_inline {
         $y = $y.rotate_left($beta).bitxor($x);
     };
 }
+
+macro_rules! impl_expand_key {
+    ($round_keys:expr, $key:expr, $word:ty, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {
+        let mut l = l_words!($key, $key_words);
+        let mut k = $key[$key_words - 1];
+
+
+        seq!(I in 0..$rounds {
+            $round_keys[I] = k;
+            define_encrypt_round_inline!(l[round_idx!($key_words, I)], k, <$word as From<u8>>::from(I as u8), $alpha, $beta);
+        });
+
+        $round_keys[$rounds] = k;
+    };
+}
+
+macro_rules! impl_encrypt_block {
+    ($block:literal, $key:literal, $word:ty, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {
+        paste! {
+            #[inline(always)]
+            pub fn [<encrypt_block_ $block _ $key>](ct: [$word; 2], key: [$word; $key_words]) -> [$word; 2] {
+                let mut round_keys: [$word; $rounds + 1] = [Default::default(); $rounds + 1];
+                impl_expand_key!(round_keys, key, $word, $key_words, $alpha, $beta, $rounds);
+
+                let mut x = ct[0];
+                let mut y = ct[1];
+
+                seq!(I in 0..=$rounds {
+                    define_encrypt_round_inline!(x, y, round_keys[I], $alpha, $beta);
+                });
+
+                [x, y]
+            }
+        }
+    };
+}
+
+impl_encrypt_block!(32, 64, u16, 4, 7, 2, 21);
+impl_encrypt_block!(48, 72, U24, 3, 8, 3, 21);
+impl_encrypt_block!(48, 96, U24, 4, 8, 3, 22);
+impl_encrypt_block!(64, 96, u32, 3, 8, 3, 25);
+impl_encrypt_block!(64, 128, u32, 4, 8, 3, 26);
+impl_encrypt_block!(96, 96, U48, 2, 8, 3, 27);
+impl_encrypt_block!(96, 144, U48, 3, 8, 3, 28);
+impl_encrypt_block!(128, 128, u64, 2, 8, 3, 31);
+impl_encrypt_block!(128, 192, u64, 3, 8, 3, 32);
+impl_encrypt_block!(128, 256, u64, 4, 8, 3, 33);
 
 //runda - 1
 macro_rules! impl_encrypt_block_inflight {

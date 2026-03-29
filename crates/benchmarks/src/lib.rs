@@ -21,6 +21,7 @@ macro_rules! define_cipher_bench {
         key = $key:expr,
         pt = $pt:expr,
         encrypt = $encrypt:path,
+        encrypt_inflight = $encrypt_inflight:path,
         decrypt = $decrypt:path
     ) => {
         $(#[$meta])*
@@ -32,6 +33,13 @@ macro_rules! define_cipher_bench {
             g.bench_function(format!("{}/encrypt", $prefix), |b| {
                 b.iter(|| {
                     let out = $encrypt(black_box(pt), black_box(key));
+                    black_box(out);
+                })
+            });
+
+            g.bench_function(format!("{}/encrypt_inflight", $prefix), |b| {
+                b.iter(|| {
+                    let out = $encrypt_inflight(black_box(pt), black_box(key));
                     black_box(out);
                 })
             });

@@ -4,7 +4,7 @@ use crate::codec::{
     write_u32_le, write_u48_le, write_u64_le,
 };
 use crate::error::SPECKError;
-use speck::SpeckVersion;
+use speck::{SpeckVersion, U24, U48};
 use speck::{
     decrypt_block_32_64, decrypt_block_48_72, decrypt_block_48_96, decrypt_block_64_96,
     decrypt_block_64_128, decrypt_block_96_96, decrypt_block_96_144, decrypt_block_128_128,
@@ -110,13 +110,13 @@ impl SPECK {
                 read_u16_le,
                 write_u16_le,
             ),
-            SpeckVersion::Speck48_72 => self.speck_cbc_encrypt::<u32, 3, 3>(
+            SpeckVersion::Speck48_72 => self.speck_cbc_encrypt::<U24, 3, 3>(
                 data,
                 encrypt_block_48_72,
                 read_u24_le,
                 write_u24_le,
             ),
-            SpeckVersion::Speck48_96 => self.speck_cbc_encrypt::<u32, 3, 4>(
+            SpeckVersion::Speck48_96 => self.speck_cbc_encrypt::<U24, 3, 4>(
                 data,
                 encrypt_block_48_96,
                 read_u24_le,
@@ -134,13 +134,13 @@ impl SPECK {
                 read_u32_le,
                 write_u32_le,
             ),
-            SpeckVersion::Speck96_96 => self.speck_cbc_encrypt::<u64, 6, 2>(
+            SpeckVersion::Speck96_96 => self.speck_cbc_encrypt::<U48, 6, 2>(
                 data,
                 encrypt_block_96_96,
                 read_u48_le,
                 write_u48_le,
             ),
-            SpeckVersion::Speck96_144 => self.speck_cbc_encrypt::<u64, 6, 3>(
+            SpeckVersion::Speck96_144 => self.speck_cbc_encrypt::<U48, 6, 3>(
                 data,
                 encrypt_block_96_144,
                 read_u48_le,

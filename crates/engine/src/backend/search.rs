@@ -50,42 +50,42 @@ define_search!(
     comparator = block_compare,
     key_conversion = as_u16x4_le
 );
-define_search!(
-    name = search_encrypt_48_72,
-    version = SpeckVersion::Speck48_72,
-    bytes = 9,
-    vector = u32,
-    function = speck::encrypt_block_48_72,
-    comparator = block_compare,
-    key_conversion = as_u24x3_le
-);
-define_search!(
-    name = search_decrypt_48_72,
-    version = SpeckVersion::Speck48_72,
-    bytes = 9,
-    vector = u32,
-    function = speck::decrypt_block_48_72,
-    comparator = block_compare,
-    key_conversion = as_u24x3_le
-);
-define_search!(
-    name = search_encrypt_48_96,
-    version = SpeckVersion::Speck48_96,
-    bytes = 12,
-    vector = u32,
-    function = speck::encrypt_block_48_96,
-    comparator = block_compare,
-    key_conversion = as_u24x4_le
-);
-define_search!(
-    name = search_decrypt_48_96,
-    version = SpeckVersion::Speck48_96,
-    bytes = 12,
-    vector = u32,
-    function = speck::decrypt_block_48_96,
-    comparator = block_compare,
-    key_conversion = as_u24x4_le
-);
+// define_search!(
+//     name = search_encrypt_48_72,
+//     version = SpeckVersion::Speck48_72,
+//     bytes = 9,
+//     vector = u32,
+//     function = speck::encrypt_block_48_72,
+//     comparator = block_compare,
+//     key_conversion = as_u24x3_le
+// );
+// define_search!(
+//     name = search_decrypt_48_72,
+//     version = SpeckVersion::Speck48_72,
+//     bytes = 9,
+//     vector = u32,
+//     function = speck::decrypt_block_48_72,
+//     comparator = block_compare,
+//     key_conversion = as_u24x3_le
+// );
+// define_search!(
+//     name = search_encrypt_48_96,
+//     version = SpeckVersion::Speck48_96,
+//     bytes = 12,
+//     vector = u32,
+//     function = speck::encrypt_block_48_96,
+//     comparator = block_compare,
+//     key_conversion = as_u24x4_le
+// );
+// define_search!(
+//     name = search_decrypt_48_96,
+//     version = SpeckVersion::Speck48_96,
+//     bytes = 12,
+//     vector = u32,
+//     function = speck::decrypt_block_48_96,
+//     comparator = block_compare,
+//     key_conversion = as_u24x4_le
+// );
 define_search!(
     name = search_encrypt_64_96,
     version = SpeckVersion::Speck64_96,
@@ -122,42 +122,42 @@ define_search!(
     comparator = block_compare,
     key_conversion = as_u32x4_le
 );
-define_search!(
-    name = search_encrypt_96_96,
-    version = SpeckVersion::Speck96_96,
-    bytes = 12,
-    vector = u64,
-    function = speck::encrypt_block_96_96,
-    comparator = block_compare,
-    key_conversion = as_u48x2_le
-);
-define_search!(
-    name = search_decrypt_96_96,
-    version = SpeckVersion::Speck96_96,
-    bytes = 12,
-    vector = u64,
-    function = speck::decrypt_block_96_96,
-    comparator = block_compare,
-    key_conversion = as_u48x2_le
-);
-define_search!(
-    name = search_encrypt_96_144,
-    version = SpeckVersion::Speck96_144,
-    bytes = 18,
-    vector = u64,
-    function = speck::encrypt_block_96_144,
-    comparator = block_compare,
-    key_conversion = as_u48x3_le
-);
-define_search!(
-    name = search_decrypt_96_144,
-    version = SpeckVersion::Speck96_144,
-    bytes = 18,
-    vector = u64,
-    function = speck::decrypt_block_96_144,
-    comparator = block_compare,
-    key_conversion = as_u48x3_le
-);
+// define_search!(
+//     name = search_encrypt_96_96,
+//     version = SpeckVersion::Speck96_96,
+//     bytes = 12,
+//     vector = u64,
+//     function = speck::encrypt_block_96_96,
+//     comparator = block_compare,
+//     key_conversion = as_u48x2_le
+// );
+// define_search!(
+//     name = search_decrypt_96_96,
+//     version = SpeckVersion::Speck96_96,
+//     bytes = 12,
+//     vector = u64,
+//     function = speck::decrypt_block_96_96,
+//     comparator = block_compare,
+//     key_conversion = as_u48x2_le
+// );
+// define_search!(
+//     name = search_encrypt_96_144,
+//     version = SpeckVersion::Speck96_144,
+//     bytes = 18,
+//     vector = u64,
+//     function = speck::encrypt_block_96_144,
+//     comparator = block_compare,
+//     key_conversion = as_u48x3_le
+// );
+// define_search!(
+//     name = search_decrypt_96_144,
+//     version = SpeckVersion::Speck96_144,
+//     bytes = 18,
+//     vector = u64,
+//     function = speck::decrypt_block_96_144,
+//     comparator = block_compare,
+//     key_conversion = as_u48x3_le
+// );
 define_search!(
     name = search_encrypt_128_128,
     version = SpeckVersion::Speck128_128,

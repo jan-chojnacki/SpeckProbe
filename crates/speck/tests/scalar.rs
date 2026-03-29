@@ -27,16 +27,25 @@ mod test {
     define_speck_test!(
         "encrypt_block_48_72",
         encrypt_block_48_72,
-        key = [0x121110, 0x0a0908, 0x020100,],
-        data = [0x20796c, 0x6c6172],
+        key = [
+            U24::from(0x121110u32),
+            U24::from(0x0a0908u32),
+            U24::from(0x020100u32),
+        ],
+        data = [U24::from(0x20796cu32), U24::from(0x6c6172u32)],
         expected = [0xc049a5, 0x385adc]
     );
 
     define_speck_test!(
         "encrypt_block_48_96",
         encrypt_block_48_96,
-        key = [0x1a1918, 0x121110, 0x0a0908, 0x020100,],
-        data = [0x6d2073, 0x696874],
+        key = [
+            U24::from(0x1a1918u32),
+            U24::from(0x121110u32),
+            U24::from(0x0a0908u32),
+            U24::from(0x020100u32),
+        ],
+        data = [U24::from(0x6d2073u32), U24::from(0x696874u32)],
         expected = [0x735e10, 0xb6445d]
     );
 
@@ -59,16 +68,20 @@ mod test {
     define_speck_test!(
         "encrypt_block_96_96",
         encrypt_block_96_96,
-        key = [0x0d0c0b0a0908, 0x050403020100,],
-        data = [0x65776f68202c, 0x656761737520],
+        key = [U48::from(0x0d0c0b0a0908u64), U48::from(0x050403020100u64),],
+        data = [U48::from(0x65776f68202cu64), U48::from(0x656761737520u64)],
         expected = [0x9e4d09ab7178u64, 0x62bdde8f79aau64]
     );
 
     define_speck_test!(
         "encrypt_block_96_144",
         encrypt_block_96_144,
-        key = [0x151413121110, 0x0d0c0b0a0908, 0x050403020100,],
-        data = [0x656d6974206e, 0x69202c726576],
+        key = [
+            U48::from(0x151413121110u64),
+            U48::from(0x0d0c0b0a0908u64),
+            U48::from(0x050403020100u64),
+        ],
+        data = [U48::from(0x656d6974206eu64), U48::from(0x69202c726576u64)],
         expected = [0x2bf31072228au64, 0x7ae440252ee6u64]
     );
 
@@ -210,16 +223,25 @@ mod test {
     define_speck_test!(
         "decrypt_block_48_72",
         decrypt_block_48_72,
-        key = [0x121110, 0x0a0908, 0x020100,],
-        data = [0xc049a5, 0x385adc],
+        key = [
+            U24::from(0x121110u32),
+            U24::from(0x0a0908u32),
+            U24::from(0x020100u32),
+        ],
+        data = [U24::from(0xc049a5u32), U24::from(0x385adcu32)],
         expected = [0x20796c, 0x6c6172]
     );
 
     define_speck_test!(
         "decrypt_block_48_96",
         decrypt_block_48_96,
-        key = [0x1a1918, 0x121110, 0x0a0908, 0x020100,],
-        data = [0x735e10, 0xb6445d],
+        key = [
+            U24::from(0x1a1918u32),
+            U24::from(0x121110u32),
+            U24::from(0x0a0908u32),
+            U24::from(0x020100u32),
+        ],
+        data = [U24::from(0x735e10u32), U24::from(0xb6445du32)],
         expected = [0x6d2073, 0x696874]
     );
 
@@ -242,16 +264,20 @@ mod test {
     define_speck_test!(
         "decrypt_block_96_96",
         decrypt_block_96_96,
-        key = [0x0d0c0b0a0908, 0x050403020100,],
-        data = [0x9e4d09ab7178, 0x62bdde8f79aa],
+        key = [U48::from(0x0d0c0b0a0908u64), U48::from(0x050403020100u64),],
+        data = [U48::from(0x9e4d09ab7178u64), U48::from(0x62bdde8f79aau64)],
         expected = [0x65776f68202cu64, 0x656761737520u64]
     );
 
     define_speck_test!(
         "decrypt_block_96_144",
         decrypt_block_96_144,
-        key = [0x151413121110, 0x0d0c0b0a0908, 0x050403020100,],
-        data = [0x2bf31072228a, 0x7ae440252ee6],
+        key = [
+            U48::from(0x151413121110u64),
+            U48::from(0x0d0c0b0a0908u64),
+            U48::from(0x050403020100u64),
+        ],
+        data = [U48::from(0x2bf31072228au64), U48::from(0x7ae440252ee6u64)],
         expected = [0x656d6974206eu64, 0x69202c726576u64]
     );
 
