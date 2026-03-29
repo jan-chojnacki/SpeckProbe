@@ -33,6 +33,15 @@ define_search!(
     key_conversion = as_u16x4_le
 );
 define_search!(
+    name = search_encrypt_inflight_32_64,
+    version = SpeckVersion::Speck32_64,
+    bytes = 8,
+    vector = u16,
+    function = speck::encrypt_block_inflight_32_64,
+    comparator = block_compare,
+    key_conversion = as_u16x4_le
+);
+define_search!(
     name = search_decrypt_32_64,
     version = SpeckVersion::Speck32_64,
     bytes = 8,

@@ -7,3 +7,4 @@ edition = "2024"
 engine = { path = "../engine" }
 speck = { path = "../speck" }
 rayon = "1.11"
+seq-macro = "0.3.6"

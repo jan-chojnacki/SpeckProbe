@@ -24,7 +24,7 @@ fn main() {
     pool.install(|| {
         producer.par_bridge().into_par_iter().for_each(|i| {
             let mut out: Vec<Key<8, 6>> = Vec::new();
-            engine::backend::search::search_encrypt_32_64(i, &mut out);
+            engine::backend::search::search_encrypt_inflight_32_64(i, &mut out);
         });
     });
 

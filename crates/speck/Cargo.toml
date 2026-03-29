@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 paste = "1"
 strum = { version = "0.28", features = ["derive"] }
+seq-macro = "0.3.6"
 
 [dev-dependencies]
 bytemuck = { version = "1", features = ["avx512_simd", "aarch64_simd"] }

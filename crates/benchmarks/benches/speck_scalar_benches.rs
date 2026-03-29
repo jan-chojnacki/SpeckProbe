@@ -16,6 +16,15 @@ define_cipher_bench!(
 );
 
 define_cipher_bench!(
+    scalar_inflight_32_64_bench,
+    prefix = "inflight_32_64",
+    key = [0, 0, 0, 0],
+    pt = [0, 0],
+    encrypt = speck::encrypt_block_inflight_32_64,
+    decrypt = speck::decrypt_block_32_64
+);
+
+define_cipher_bench!(
     scalar_48_72_bench,
     prefix = "48_72",
     key = [0, 0, 0],
@@ -101,6 +110,7 @@ fn benchmark(c: &mut Criterion) {
     g.throughput(Throughput::Elements(1));
 
     scalar_32_64_bench(&mut g);
+    scalar_inflight_32_64_bench(&mut g);
     scalar_48_72_bench(&mut g);
     scalar_48_96_bench(&mut g);
     scalar_64_96_bench(&mut g);
