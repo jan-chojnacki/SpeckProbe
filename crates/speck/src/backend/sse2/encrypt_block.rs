@@ -2,7 +2,7 @@ use std::arch::x86_64::__m128i;
 
 macro_rules! impl_encrypt_block_sse2 {
     ($fn_name:ident, $word:tt, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {
-        #[doc = "Encrypts one Speck block using AVX."]
+        #[doc = "Encrypts one Speck block using SSE2."]
         #[doc = "# Safety"]
         #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
         #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
