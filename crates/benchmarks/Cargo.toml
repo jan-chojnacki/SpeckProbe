@@ -16,17 +16,17 @@ speck = { path = "../speck" }
 name = "speck_scalar_benches"
 harness = false
 
-#[[bench]]
-#name = "speck_sse2_benches"
-#harness = false
-#
-#[[bench]]
-#name = "speck_avx2_benches"
-#harness = false
-#
-#[[bench]]
-#name = "speck_avx512_benches"
-#harness = false
+[[bench]]
+name = "speck_sse2_benches"
+harness = false
+
+[[bench]]
+name = "speck_avx2_benches"
+harness = false
+
+[[bench]]
+name = "speck_avx512_benches"
+harness = false
 #
 #[[bench]]
 #name = "speck_neon_benches"

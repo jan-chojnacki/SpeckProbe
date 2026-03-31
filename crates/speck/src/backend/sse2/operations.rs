@@ -46,6 +46,46 @@ macro_rules! define_sse2_ror {
     };
 }
 
+#[macro_export]
+macro_rules! sse2_ror {
+    (16, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_or_si128(
+            core::arch::x86_64::_mm_srli_epi16($v, $n),
+            core::arch::x86_64::_mm_slli_epi16($v, 16 - $n),
+        )
+    };
+    (24, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_or_si128(
+                core::arch::x86_64::_mm_srli_epi32($v, $n),
+                core::arch::x86_64::_mm_slli_epi32($v, 24 - $n),
+            ),
+            core::arch::x86_64::_mm_set1_epi32(0x00FF_FFFFu32 as i32),
+        )
+    };
+    (32, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_or_si128(
+            core::arch::x86_64::_mm_srli_epi32($v, $n),
+            core::arch::x86_64::_mm_slli_epi32($v, 32 - $n),
+        )
+    };
+    (48, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_or_si128(
+                core::arch::x86_64::_mm_srli_epi64($v, $n),
+                core::arch::x86_64::_mm_slli_epi64($v, 48 - $n),
+            ),
+            core::arch::x86_64::_mm_set1_epi64x(0x0000_FFFF_FFFF_FFFFu64 as i64),
+        )
+    };
+    (64, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_or_si128(
+            core::arch::x86_64::_mm_srli_epi64($v, $n),
+            core::arch::x86_64::_mm_slli_epi64($v, 64 - $n),
+        )
+    };
+}
+
 define_sse2_ror!(16, 7);
 define_sse2_ror!(16, 2);
 define_sse2_ror!(24, 8);
@@ -63,10 +103,7 @@ macro_rules! define_sse2_rol {
             #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
             #[target_feature(enable = "sse2")]
             pub fn [<sse2_rol_ $n _u24>](v: __m128i) -> __m128i {
-                let r = _mm_or_si128(
-                    _mm_slli_epi32(v, $n),
-                    _mm_srli_epi32(v, 24 - $n),
-                );
+                let r = _mm_or_si128(_mm_slli_epi32(v, $n),_mm_srli_epi32(v, 24 - $n));
                 _mm_and_si128(r, _mm_set1_epi32(0x00FF_FFFFu32 as i32))
             }
         }
@@ -77,9 +114,7 @@ macro_rules! define_sse2_rol {
             #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
             #[target_feature(enable = "sse2")]
             pub fn [<sse2_rol_ $n _u48>](v: __m128i) -> __m128i {
-                let r = _mm_or_si128(
-                    _mm_slli_epi64(v, $n),
-                    _mm_srli_epi64(v, 48 - $n),
+                let r = _mm_or_si128(_mm_slli_epi64(v, $n),_mm_srli_epi64(v, 48 - $n),
                 );
                 _mm_and_si128(r, _mm_set1_epi64x(0x0000_FFFF_FFFF_FFFFu64 as i64))
             }
@@ -94,6 +129,46 @@ macro_rules! define_sse2_rol {
                 _mm_or_si128([<_mm_slli_epi $word>](v, $n), [<_mm_srli_epi $word>](v, $word - $n))
             }
         }
+    };
+}
+
+#[macro_export]
+macro_rules! sse2_rol {
+    (16, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_or_si128(
+            core::arch::x86_64::_mm_slli_epi16($v, $n),
+            core::arch::x86_64::_mm_srli_epi16($v, 16 - $n),
+        )
+    };
+    (24, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_or_si128(
+                core::arch::x86_64::_mm_slli_epi32($v, $n),
+                core::arch::x86_64::_mm_srli_epi32($v, 24 - $n),
+            ),
+            core::arch::x86_64::_mm_set1_epi32(0x00FF_FFFFu32 as i32),
+        )
+    };
+    (32, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_or_si128(
+            core::arch::x86_64::_mm_slli_epi32($v, $n),
+            core::arch::x86_64::_mm_srli_epi32($v, 32 - $n),
+        )
+    };
+    (48, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_or_si128(
+                core::arch::x86_64::_mm_slli_epi64($v, $n),
+                core::arch::x86_64::_mm_srli_epi64($v, 48 - $n),
+            ),
+            core::arch::x86_64::_mm_set1_epi64x(0x0000_FFFF_FFFF_FFFFu64 as i64),
+        )
+    };
+    (64, $v:expr, $n:expr) => {
+        core::arch::x86_64::_mm_or_si128(
+            core::arch::x86_64::_mm_slli_epi64($v, $n),
+            core::arch::x86_64::_mm_srli_epi64($v, 64 - $n),
+        )
     };
 }
 
@@ -142,6 +217,31 @@ macro_rules! define_sse2_add {
     };
 }
 
+#[macro_export]
+macro_rules! sse2_add {
+    (16, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_add_epi16($a, $b)
+    };
+    (24, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_add_epi32($a, $b),
+            core::arch::x86_64::_mm_set1_epi32(0x00FF_FFFFu32 as i32),
+        )
+    };
+    (32, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_add_epi32($a, $b)
+    };
+    (48, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_add_epi64($a, $b),
+            core::arch::x86_64::_mm_set1_epi64x(0x0000_FFFF_FFFF_FFFFu64 as i64),
+        )
+    };
+    (64, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_add_epi64($a, $b)
+    };
+}
+
 define_sse2_add!(16);
 define_sse2_add!(24);
 define_sse2_add!(32);
@@ -179,6 +279,31 @@ macro_rules! define_sse2_sub {
                 [<_mm_sub_epi $word>](a, b)
             }
         }
+    };
+}
+
+#[macro_export]
+macro_rules! sse2_sub {
+    (16, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_sub_epi16($a, $b)
+    };
+    (24, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_sub_epi32($a, $b),
+            core::arch::x86_64::_mm_set1_epi32(0x00FF_FFFFu32 as i32),
+        )
+    };
+    (32, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_sub_epi32($a, $b)
+    };
+    (48, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_sub_epi64($a, $b),
+            core::arch::x86_64::_mm_set1_epi64x(0x0000_FFFF_FFFF_FFFFu64 as i64),
+        )
+    };
+    (64, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_sub_epi64($a, $b)
     };
 }
 
@@ -220,8 +345,52 @@ macro_rules! define_sse2_xor {
     };
 }
 
+#[macro_export]
+macro_rules! sse2_xor {
+    (16, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_xor_si128($a, $b)
+    };
+    (24, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_xor_si128($a, $b),
+            core::arch::x86_64::_mm_set1_epi32(0x00FF_FFFFu32 as i32),
+        )
+    };
+    (32, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_xor_si128($a, $b)
+    };
+    (48, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_and_si128(
+            core::arch::x86_64::_mm_xor_si128($a, $b),
+            core::arch::x86_64::_mm_set1_epi64x(0x0000_FFFF_FFFF_FFFFu64 as i64),
+        )
+    };
+    (64, $a:expr, $b:expr) => {
+        core::arch::x86_64::_mm_xor_si128($a, $b)
+    };
+}
+
 define_sse2_xor!(16);
 define_sse2_xor!(24);
 define_sse2_xor!(32);
 define_sse2_xor!(48);
 define_sse2_xor!(64);
+
+#[macro_export]
+macro_rules! sse2_set {
+    (16, $n:expr) => {
+        core::arch::x86_64::_mm_set1_epi16($n as i16)
+    };
+    (24, $n:expr) => {
+        core::arch::x86_64::_mm_set1_epi32($n as i32)
+    };
+    (32, $n:expr) => {
+        core::arch::x86_64::_mm_set1_epi32($n as i32)
+    };
+    (48, $n:expr) => {
+        core::arch::x86_64::_mm_set1_epi64x($n as i64)
+    };
+    (64, $n:expr) => {
+        core::arch::x86_64::_mm_set1_epi64x($n as i64)
+    };
+}

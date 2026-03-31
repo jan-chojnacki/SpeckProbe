@@ -19,6 +19,18 @@ macro_rules! define_decrypt_round_sse2 {
     };
 }
 
+#[macro_export]
+macro_rules! sse2_decrypt_round_inline {
+    ($x:expr, $y:expr, $k:expr, $word:tt, $alpha:expr, $beta:expr) => {
+        $y = sse2_xor!($word, $y, $x);
+        $y = sse2_ror!($word, $y, $beta);
+
+        $x = sse2_xor!($word, $x, $k);
+        $x = sse2_sub!($word, $x, $y);
+        $x = sse2_rol!($word, $x, $alpha);
+    };
+}
+
 define_decrypt_round_sse2!(16, 7, 2);
 define_decrypt_round_sse2!(24, 8, 3);
 define_decrypt_round_sse2!(32, 8, 3);
