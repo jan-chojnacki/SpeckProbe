@@ -1,3 +1,4 @@
+mod adapter;
 pub mod key_idx;
 mod key_words_inline;
 mod u24;

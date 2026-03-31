@@ -5,7 +5,6 @@ use std::hint::black_box;
 
 use benchmarks::criterion_config;
 use benchmarks::define_cipher_bench;
-use speck::{U24, U48};
 
 define_cipher_bench!(
     scalar_32_64_bench,
@@ -20,8 +19,8 @@ define_cipher_bench!(
 define_cipher_bench!(
     scalar_48_72_bench,
     prefix = "48_72",
-    key = [U24::from(0u32); 3],
-    pt = [U24::from(0u32); 2],
+    key = [0, 0, 0],
+    pt = [0, 0],
     encrypt = speck::encrypt_block_48_72,
     encrypt_inflight = speck::encrypt_block_inflight_48_72,
     decrypt = speck::decrypt_block_48_72
@@ -30,8 +29,8 @@ define_cipher_bench!(
 define_cipher_bench!(
     scalar_48_96_bench,
     prefix = "48_96",
-    key = [U24::from(0u32); 4],
-    pt = [U24::from(0u32); 2],
+    key = [0, 0, 0, 0],
+    pt = [0, 0],
     encrypt = speck::encrypt_block_48_96,
     encrypt_inflight = speck::encrypt_block_inflight_48_96,
     decrypt = speck::decrypt_block_48_96
@@ -60,8 +59,8 @@ define_cipher_bench!(
 define_cipher_bench!(
     scalar_96_96_bench,
     prefix = "96_96",
-    key = [U48::from(0u64); 2],
-    pt = [U48::from(0u64); 2],
+    key = [0, 0],
+    pt = [0, 0],
     encrypt = speck::encrypt_block_96_96,
     encrypt_inflight = speck::encrypt_block_inflight_96_96,
     decrypt = speck::decrypt_block_96_96
@@ -70,8 +69,8 @@ define_cipher_bench!(
 define_cipher_bench!(
     scalar_96_144_bench,
     prefix = "96_144",
-    key = [U48::from(0u64); 3],
-    pt = [U48::from(0u64); 2],
+    key = [0, 0, 0],
+    pt = [0, 0],
     encrypt = speck::encrypt_block_96_144,
     encrypt_inflight = speck::encrypt_block_inflight_96_144,
     decrypt = speck::decrypt_block_96_144

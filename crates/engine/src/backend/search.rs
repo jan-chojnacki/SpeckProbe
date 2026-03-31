@@ -2,7 +2,7 @@ use crate::backend::scalar::comparator::block_compare;
 use crate::domain::key::Key;
 use crate::domain::key_iterator::KeyIterator;
 use crate::domain::task::Task;
-use speck::SpeckVersion;
+use speck::{SpeckVersion, U24};
 
 macro_rules! define_search {
     (name = $name:ident, version = $version:path, bytes = $bytes:literal, vector = $vector:ty, function = $function:path, comparator = $comparator:path, key_conversion = $key_conversion:ident) => {

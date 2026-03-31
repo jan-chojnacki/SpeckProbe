@@ -50,7 +50,7 @@ macro_rules! avx512_rol {
         )
     };
     (32, $v:expr, $n:expr) => {
-        core::arch::x86_64::_mm512_ror_epi32($v, $n)
+        core::arch::x86_64::_mm512_rol_epi32($v, $n)
     };
     (48, $v:expr, $n:expr) => {
         core::arch::x86_64::_mm512_and_si512(
@@ -62,7 +62,7 @@ macro_rules! avx512_rol {
         )
     };
     (64, $v:expr, $n:expr) => {
-        core::arch::x86_64::_mm512_ror_epi64($v, $n)
+        core::arch::x86_64::_mm512_rol_epi64($v, $n)
     };
 }
 
