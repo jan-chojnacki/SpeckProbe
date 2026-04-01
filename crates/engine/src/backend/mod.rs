@@ -1,6 +1,9 @@
-pub mod scalar;
+mod scalar;
 
 #[cfg(target_arch = "aarch64")]
-pub mod neon;
-pub mod search;
+mod neon;
+mod search;
 pub(crate) mod x86_64;
+
+pub use search::*;
+pub use x86_64::search::*;

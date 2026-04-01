@@ -6,12 +6,12 @@ use std::time::Instant;
 
 //base scalar: total: 705.452474ms
 fn main() {
-    let start = [0, 0, 0, 0, 0, 0];
-    let end = [255, 10, 0, 0, 0, 0];
+    let start = [0; 7];
+    let end = [255, 10, 0, 0, 0, 0, 0];
     let data = [0, 0];
     let expected = [0, 0];
 
-    let producer = TaskProducer::<u16, 8, 6>::new(start, end, data, expected);
+    let producer = TaskProducer::<u16, 8, 7>::new(start, end, data, expected);
 
     let pool = ThreadPoolBuilder::new()
         .num_threads(16)
@@ -23,8 +23,8 @@ fn main() {
 
     pool.install(|| {
         producer.par_bridge().into_par_iter().for_each(|i| {
-            let mut out: Vec<Key<8, 6>> = Vec::new();
-            engine::backend::search::search_encrypt_inflight_32_64(i, &mut out);
+            let mut out: Vec<Key<8, 7>> = Vec::new();
+            engine::search_encrypt_inflight_32_64(i, &mut out);
         });
     });
 

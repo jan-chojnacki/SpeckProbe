@@ -1,3 +1,4 @@
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct Task<T, const BYTES: usize, const PREFIX: usize>
 where
     T: Copy + Clone,

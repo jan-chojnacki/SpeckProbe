@@ -25,7 +25,7 @@ macro_rules! define_cipher_bench {
         decrypt = $decrypt:path
     ) => {
         $(#[$meta])*
-        fn $fn_name(g: &mut BenchmarkGroup<WallTime>) {
+        fn $fn_name(g: &mut criterion::BenchmarkGroup<criterion::measurement::WallTime>) {
             let key = $key;
             let pt = $pt;
             let ct = $encrypt(pt, key);
@@ -49,6 +49,70 @@ macro_rules! define_cipher_bench {
                     let out = $decrypt(black_box(ct), black_box(key));
                     black_box(out);
                 })
+            });
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! calculate_end {
+    ($n:expr) => {{
+        match $n {
+            0 => 0,
+            1..=7 => (1u64 << ($n * 8)) - 1,
+            _ => u64::MAX,
+        }
+    }};
+}
+
+#[macro_export]
+macro_rules! define_engine_bench {
+    (
+        $(#[$meta:meta])*
+        $fn_name:ident,
+        bytes = $bytes:expr,
+        word = $word:ty,
+        prefix = $prefix:literal,
+        encrypt = $encrypt:path,
+        encrypt_inflight = $encrypt_inflight:path,
+        decrypt = $decrypt:path
+    ) => {
+        $(#[$meta])*
+        fn $fn_name(g: &mut criterion::BenchmarkGroup<criterion::measurement::WallTime>) {
+            seq_macro::seq!(I in 1..=3{
+                let end = $crate::calculate_end!(I);
+                let task = Task::<$word, { $bytes }, { $bytes - I }> {
+                    prefix: [0; $bytes - I],
+                    start: 0,
+                    end,
+                    data: [0, 0],
+                    expected: [0, 0],
+                };
+
+                let mut out: Vec<Key<{ $bytes }, { $bytes - I }>> = Vec::new();
+
+                g.throughput(Throughput::Elements(end.saturating_add(1)));
+
+                g.bench_function(format!("{}/{}/encrypt", $prefix, $bytes - I), |b| {
+                    b.iter(|| {
+                        $encrypt(black_box(task), black_box(&mut out));
+                        black_box(&out);
+                    })
+                });
+
+                g.bench_function(format!("{}/{}/encrypt_inflight", $prefix, $bytes - I), |b| {
+                    b.iter(|| {
+                        $encrypt_inflight(black_box(task), black_box(&mut out));
+                        black_box(&out);
+                    })
+                });
+
+                g.bench_function(format!("{}/{}/decrypt", $prefix, $bytes - I), |b| {
+                    b.iter(|| {
+                        $decrypt(black_box(task), black_box(&mut out));
+                        black_box(&out);
+                    })
+                });
             });
         }
     };

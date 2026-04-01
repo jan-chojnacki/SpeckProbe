@@ -1,5 +1,3 @@
-use criterion::BenchmarkGroup;
-use criterion::measurement::WallTime;
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
