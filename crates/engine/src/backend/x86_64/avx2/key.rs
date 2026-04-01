@@ -1,4 +1,3 @@
-use crate::backend::x86_64::avx512::key::AVX512Key;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
 use speck::SpeckVersion;

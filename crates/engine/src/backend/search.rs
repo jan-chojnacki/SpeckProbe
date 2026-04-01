@@ -3,7 +3,7 @@ use crate::domain::key::Key;
 use crate::domain::key_iterator::KeyIterator;
 use crate::domain::task::Task;
 use paste::paste;
-use speck::{SpeckVersion, U24};
+use speck::SpeckVersion;
 
 macro_rules! define_search {
     (
