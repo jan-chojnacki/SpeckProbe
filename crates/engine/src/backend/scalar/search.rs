@@ -15,7 +15,7 @@ macro_rules! define_search {
     name = $name:tt
     ) => {paste! {
         #[inline(always)]
-        pub fn [<search_encrypt_ $name>] <const PREFIX: usize>(
+        pub fn [<search_encrypt_ $name>]<const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,
         ) {
