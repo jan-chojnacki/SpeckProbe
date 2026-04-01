@@ -38,5 +38,5 @@ name = "task_producer_benches"
 harness = false
 
 [[bench]]
-name = "engine_benches"
+name = "engine_scalar_benches"
 harness = false
