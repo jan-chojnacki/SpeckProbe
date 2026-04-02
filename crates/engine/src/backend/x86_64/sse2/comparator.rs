@@ -16,10 +16,27 @@ pub fn sse2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     let m_lo = _mm_movemask_epi8(cmp_lo) as u32;
     let m_hi = _mm_movemask_epi8(cmp_hi) as u32;
 
-    let lanes_lo = (m_lo & (m_lo >> 1) & 0x5555) | ((m_lo & (m_lo >> 1) & 0xAAAA) >> 1);
-    let lanes_hi = (m_hi & (m_hi >> 1) & 0x5555) | ((m_hi & (m_hi >> 1) & 0xAAAA) >> 1);
+    let lanes_lo = m_lo & (m_lo >> 1);
+    let lanes_hi = m_hi & (m_hi >> 1);
 
-    let mut lanes = (lanes_lo & lanes_hi) & 0x00FF;
+    let lane_bits_lo = ((lanes_lo >> 0) & 0x1)
+        | ((lanes_lo >> 2) & 0x2)
+        | ((lanes_lo >> 4) & 0x4)
+        | ((lanes_lo >> 6) & 0x8)
+        | ((lanes_lo >> 8) & 0x10)
+        | ((lanes_lo >> 10) & 0x20)
+        | ((lanes_lo >> 12) & 0x40)
+        | ((lanes_lo >> 14) & 0x80);
+    let lane_bits_hi = ((lanes_hi >> 0) & 0x1)
+        | ((lanes_hi >> 2) & 0x2)
+        | ((lanes_hi >> 4) & 0x4)
+        | ((lanes_hi >> 6) & 0x8)
+        | ((lanes_hi >> 8) & 0x10)
+        | ((lanes_hi >> 10) & 0x20)
+        | ((lanes_hi >> 12) & 0x40)
+        | ((lanes_hi >> 14) & 0x80);
+
+    let mut lanes = (lane_bits_lo & lane_bits_hi) & 0x00FF;
 
     while lanes != 0 {
         let i = lanes.trailing_zeros() as usize;

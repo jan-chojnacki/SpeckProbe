@@ -1,4 +1,4 @@
-use crate::word::Word;
+use crate::word::{EngineWord, ValidatorWord};
 use crossbeam::channel::{Receiver, Sender, bounded};
 use engine::domain::key::Key;
 use engine::domain::task::Task;
@@ -10,36 +10,44 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::thread::JoinHandle;
 
-pub struct Runtime<FS, FV, W: Word, const BYTES: usize, const PREFIX: usize>
-where
-    FS: Fn(Task<W, BYTES, PREFIX>, &mut Vec<Key<BYTES, PREFIX>>) + Sync,
-    FV: Fn([W; 2], [W; 2], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
+pub struct Runtime<
+    FS,
+    FV,
+    EW: EngineWord,
+    VW: ValidatorWord,
+    const BYTES: usize,
+    const PREFIX: usize,
+> where
+    FS: Fn(Task<EW, BYTES, PREFIX>, &mut Vec<Key<BYTES, PREFIX>>) + Sync,
+    FV: Fn([VW; 2], [VW; 2], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
 {
-    task_producer: Option<TaskProducer<W, BYTES, PREFIX>>,
+    task_producer: Option<TaskProducer<EW, BYTES, PREFIX>>,
     pool: ThreadPool,
     tx: Option<Sender<Vec<Key<BYTES, PREFIX>>>>,
     rx: Receiver<Vec<Key<BYTES, PREFIX>>>,
     stop: Arc<AtomicBool>,
-    data: Vec<[W; 2]>,
-    expected: Vec<[W; 2]>,
+    data: Vec<[VW; 2]>,
+    expected: Vec<[VW; 2]>,
     function: FS,
     validator: FV,
 }
 
-impl<FS, FV, W: Word, const BYTES: usize, const PREFIX: usize> Runtime<FS, FV, W, BYTES, PREFIX>
+impl<FS, FV, EW: EngineWord, VW: ValidatorWord, const BYTES: usize, const PREFIX: usize>
+    Runtime<FS, FV, EW, VW, BYTES, PREFIX>
 where
-    FS: Fn(Task<W, BYTES, PREFIX>, &mut Vec<Key<BYTES, PREFIX>>) + Sync,
-    FV: Fn([W; 2], [W; 2], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
+    FS: Fn(Task<EW, BYTES, PREFIX>, &mut Vec<Key<BYTES, PREFIX>>) + Sync,
+    FV: Fn([VW; 2], [VW; 2], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
 {
     pub fn new(
         start: [u8; PREFIX],
         end: [u8; PREFIX],
-        data: Vec<[W; 2]>,
-        expected: Vec<[W; 2]>,
+        data: &[[VW; 2]],
+        expected: &[[VW; 2]],
         num_threads: usize,
         cap: usize,
         function: FS,
         validator: FV,
+        convert: impl Fn([VW; 2]) -> [EW; 2],
     ) -> Self {
         assert!(data.len() > 0);
         assert_eq!(data.len(), expected.len());
@@ -53,7 +61,12 @@ where
         let (tx, rx) = bounded::<Vec<Key<BYTES, PREFIX>>>(cap);
         let stop = Arc::new(AtomicBool::new(false));
 
-        let task_producer = TaskProducer::<W, BYTES, PREFIX>::new(start, end, data[0], expected[0]);
+        let task_producer = TaskProducer::<EW, BYTES, PREFIX>::new(
+            start,
+            end,
+            convert(data[0]),
+            convert(expected[0]),
+        );
 
         Self {
             task_producer: Some(task_producer),
@@ -61,8 +74,8 @@ where
             tx: Some(tx),
             rx,
             stop,
-            data,
-            expected,
+            data: data.to_vec(),
+            expected: expected.to_vec(),
             function,
             validator,
         }
@@ -104,8 +117,8 @@ where
 
     fn validate(
         validator: &FV,
-        data: &[[W; 2]],
-        expected: &[[W; 2]],
+        data: &[[VW; 2]],
+        expected: &[[VW; 2]],
         hit: &Key<BYTES, PREFIX>,
     ) -> bool {
         for (d, e) in data.iter().zip(expected) {

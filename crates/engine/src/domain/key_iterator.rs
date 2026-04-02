@@ -54,14 +54,14 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     pub fn sse2_new_key<const LANES: usize>(&self) -> SSE2Key<LANES, BYTES, PREFIX> {
-        let v = std::array::from_fn(|i| self.current + i as u64);
+        let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
         SSE2Key::new(&self.prefix, v, self.speck_version)
     }
 
     #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
     #[target_feature(enable = "avx2")]
     pub fn avx2_new_key<const LANES: usize>(&self) -> AVX2Key<LANES, BYTES, PREFIX> {
-        let v = std::array::from_fn(|i| self.current + i as u64);
+        let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
         AVX2Key::new(&self.prefix, v, self.speck_version)
     }
 
@@ -109,13 +109,16 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
             return None;
         }
 
-        let v = std::array::from_fn(|i| self.current + i as u64);
+        debug_assert!(LANES > 0);
+
+        let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
         out.update(v);
 
-        if self.current == self.end {
+        let last_in_chunk = self.current.saturating_add(LANES as u64 - 1);
+        if last_in_chunk >= self.end {
             self.finished = true;
         } else {
-            self.current = self.current.saturating_add(LANES as u64);
+            self.current += LANES as u64;
         }
 
         Some(())
