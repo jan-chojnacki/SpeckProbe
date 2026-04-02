@@ -1,6 +1,8 @@
 use crate::runtime::Runtime;
 use engine::domain::key::Key;
 use paste::paste;
+use std::arch::aarch64::uint16x8_t;
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{__m128i, __m256i, __m512i};
 
 macro_rules! define_runtime {
@@ -84,5 +86,19 @@ define_runtime!(
     ecb,
     avx512_
 );
+
+// define_runtime!(
+//     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+//     #[target_feature(enable = "neon")]
+//     avx512_runtime,
+//     8,
+//     5,
+//     uint16x8_t,
+//     u16,
+//     engine::backend::aarch64::neon::converter::neon_u16x2_block_to_vec,
+//     32_64,
+//     ecb,
+//     neon_
+// );
 
 define_runtime!(scalar_runtime, 8, 5, u16, u16, |x| x, 32_64, ecb);

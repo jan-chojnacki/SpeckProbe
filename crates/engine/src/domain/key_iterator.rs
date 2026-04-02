@@ -1,5 +1,5 @@
 #[cfg(target_arch = "aarch64")]
-use crate::backend::neon::key::NEONKey;
+use crate::backend::aarch64::neon::key::NEONKey;
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 use crate::backend::x86_64::avx2::key::AVX2Key;
 #[cfg(all(
@@ -78,9 +78,9 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
 
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
-    pub fn neon_new_key<const T: usize>(&self) -> NEONKey<T> {
+    pub fn neon_new_key<const LANES: usize>(&self) -> NEONKey<LANES, BYTES, PREFIX> {
         let v = std::array::from_fn(|i| self.current + i as u64);
-        NEONKey::new(&self.prefix[..self.prefix_len], v, self.speck_version)
+        NEONKey::new(&self.prefix, v, self.speck_version)
     }
 
     #[inline(always)]

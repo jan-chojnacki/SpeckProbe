@@ -1,4 +1,4 @@
-use crate::backend::neon::key::NEONKey;
+use crate::aarch64::neon::key::NEONKey;
 use crate::domain::key::Key;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 use std::arch::aarch64::{
@@ -8,11 +8,11 @@ use std::arch::aarch64::{
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 #[target_feature(enable = "neon")]
-pub fn neon_block_compare_u16(
+pub fn neon_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[uint16x8_t; 2],
     v: &[uint16x8_t; 2],
-    key: &NEONKey<8>,
-    out: &mut Vec<Key>,
+    key: &NEONKey<8, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = vceqq_u16(e[0], v[0]);
     let cmp_hi = vceqq_u16(e[1], v[1]);
@@ -31,11 +31,11 @@ pub fn neon_block_compare_u16(
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 #[target_feature(enable = "neon")]
-pub fn neon_block_compare_u32(
+pub fn neon_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[uint32x4_t; 2],
     v: &[uint32x4_t; 2],
-    key: &NEONKey<4>,
-    out: &mut Vec<Key>,
+    key: &NEONKey<4, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = vceqq_u32(e[0], v[0]);
     let cmp_hi = vceqq_u32(e[1], v[1]);
@@ -54,11 +54,11 @@ pub fn neon_block_compare_u32(
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 #[target_feature(enable = "neon")]
-pub fn neon_block_compare_u64(
+pub fn neon_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[uint64x2_t; 2],
     v: &[uint64x2_t; 2],
-    key: &NEONKey<2>,
-    out: &mut Vec<Key>,
+    key: &NEONKey<2, BYTES, PREFIX>,
+    out: &mut Vec<Key<BYTES, PREFIX>>,
 ) {
     let cmp_lo = vceqq_u64(e[0], v[0]);
     let cmp_hi = vceqq_u64(e[1], v[1]);
