@@ -11,23 +11,35 @@ macro_rules! define_validate {
     ) => {
         paste! {
             #[inline(always)]
-            pub fn [<validate_encrypt_ $name>]<const PREFIX: usize>(
-                pt: [$vector; 2],
-                expected: [$vector; 2],
+            pub fn [<ecb_validate_encrypt_ $name>]<const PREFIX: usize>(
+                pt: &[[$vector; 2]],
+                expected: &[[$vector; 2]],
                 key: &Key<$bytes, PREFIX>,
             ) -> bool {
-                let result = speck::[<encrypt_block_ $name>](pt, key.$key_conversion());
-                result[0] == expected[0] && result[1] == expected[1]
+                for (p, e) in pt.iter().zip(expected) {
+                    let result = speck::[<encrypt_block_ $name>](*p, key.$key_conversion());
+                    if !(result[0] == e[0] && result[1] == e[1]) {
+                        return false;
+                    }
+                }
+
+                true
             }
 
             #[inline(always)]
-            pub fn [<validate_decrypt_ $name>]<const PREFIX: usize>(
-                ct: [$vector; 2],
-                expected: [$vector; 2],
+            pub fn [<ecb_validate_decrypt_ $name>]<const PREFIX: usize>(
+                ct: &[[$vector; 2]],
+                expected: &[[$vector; 2]],
                 key: &Key<$bytes, PREFIX>,
             ) -> bool {
-                let result = speck::[<decrypt_block_ $name>](ct, key.$key_conversion());
-                result[0] == expected[0] && result[1] == expected[1]
+                for (c, e) in ct.iter().zip(expected) {
+                    let result = speck::[<decrypt_block_ $name>](*c, key.$key_conversion());
+                    if !(result[0] == e[0] && result[1] == e[1]) {
+                        return false;
+                    }
+                }
+
+                true
             }
         }
     };

@@ -1,7 +1,7 @@
 use crate::runtime::Runtime;
 use engine::domain::key::Key;
 use paste::paste;
-use std::arch::x86_64::__m256i;
+use std::arch::x86_64::{__m128i, __m256i, __m512i};
 
 macro_rules! define_runtime {
     (
@@ -12,7 +12,8 @@ macro_rules! define_runtime {
         $engine_word:ty,
         $validator_word:ty,
         $converter:expr,
-        $version:tt
+        $version:tt,
+        $mode:tt
         $(, $simd:tt)?
         $(,)?
     ) => {paste! {
@@ -33,7 +34,7 @@ macro_rules! define_runtime {
                 num_threads,
                 cap,
                 |task, out| engine::[<$($simd)? search_encrypt_inflight_ $version>](task, out),
-                engine::[<validate_encrypt_ $version>],
+                engine::[<$mode _validate_encrypt_ $version>],
                 |block| ($converter)(block),
             );
 
@@ -43,16 +44,45 @@ macro_rules! define_runtime {
 }
 
 define_runtime!(
+    #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+    #[target_feature(enable = "sse2")]
+    sse2_runtime,
+    8,
+    5,
+    __m128i,
+    u16,
+    engine::backend::x86_64::sse2::converter::sse2_u16x2_block_to_vec,
+    32_64,
+    ecb,
+    sse2_
+);
+
+define_runtime!(
     #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
     #[target_feature(enable = "avx2")]
-    runtime2,
+    avx2_runtime,
     8,
-    7,
+    5,
     __m256i,
     u16,
     engine::backend::x86_64::avx2::converter::avx2_u16x2_block_to_vec,
     32_64,
+    ecb,
     avx2_
 );
 
-define_runtime!(runtime1, 8, 7, u16, u16, |x| x, 32_64,);
+define_runtime!(
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
+    avx512_runtime,
+    8,
+    5,
+    __m512i,
+    u16,
+    engine::backend::x86_64::avx512::converter::avx512_u16x2_block_to_vec,
+    32_64,
+    ecb,
+    avx512_
+);
+
+define_runtime!(scalar_runtime, 8, 5, u16, u16, |x| x, 32_64, ecb);

@@ -19,7 +19,7 @@ pub struct Runtime<
     const PREFIX: usize,
 > where
     FS: Fn(Task<EW, BYTES, PREFIX>, &mut Vec<Key<BYTES, PREFIX>>) + Sync,
-    FV: Fn([VW; 2], [VW; 2], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
+    FV: Fn(&[[VW; 2]], &[[VW; 2]], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
 {
     task_producer: Option<TaskProducer<EW, BYTES, PREFIX>>,
     pool: ThreadPool,
@@ -36,7 +36,7 @@ impl<FS, FV, EW: EngineWord, VW: ValidatorWord, const BYTES: usize, const PREFIX
     Runtime<FS, FV, EW, VW, BYTES, PREFIX>
 where
     FS: Fn(Task<EW, BYTES, PREFIX>, &mut Vec<Key<BYTES, PREFIX>>) + Sync,
-    FV: Fn([VW; 2], [VW; 2], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
+    FV: Fn(&[[VW; 2]], &[[VW; 2]], &Key<BYTES, PREFIX>) -> bool + Send + Copy + 'static,
 {
     pub fn new(
         start: [u8; PREFIX],
@@ -121,13 +121,7 @@ where
         expected: &[[VW; 2]],
         hit: &Key<BYTES, PREFIX>,
     ) -> bool {
-        for (d, e) in data.iter().zip(expected) {
-            if !validator(*d, *e, hit) {
-                return false;
-            }
-        }
-
-        true
+        validator(data, expected, hit)
     }
 
     fn run_pool(&mut self, tx: &Sender<Vec<Key<BYTES, PREFIX>>>) {
