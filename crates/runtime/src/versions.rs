@@ -90,7 +90,7 @@ define_runtime!(
 // define_runtime!(
 //     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 //     #[target_feature(enable = "neon")]
-//     avx512_runtime,
+//     neon_runtime,
 //     8,
 //     5,
 //     uint16x8_t,

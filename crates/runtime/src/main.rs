@@ -58,5 +58,14 @@ fn main() {
         println!("scalar");
         dbg!(t1);
         dbg!(results.1);
+
+        let t0 = Instant::now();
+
+        let results = scalar_runtime(start, end, &data, &expected, 16, 128);
+        let t1 = t0.elapsed();
+
+        println!("scalar");
+        dbg!(t1);
+        dbg!(results.1);
     }
 }
