@@ -87,18 +87,18 @@ define_runtime!(
     avx512_
 );
 
-// define_runtime!(
-//     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
-//     #[target_feature(enable = "neon")]
-//     neon_runtime,
-//     8,
-//     5,
-//     uint16x8_t,
-//     u16,
-//     engine::backend::aarch64::neon::converter::neon_u16x2_block_to_vec,
-//     32_64,
-//     ecb,
-//     neon_
-// );
+define_runtime!(
+    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[target_feature(enable = "neon")]
+    neon_runtime,
+    8,
+    5,
+    uint16x8_t,
+    u16,
+    engine::backend::aarch64::neon::converter::neon_u16x2_block_to_vec,
+    32_64,
+    ecb,
+    neon_
+);
 
 define_runtime!(scalar_runtime, 8, 5, u16, u16, |x| x, 32_64, ecb);
