@@ -1,3 +1,4 @@
+#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::{__m128i, __m256i, __m512i};
