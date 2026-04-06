@@ -10,6 +10,20 @@ pub enum CipherMode {
     Cbc,
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum BackendHint {
+    Auto,
+    Scalar,
+    #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+    Sse2,
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    Avx2,
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    Avx512,
+    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    Neon,
+}
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum DispatchError {
     UnsupportedSuffix {
@@ -23,23 +37,6 @@ pub enum DispatchError {
         mode: CipherMode,
         suffix: usize,
     },
-}
-
-pub fn dispatch(runtime_request: RuntimeRequest) -> Result<DispatchOutput, DispatchError> {
-    let suffix: usize = runtime_request.runtime_config.suffix_bytes_size;
-    if !(1..=4).contains(&suffix) {
-        return Err(DispatchError::UnsupportedSuffix { suffix });
-    }
-
-    let version: SpeckVersion = runtime_request.cipher_config.speck_version;
-
-    let mode: CipherMode = runtime_request.cipher_config.cipher_mode;
-
-    if mode != CipherMode::Ecb {
-        return Err(DispatchError::UnsupportedMode { mode });
-    }
-
-    dispatch_backend(runtime_request, suffix, version, mode)
 }
 
 macro_rules! dispatch_for_backend {
@@ -96,6 +93,44 @@ macro_rules! dispatch_for_backend_with_versions {
             }
         }
     };
+}
+
+pub fn dispatch(runtime_request: RuntimeRequest) -> Result<DispatchOutput, DispatchError> {
+    let suffix: usize = runtime_request.runtime_config.suffix_bytes_size;
+    if !(1..=4).contains(&suffix) {
+        return Err(DispatchError::UnsupportedSuffix { suffix });
+    }
+
+    let version: SpeckVersion = runtime_request.cipher_config.speck_version;
+
+    let mode: CipherMode = runtime_request.cipher_config.cipher_mode;
+
+    if mode != CipherMode::Ecb {
+        return Err(DispatchError::UnsupportedMode { mode });
+    }
+
+    match runtime_request.runtime_config.backend_hint {
+        BackendHint::Auto => dispatch_backend(runtime_request, suffix, version, mode),
+        BackendHint::Scalar => {
+            dispatch_for_backend!(scalar, runtime_request, version, mode, suffix)
+        }
+        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        BackendHint::Sse2 => unsafe {
+            dispatch_for_backend!(sse2, runtime_request, version, mode, suffix)
+        },
+        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        BackendHint::Avx2 => unsafe {
+            dispatch_for_backend!(avx2, runtime_request, version, mode, suffix)
+        },
+        #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+        BackendHint::Avx512 => unsafe {
+            dispatch_for_backend!(avx512, runtime_request, version, mode, suffix)
+        },
+        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        BackendHint::Neon => unsafe {
+            dispatch_for_backend!(neon, runtime_request, version, mode, suffix)
+        },
+    }
 }
 
 #[cfg_attr(

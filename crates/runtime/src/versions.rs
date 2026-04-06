@@ -22,7 +22,7 @@ mod aarch64 {
     };
     pub use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 }
-use crate::dispatch::CipherMode;
+use crate::dispatch::{BackendHint, CipherMode};
 #[cfg(target_arch = "aarch64")]
 use aarch64::*;
 use speck::SpeckVersion;
@@ -37,6 +37,7 @@ pub struct RuntimeConfig {
     pub suffix_bytes_size: usize,
     pub num_threads: usize,
     pub cap: usize,
+    pub backend_hint: BackendHint,
 }
 
 pub struct CipherConfig {

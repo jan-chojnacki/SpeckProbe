@@ -1,3 +1,4 @@
+use runtime::dispatch::BackendHint::Auto;
 use runtime::dispatch::CipherMode::Ecb;
 use runtime::versions::{CipherConfig, RuntimeConfig, RuntimeRequest, SearchSpace};
 use speck::SpeckVersion::Speck32_64;
@@ -13,6 +14,7 @@ fn main() {
         suffix_bytes_size: 3,
         num_threads: 16,
         cap: 256,
+        backend_hint: Auto,
     };
 
     let search_space: SearchSpace = SearchSpace {
