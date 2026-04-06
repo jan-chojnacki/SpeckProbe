@@ -1,4 +1,4 @@
-use crate::word::{EngineWord, ValidatorWord};
+use crate::domain::word::{EngineWord, ValidatorWord};
 use crossbeam::channel::{Receiver, Sender, bounded};
 use engine::domain::key::Key;
 use engine::domain::task::Task;

@@ -1,6 +1,6 @@
-use runtime::dispatch::BackendHint::Auto;
-use runtime::dispatch::CipherMode::Ecb;
-use runtime::versions::{CipherConfig, RuntimeConfig, RuntimeRequest, SearchSpace};
+use runtime::api::BackendHint::Auto;
+use runtime::api::CipherMode::Ecb;
+use runtime::api::{CipherConfig, RuntimeConfig, RuntimeRequest, SearchSpace};
 use speck::SpeckVersion::Speck32_64;
 use std::time::Instant;
 
@@ -32,7 +32,7 @@ fn main() {
 
     let t0 = Instant::now();
 
-    runtime::dispatch::dispatch(runtime_request).expect("TODO: panic message");
+    runtime::backend::dispatch::dispatch(runtime_request).expect("TODO: panic message");
 
     let t1 = t0.elapsed();
 
