@@ -1,5 +1,4 @@
 use crate::runtime::Runtime;
-use engine::domain::key::Key;
 use paste::paste;
 #[cfg(target_arch = "x86_64")]
 mod x86_64 {
@@ -23,8 +22,34 @@ mod aarch64 {
     };
     pub use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 }
+use crate::dispatch::CipherMode;
 #[cfg(target_arch = "aarch64")]
 use aarch64::*;
+use speck::SpeckVersion;
+
+pub struct RuntimeRequest {
+    pub cipher_config: CipherConfig,
+    pub runtime_config: RuntimeConfig,
+    pub search_space: SearchSpace,
+}
+
+pub struct RuntimeConfig {
+    pub suffix_bytes_size: usize,
+    pub num_threads: usize,
+    pub cap: usize,
+}
+
+pub struct CipherConfig {
+    pub cipher_mode: CipherMode,
+    pub speck_version: SpeckVersion,
+}
+
+pub struct SearchSpace {
+    pub start: Vec<u8>,
+    pub end: Vec<u8>,
+    pub data: Vec<[u64; 2]>,
+    pub expected: Vec<[u64; 2]>,
+}
 
 macro_rules! define_runtime {
     (
@@ -42,26 +67,41 @@ macro_rules! define_runtime {
     ) => {paste! {
         $(#[$meta])*
         pub fn $fn_name(
-            start: [u8; { $bytes - $suffix }],
-            end: [u8; { $bytes - $suffix }],
-            data: &[[$validator_word; 2]],
-            expected: &[[$validator_word; 2]],
-            num_threads: usize,
-            cap: usize,
-        ) -> (Vec<Key<$bytes, { $bytes - $suffix }>>, Option<Key<$bytes, { $bytes - $suffix }>>) {
+            runtime_request: RuntimeRequest,
+        ) -> (Vec<Vec<u8>>, Option<Vec<u8>>) {
+            let start: [u8; { $bytes - $suffix }] = runtime_request.search_space.start
+                .try_into()
+                .expect("start length mismatch");
+            let end: [u8; { $bytes - $suffix }] = runtime_request.search_space.end
+                .try_into()
+                .expect("end length mismatch");
+
+            let data: Vec<[$validator_word; 2]> = runtime_request.search_space.data
+                .iter()
+                .map(|[a, b]| [*a as $validator_word, *b as $validator_word])
+                .collect();
+            let expected: Vec<[$validator_word; 2]> = runtime_request.search_space.expected
+                .iter()
+                .map(|[a, b]| [*a as $validator_word, *b as $validator_word])
+                .collect();
+
             let mut runtime = Runtime::<_, _, $engine_word, $validator_word, $bytes, { $bytes - $suffix }>::new(
                 start,
                 end,
-                data,
-                expected,
-                num_threads,
-                cap,
+                &data,
+                &expected,
+                runtime_request.runtime_config.num_threads,
+                runtime_request.runtime_config.cap,
                 |task, out| engine::[<$($simd)? search_encrypt_inflight_ $version>](task, out),
                 engine::[<$mode _validate_encrypt_ $version>],
                 |block| ($converter)(block),
             );
 
-            runtime.run()
+            let (keys, found) = runtime.run();
+            (
+                keys.into_iter().map(|k| k.to_vec()).collect(),
+                found.map(|k| k.to_vec()),
+            )
         }
     }};
 }

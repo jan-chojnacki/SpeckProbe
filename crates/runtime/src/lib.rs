@@ -1,4 +1,5 @@
-pub mod word;
+pub(crate) mod word;
 
-pub mod runtime;
+pub mod dispatch;
+pub(crate) mod runtime;
 pub mod versions;

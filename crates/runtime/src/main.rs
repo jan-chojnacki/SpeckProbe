@@ -1,75 +1,38 @@
-#[cfg(target_arch = "aarch64")]
-use runtime::versions::neon_32_64_s3_ecb_runtime as neon_runtime;
+use runtime::dispatch::CipherMode::Ecb;
+use runtime::versions::{CipherConfig, RuntimeConfig, RuntimeRequest, SearchSpace};
+use speck::SpeckVersion::Speck32_64;
 use std::time::Instant;
 
-use runtime::versions::{
-    avx2_32_64_s2_ecb_runtime, avx2_32_64_s3_ecb_runtime, avx512_32_64_s2_ecb_runtime,
-    avx512_32_64_s3_ecb_runtime, scalar_32_64_s2_ecb_runtime, scalar_32_64_s3_ecb_runtime,
-    sse2_32_64_s2_ecb_runtime, sse2_32_64_s3_ecb_runtime,
-};
-
 fn main() {
-    let start = [0; 5];
-    let end = [255, 0, 0, 0, 0];
-    let data = vec![[0, 0], [1, 1]];
-    let expected = vec![[0, 0], [1, 1]];
+    let cipher_config: CipherConfig = CipherConfig {
+        cipher_mode: Ecb,
+        speck_version: Speck32_64,
+    };
 
-    #[cfg(target_arch = "x86_64")]
-    unsafe {
-        let t0 = Instant::now();
+    let runtime_config: RuntimeConfig = RuntimeConfig {
+        suffix_bytes_size: 3,
+        num_threads: 16,
+        cap: 256,
+    };
 
-        let results = scalar_32_64_s3_ecb_runtime(start, end, &data, &expected, 16, 128);
-        let t1 = t0.elapsed();
+    let search_space: SearchSpace = SearchSpace {
+        start: vec![0; 5],
+        end: vec![255, 0, 0, 0, 0],
+        data: vec![[0, 0], [1, 1]],
+        expected: vec![[0, 0], [1, 1]],
+    };
 
-        println!("scalar");
-        dbg!(t1);
-        dbg!(results.1);
+    let runtime_request: RuntimeRequest = RuntimeRequest {
+        cipher_config,
+        runtime_config,
+        search_space,
+    };
 
-        let t0 = Instant::now();
+    let t0 = Instant::now();
 
-        let results = sse2_32_64_s3_ecb_runtime(start, end, &data, &expected, 16, 128);
-        let t1 = t0.elapsed();
+    runtime::dispatch::dispatch(runtime_request).expect("TODO: panic message");
 
-        println!("sse2");
-        dbg!(t1);
-        dbg!(results.1);
+    let t1 = t0.elapsed();
 
-        let t0 = Instant::now();
-
-        let results = avx2_32_64_s3_ecb_runtime(start, end, &data, &expected, 16, 128);
-        let t1 = t0.elapsed();
-
-        println!("avx2");
-        dbg!(t1);
-        dbg!(results.1);
-
-        let t0 = Instant::now();
-
-        let results = avx512_32_64_s3_ecb_runtime(start, end, &data, &expected, 16, 128);
-        let t1 = t0.elapsed();
-
-        println!("avx512");
-        dbg!(t1);
-        dbg!(results.1);
-    }
-    #[cfg(target_arch = "aarch64")]
-    unsafe {
-        let t0 = Instant::now();
-
-        let results = scalar_runtime(start, end, &data, &expected, 16, 128);
-        let t1 = t0.elapsed();
-
-        println!("scalar");
-        dbg!(t1);
-        dbg!(results.1);
-
-        let t0 = Instant::now();
-
-        let results = neon_runtime(start, end, &data, &expected, 16, 128);
-        let t1 = t0.elapsed();
-
-        println!("neon");
-        dbg!(t1);
-        dbg!(results.1);
-    }
+    println!("{:?}", t1);
 }
