@@ -149,7 +149,7 @@ define_cipher_bench!(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 fn benchmark(c: &mut Criterion) {
-    let mut g = c.benchmark_group("sse2");
+    let mut g = c.benchmark_group("speck/sse2");
 
     unsafe {
         g.throughput(Throughput::Elements(8));

@@ -137,7 +137,7 @@
 //
 // #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 // fn benchmark(c: &mut Criterion) {
-//     let mut g = c.benchmark_group("neon");
+//     let mut g = c.benchmark_group("speck/neon");
 //     unsafe {
 //         g.throughput(Throughput::Elements(8));
 //         neon_32_64_bench(&mut g);

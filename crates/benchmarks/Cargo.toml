@@ -5,7 +5,7 @@ edition = "2024"
 publish = false
 
 [dependencies]
-criterion = "0.8"
+criterion = { version = "0.8", features = ["csv_output"] }
 rayon = "1.11"
 
 [dev-dependencies]

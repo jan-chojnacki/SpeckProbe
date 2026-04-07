@@ -105,7 +105,7 @@ define_engine_bench!(
 );
 
 fn benchmark(c: &mut Criterion) {
-    let mut g = c.benchmark_group("engine_scalar");
+    let mut g = c.benchmark_group("engine/scalar");
 
     scalar_32_64_bench(&mut g);
     scalar_48_72_bench(&mut g);

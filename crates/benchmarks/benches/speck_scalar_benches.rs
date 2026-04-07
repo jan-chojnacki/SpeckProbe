@@ -105,7 +105,7 @@ define_cipher_bench!(
 );
 
 fn benchmark(c: &mut Criterion) {
-    let mut g = c.benchmark_group("scalar");
+    let mut g = c.benchmark_group("speck/scalar");
     g.throughput(Throughput::Elements(1));
 
     scalar_32_64_bench(&mut g);
