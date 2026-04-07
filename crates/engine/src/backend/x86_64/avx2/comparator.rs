@@ -2,8 +2,10 @@ use crate::backend::x86_64::avx2::key::AVX2Key;
 use crate::domain::key::Key;
 use std::arch::x86_64::{__m256i, _mm256_cmpeq_epi16, _mm256_cmpeq_epi32, _mm256_movemask_epi8};
 
-#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
 pub fn avx2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[__m256i; 2],
     v: &[__m256i; 2],
@@ -62,8 +64,10 @@ pub fn avx2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     }
 }
 
-#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
 pub fn avx2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[__m256i; 2],
     v: &[__m256i; 2],
@@ -106,8 +110,10 @@ pub fn avx2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     }
 }
 
-#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
 pub fn avx2_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[__m256i; 2],
     v: &[__m256i; 2],

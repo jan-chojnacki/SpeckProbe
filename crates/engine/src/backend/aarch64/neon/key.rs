@@ -31,6 +31,8 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES,
 
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn new(prefix: &[u8; PREFIX], v: [u64; LANES], speck_version: SpeckVersion) -> Self {
         let mut bytes = [[0u8; BYTES]; LANES];
 
@@ -131,6 +133,8 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES,
 impl<const PREFIX: usize> NEONKey<8, 8, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u16x4_key(&self) -> [uint16x8_t; 4] {
         let a: [[u8; 2]; 8] = self.bytes.map(|b| [b[0], b[1]]);
         let b: [[u8; 2]; 8] = self.bytes.map(|b| [b[2], b[3]]);
@@ -150,6 +154,8 @@ impl<const PREFIX: usize> NEONKey<8, 8, PREFIX> {
 impl<const PREFIX: usize> NEONKey<4, 9, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u24x3_key(&self) -> [uint32x4_t; 3] {
         let a: [[u8; 4]; 4] = self.bytes.map(|b| [b[0], b[1], b[2], 0]);
         let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
@@ -167,6 +173,8 @@ impl<const PREFIX: usize> NEONKey<4, 9, PREFIX> {
 impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u24x4_key(&self) -> [uint32x4_t; 4] {
         let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
         let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
@@ -183,6 +191,8 @@ impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
 
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u32x3_key(&self) -> [uint32x4_t; 3] {
         let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
         let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
@@ -199,6 +209,8 @@ impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
 impl<const PREFIX: usize> NEONKey<4, 16, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u32x4_key(&self) -> [uint32x4_t; 4] {
         let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
         let d: [[u8; 4]; 4] = self.bytes.map(|b| [b[12], b[13], b[14], b[15]]);
@@ -216,6 +228,8 @@ impl<const PREFIX: usize> NEONKey<4, 16, PREFIX> {
 impl<const PREFIX: usize> NEONKey<2, 12, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u48x2_key(&self) -> [uint64x2_t; 2] {
         let a: [[u8; 8]; 2] = self
             .bytes
@@ -235,6 +249,8 @@ impl<const PREFIX: usize> NEONKey<2, 12, PREFIX> {
 impl<const PREFIX: usize> NEONKey<2, 18, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u48x3_key(&self) -> [uint64x2_t; 3] {
         let b: [[u8; 8]; 2] = self
             .bytes
@@ -255,6 +271,8 @@ impl<const PREFIX: usize> NEONKey<2, 18, PREFIX> {
 impl<const PREFIX: usize> NEONKey<2, 16, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u64x2_key(&self) -> [uint64x2_t; 2] {
         let b: [[u8; 8]; 2] = self
             .bytes
@@ -271,6 +289,8 @@ impl<const PREFIX: usize> NEONKey<2, 16, PREFIX> {
 impl<const PREFIX: usize> NEONKey<2, 24, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u64x3_key(&self) -> [uint64x2_t; 3] {
         let c: [[u8; 8]; 2] = self
             .bytes
@@ -288,6 +308,8 @@ impl<const PREFIX: usize> NEONKey<2, 24, PREFIX> {
 impl<const PREFIX: usize> NEONKey<2, 32, PREFIX> {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u64x4_key(&self) -> [uint64x2_t; 4] {
         let d: [[u8; 8]; 2] = self
             .bytes

@@ -1,9 +1,12 @@
+#[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::avx2::comparator::{
     avx2_block_compare_u16, avx2_block_compare_u32, avx2_block_compare_u64,
 };
+#[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::avx512::comparator::{
     avx512_block_compare_u16, avx512_block_compare_u32, avx512_block_compare_u64,
 };
+#[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::sse2::comparator::{
     sse2_block_compare_u16, sse2_block_compare_u32, sse2_block_compare_u64,
 };
@@ -27,6 +30,8 @@ macro_rules! define_search {
     simd = $simd:tt
     ) => {paste! {
         $(#[$meta])*
+        #[doc = "# Safety"]
+        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
         pub fn [<$simd _search_encrypt_ $name>] <const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,
@@ -42,6 +47,8 @@ macro_rules! define_search {
         }
 
         $(#[$meta])*
+        #[doc = "# Safety"]
+        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
         pub fn [<$simd _search_encrypt_inflight_ $name>]<const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,
@@ -57,6 +64,8 @@ macro_rules! define_search {
         }
 
         $(#[$meta])*
+        #[doc = "# Safety"]
+        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
         pub fn [<$simd _search_decrypt_ $name>]<const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,
@@ -74,6 +83,7 @@ macro_rules! define_search {
 }
 
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
@@ -85,6 +95,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
@@ -96,6 +107,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
@@ -107,6 +119,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
@@ -118,6 +131,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
@@ -129,6 +143,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
@@ -140,6 +155,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
@@ -151,6 +167,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
@@ -162,6 +179,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
@@ -173,6 +191,7 @@ define_search!(
     simd = sse2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
     version = SpeckVersion::Speck128_256,
     bytes = 32,
@@ -185,6 +204,7 @@ define_search!(
 );
 
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
@@ -196,6 +216,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
@@ -207,6 +228,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
@@ -218,6 +240,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
@@ -229,6 +252,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
@@ -240,6 +264,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
@@ -251,6 +276,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
@@ -262,6 +288,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
@@ -273,6 +300,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
@@ -284,6 +312,7 @@ define_search!(
     simd = avx2
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
     version = SpeckVersion::Speck128_256,
     bytes = 32,
@@ -296,6 +325,7 @@ define_search!(
 );
 
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512bw")]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
@@ -307,6 +337,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
@@ -318,6 +349,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
@@ -329,6 +361,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
@@ -340,6 +373,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
@@ -351,6 +385,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
@@ -362,6 +397,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
@@ -373,6 +409,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
@@ -384,6 +421,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
@@ -395,6 +433,7 @@ define_search!(
     simd = avx512
 );
 define_search!(
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
     version = SpeckVersion::Speck128_256,
     bytes = 32,

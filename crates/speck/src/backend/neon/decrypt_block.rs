@@ -5,7 +5,7 @@ macro_rules! impl_decrypt_block_neon {
         #[doc = "Decrypts one Speck block using NEON."]
         #[doc = "# Safety"]
         #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(all(target_arch = "aarch64"))]
         #[target_feature(enable = "neon")]
         pub fn $fn_name(ct: [$vec_type; 2], key: [$vec_type; $key_words]) -> [$vec_type; 2] {
             let mut round_keys: [$vec_type; $rounds + 1] = [$crate::neon_set!($word, 0); $rounds + 1];

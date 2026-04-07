@@ -1,6 +1,8 @@
+use crate::backend::macors::define_runtime_variants_default;
 use engine::aarch64::neon::converter::{
     neon_u16x2_block_to_vec, neon_u32x2_block_to_vec, neon_u64x2_block_to_vec,
 };
+use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 define_runtime_variants_default!(
     attrs = [

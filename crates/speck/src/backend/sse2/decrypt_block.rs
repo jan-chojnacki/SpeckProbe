@@ -5,7 +5,7 @@ macro_rules! impl_decrypt_block_sse2 {
         #[doc = "Decrypts one Speck block using SSE2."]
         #[doc = "# Safety"]
         #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
         pub fn $fn_name(ct: [__m128i; 2], key: [__m128i; $key_words]) -> [__m128i; 2] {
             let mut round_keys: [__m128i; $rounds + 1] = [core::arch::x86_64::_mm_setzero_si128(); $rounds + 1];

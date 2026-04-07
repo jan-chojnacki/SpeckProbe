@@ -13,6 +13,10 @@ macro_rules! define_runtime {
         $(,)?
     ) => { paste::paste! {
         $(#[$meta])*
+        $(
+            #[doc = "# Safety"]
+            #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
+        )?
         pub fn $fn_name(
             runtime_request: $crate::api::RuntimeRequest,
         ) -> (Vec<Vec<u8>>, Option<Vec<u8>>) {

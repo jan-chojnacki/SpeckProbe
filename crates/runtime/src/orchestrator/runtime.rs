@@ -49,7 +49,7 @@ where
         validator: FV,
         convert: impl Fn([VW; 2]) -> [EW; 2],
     ) -> Self {
-        assert!(data.len() > 0);
+        assert!(!data.is_empty());
         assert_eq!(data.len(), expected.len());
 
         let pool = ThreadPoolBuilder::new()

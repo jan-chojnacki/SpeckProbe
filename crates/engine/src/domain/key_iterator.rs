@@ -1,14 +1,10 @@
 #[cfg(target_arch = "aarch64")]
 use crate::backend::aarch64::neon::key::NEONKey;
-#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+#[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::avx2::key::AVX2Key;
-#[cfg(all(
-    target_arch = "x86_64",
-    target_arch = "x86_64",
-    target_feature = "avx512bw"
-))]
+#[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::avx512::key::AVX512Key;
-#[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+#[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::sse2::key::SSE2Key;
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
@@ -51,26 +47,28 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
         Key::new(&self.prefix, self.current)
     }
 
-    #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     pub fn sse2_new_key<const LANES: usize>(&self) -> SSE2Key<LANES, BYTES, PREFIX> {
         let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
         SSE2Key::new(&self.prefix, v, self.speck_version)
     }
 
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_new_key<const LANES: usize>(&self) -> AVX2Key<LANES, BYTES, PREFIX> {
         let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
         AVX2Key::new(&self.prefix, v, self.speck_version)
     }
 
-    #[cfg(all(
-        target_arch = "x86_64",
-        target_arch = "x86_64",
-        target_feature = "avx512bw"
-    ))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512f")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512f` before calling this function."]
     pub fn avx512_new_key<const LANES: usize>(&self) -> AVX512Key<LANES, BYTES, PREFIX> {
         let v = std::array::from_fn(|i| self.current + i as u64);
         AVX512Key::new(&self.prefix, v, self.speck_version)
@@ -78,6 +76,8 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
 
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_new_key<const LANES: usize>(&self) -> NEONKey<LANES, BYTES, PREFIX> {
         let v = std::array::from_fn(|i| self.current + i as u64);
         NEONKey::new(&self.prefix, v, self.speck_version)

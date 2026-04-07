@@ -22,8 +22,10 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> SimdKey<LANES>
 impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> AVX2Key<LANES, BYTES, PREFIX> {
     const SUFFIX: usize = BYTES - PREFIX;
 
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn new(prefix: &[u8; PREFIX], v: [u64; LANES], speck_version: SpeckVersion) -> Self {
         let mut bytes = [[0u8; BYTES]; LANES];
 
@@ -101,8 +103,8 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> AVX2Key<LANES,
     }
 
     pub fn update(&mut self, v: [u64; LANES]) {
-        for i in 0..LANES {
-            let suffix = v[i].to_le_bytes();
+        for (i, v) in v.iter().enumerate().take(LANES) {
+            let suffix = v.to_le_bytes();
             self.bytes[i][..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
         }
     }
@@ -122,8 +124,10 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> AVX2Key<LANES,
 }
 
 impl<const PREFIX: usize> AVX2Key<16, 8, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u16x4_key(&self) -> [__m256i; 4] {
         let a: [[u8; 2]; 16] = self.bytes.map(|b| [b[0], b[1]]);
         let b: [[u8; 2]; 16] = self.bytes.map(|b| [b[2], b[3]]);
@@ -141,8 +145,10 @@ impl<const PREFIX: usize> AVX2Key<16, 8, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<8, 9, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u24x3_key(&self) -> [__m256i; 3] {
         let a: [[u8; 4]; 8] = self.bytes.map(|b| [b[0], b[1], b[2], 0]);
         let b: [[u8; 4]; 8] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
@@ -158,8 +164,10 @@ impl<const PREFIX: usize> AVX2Key<8, 9, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u24x4_key(&self) -> [__m256i; 4] {
         let b: [[u8; 4]; 8] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
         let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
@@ -174,8 +182,10 @@ impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
         }
     }
 
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u32x3_key(&self) -> [__m256i; 3] {
         let b: [[u8; 4]; 8] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
         let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
@@ -190,8 +200,10 @@ impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<8, 16, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u32x4_key(&self) -> [__m256i; 4] {
         let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
         let d: [[u8; 4]; 8] = self.bytes.map(|b| [b[12], b[13], b[14], b[15]]);
@@ -207,8 +219,10 @@ impl<const PREFIX: usize> AVX2Key<8, 16, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<4, 12, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u48x2_key(&self) -> [__m256i; 2] {
         let a: [[u8; 8]; 4] = self
             .bytes
@@ -226,8 +240,10 @@ impl<const PREFIX: usize> AVX2Key<4, 12, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<4, 18, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u48x3_key(&self) -> [__m256i; 3] {
         let b: [[u8; 8]; 4] = self
             .bytes
@@ -246,8 +262,10 @@ impl<const PREFIX: usize> AVX2Key<4, 18, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<4, 16, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u64x2_key(&self) -> [__m256i; 2] {
         let b: [[u8; 8]; 4] = self
             .bytes
@@ -257,8 +275,10 @@ impl<const PREFIX: usize> AVX2Key<4, 16, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<4, 24, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u64x3_key(&self) -> [__m256i; 3] {
         let c: [[u8; 8]; 4] = self
             .bytes
@@ -268,8 +288,10 @@ impl<const PREFIX: usize> AVX2Key<4, 24, PREFIX> {
 }
 
 impl<const PREFIX: usize> AVX2Key<4, 32, PREFIX> {
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+    #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u64x4_key(&self) -> [__m256i; 4] {
         let d: [[u8; 8]; 4] = self
             .bytes

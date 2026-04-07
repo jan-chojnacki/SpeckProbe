@@ -8,6 +8,8 @@ use std::arch::aarch64::{
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 #[target_feature(enable = "neon")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `neon` before calling this function."]
 pub fn neon_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[uint16x8_t; 2],
     v: &[uint16x8_t; 2],
@@ -31,6 +33,8 @@ pub fn neon_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 #[target_feature(enable = "neon")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `neon` before calling this function."]
 pub fn neon_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[uint32x4_t; 2],
     v: &[uint32x4_t; 2],
@@ -54,6 +58,8 @@ pub fn neon_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 #[target_feature(enable = "neon")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `neon` before calling this function."]
 pub fn neon_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[uint64x2_t; 2],
     v: &[uint64x2_t; 2],

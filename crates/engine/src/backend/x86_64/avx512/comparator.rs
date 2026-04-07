@@ -4,12 +4,10 @@ use std::arch::x86_64::{
     __m512i, _mm512_cmpeq_epi16_mask, _mm512_cmpeq_epi32_mask, _mm512_cmpeq_epi64_mask,
 };
 
-#[cfg(all(
-    target_arch = "x86_64",
-    target_feature = "avx512f",
-    target_feature = "avx512bw"
-))]
-#[target_feature(enable = "avx512f,avx512bw")]
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx512bw")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
 pub fn avx512_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[__m512i; 2],
     v: &[__m512i; 2],
@@ -28,8 +26,10 @@ pub fn avx512_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     }
 }
 
-#[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx512f")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `avx512f` before calling this function."]
 pub fn avx512_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[__m512i; 2],
     v: &[__m512i; 2],
@@ -48,8 +48,10 @@ pub fn avx512_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     }
 }
 
-#[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx512f")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `avx512f` before calling this function."]
 pub fn avx512_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[__m512i; 2],
     v: &[__m512i; 2],

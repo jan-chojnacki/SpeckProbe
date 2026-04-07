@@ -5,7 +5,7 @@ macro_rules! impl_encrypt_block_avx512 {
         #[doc = "Encrypts one Speck block using AVX512."]
         #[doc = "# Safety"]
         #[doc = "Caller must ensure CPU support for `avx512` before calling this function."]
-        #[cfg(all(target_arch = "x86_64", target_feature = $feature))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = $feature)]
         pub fn $fn_name(ct: [__m512i; 2], key: [__m512i; $key_words]) -> [__m512i; 2] {
             let mut round_keys: [__m512i; $rounds + 1] = [core::arch::x86_64::_mm512_setzero_si512(); $rounds + 1];
@@ -39,7 +39,7 @@ macro_rules! impl_encrypt_block_avx512_inflight {
         #[doc = "Encrypts one Speck block using AVX512."]
         #[doc = "# Safety"]
         #[doc = "Caller must ensure CPU support for `avx512` before calling this function."]
-        #[cfg(all(target_arch = "x86_64", target_feature = $feature))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = $feature)]
         pub fn $fn_name(ct: [__m512i; 2], key: [__m512i; $key_words]) -> [__m512i; 2] {
             let mut l = $crate::key_words_inline!(key, $key_words);

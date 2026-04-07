@@ -141,7 +141,7 @@ impl SPECK {
 
     pub(in crate::cipher) fn decrypt_ecb(&self, data: &[u8]) -> Result<Vec<u8>, SPECKError> {
         let block_size = self.speck_version.block_size_bytes();
-        if data.len() % block_size != 0 {
+        if !data.len().is_multiple_of(block_size) {
             return Err(SPECKError::InvalidDataLength {
                 expected_multiple: block_size,
                 got: data.len(),

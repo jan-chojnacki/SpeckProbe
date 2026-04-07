@@ -1,4 +1,6 @@
 use crate::backend::macors::define_runtime_variants_default;
+
+#[cfg(target_arch = "x86_64")]
 use engine::x86_64::avx512::converter::{
     avx512_u16x2_block_to_vec, avx512_u32x2_block_to_vec, avx512_u64x2_block_to_vec,
 };
@@ -6,7 +8,7 @@ use std::arch::x86_64::__m512i;
 
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512bw")]
     ],
     avx512_32_64,
@@ -19,7 +21,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_48_72,
@@ -32,7 +34,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_48_96,
@@ -45,7 +47,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_64_96,
@@ -58,7 +60,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_64_128,
@@ -71,7 +73,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_96_96,
@@ -84,7 +86,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_96_144,
@@ -97,7 +99,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_128_128,
@@ -110,7 +112,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_128_192,
@@ -123,7 +125,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx512f")]
     ],
     avx512_128_256,

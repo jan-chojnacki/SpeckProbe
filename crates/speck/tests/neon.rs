@@ -1,7 +1,7 @@
 mod common;
 
 #[cfg(test)]
-#[cfg(target_arch = "aarch64")]
+#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 mod test {
     use crate::common::define_speck_test_aarch64_simd;
     use speck::{

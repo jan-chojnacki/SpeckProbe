@@ -6,7 +6,7 @@ use std::arch::x86_64::__m128i;
 
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_32_64,
@@ -19,7 +19,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_48_72,
@@ -32,7 +32,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_48_96,
@@ -45,7 +45,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_64_96,
@@ -58,7 +58,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_64_128,
@@ -71,7 +71,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_96_96,
@@ -84,7 +84,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_96_144,
@@ -97,7 +97,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_128_128,
@@ -110,7 +110,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_128_192,
@@ -123,7 +123,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
     ],
     sse2_128_256,

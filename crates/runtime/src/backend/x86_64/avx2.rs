@@ -1,4 +1,5 @@
 use crate::backend::macors::define_runtime_variants_default;
+#[cfg(target_arch = "x86_64")]
 use engine::x86_64::avx2::converter::{
     avx2_u16x2_block_to_vec, avx2_u32x2_block_to_vec, avx2_u64x2_block_to_vec,
 };
@@ -6,7 +7,7 @@ use std::arch::x86_64::__m256i;
 
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_32_64,
@@ -19,7 +20,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_48_72,
@@ -32,7 +33,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_48_96,
@@ -45,7 +46,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_64_96,
@@ -58,7 +59,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_64_128,
@@ -71,7 +72,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_96_96,
@@ -84,7 +85,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_96_144,
@@ -97,7 +98,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_128_128,
@@ -110,7 +111,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_128_192,
@@ -123,7 +124,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+        #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
     ],
     avx2_128_256,

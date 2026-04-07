@@ -4,6 +4,8 @@ use std::arch::x86_64::{__m128i, _mm_cmpeq_epi16, _mm_cmpeq_epi32, _mm_movemask_
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
 pub fn sse2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     e: &[__m128i; 2],
     v: &[__m128i; 2],
@@ -48,6 +50,8 @@ pub fn sse2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
 pub fn sse2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     e: &[__m128i; 2],
     v: &[__m128i; 2],
@@ -84,6 +88,8 @@ pub fn sse2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
 
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 #[target_feature(enable = "sse2")]
+#[doc = "# Safety"]
+#[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
 pub fn sse2_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
     e: &[__m128i; 2],
     v: &[__m128i; 2],

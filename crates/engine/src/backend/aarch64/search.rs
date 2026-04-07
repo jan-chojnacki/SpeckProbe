@@ -21,6 +21,8 @@ macro_rules! define_search {
     simd = $simd:tt
     ) => {paste! {
         $(#[$meta])*
+        #[doc = "# Safety"]
+        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
         pub fn [<$simd _search_encrypt_ $name>] <const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,
@@ -36,6 +38,8 @@ macro_rules! define_search {
         }
 
         $(#[$meta])*
+        #[doc = "# Safety"]
+        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
         pub fn [<$simd _search_encrypt_inflight_ $name>]<const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,
@@ -51,6 +55,8 @@ macro_rules! define_search {
         }
 
         $(#[$meta])*
+        #[doc = "# Safety"]
+        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
         pub fn [<$simd _search_decrypt_ $name>]<const PREFIX: usize>(
             task: Task<$vector, $bytes, PREFIX>,
             out: &mut Vec<Key<$bytes, PREFIX>>,

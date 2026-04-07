@@ -1,7 +1,11 @@
 mod common;
 
 #[cfg(test)]
-#[cfg(target_arch = "x86_64")]
+#[cfg(all(
+    target_arch = "x86_64",
+    target_feature = "avx512f",
+    target_feature = "avx512bw"
+))]
 mod test {
     use crate::common::define_speck_test_x86_64_simd;
     use speck::{

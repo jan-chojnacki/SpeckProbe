@@ -31,6 +31,7 @@ impl U24 {
 impl BitXor for U24 {
     type Output = Self;
 
+    #[allow(clippy::suspicious_arithmetic_impl)]
     #[inline]
     fn bitxor(self, rhs: Self) -> Self::Output {
         U24(self.0.bitxor(rhs.0) & Self::U24_MASK)
