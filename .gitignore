@@ -1,6 +1,8 @@
 /target
 .idea
+.venv
 Cargo.lock
 perf.data
 perf.data.old
 output.csv
+data

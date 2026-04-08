@@ -80,7 +80,7 @@ macro_rules! define_engine_bench {
     ) => {
         $(#[$meta])*
         fn $fn_name(g: &mut criterion::BenchmarkGroup<criterion::measurement::WallTime>) {
-            seq_macro::seq!(I in 1..=2{
+            seq_macro::seq!(I in 1..=3{
                 let end = $crate::calculate_end!(I);
                 let zero: $word = unsafe { std::mem::zeroed() };
                 let task = Task::<$word, { $bytes }, { $bytes - I }> {

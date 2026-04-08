@@ -2,7 +2,7 @@ use clap::Parser;
 use std::path::PathBuf;
 
 const CRITERION_PATH: &str = "./target/criterion/";
-const OUTPUT_PATH: &str = "output.csv";
+const OUTPUT_PATH: &str = "./analysis/data/output.csv";
 
 /// Extract Criterion results from raw CSV files
 #[derive(Debug, Parser)]

@@ -48,3 +48,7 @@ harness = false
 [[bench]]
 name = "engine_avx512_benches"
 harness = false
+
+[[bench]]
+name = "engine_neon_benches"
+harness = false
