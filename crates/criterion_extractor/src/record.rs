@@ -17,6 +17,7 @@ pub(crate) struct Record {
     row_index: usize,
     benchmark: String,
     backend: String,
+    architecture: String,
     function: String,
     version: String,
     suffix: String,
@@ -34,8 +35,12 @@ fn split_once_or_default(value: &str) -> (String, String) {
     }
 }
 
-impl From<(usize, RawRecord)> for Record {
-    fn from((row_index, value): (usize, RawRecord)) -> Self {
+pub(crate) fn current_architecture() -> String {
+    std::env::consts::ARCH.to_string()
+}
+
+impl Record {
+    pub(crate) fn from_raw(row_index: usize, value: RawRecord, architecture: &str) -> Self {
         let (benchmark, backend) = split_once_or_default(&value.group);
         let (version, suffix) = split_once_or_default(&value.value);
 
@@ -43,6 +48,7 @@ impl From<(usize, RawRecord)> for Record {
             row_index,
             benchmark,
             backend,
+            architecture: architecture.to_string(),
             function: value.function,
             version,
             suffix,
