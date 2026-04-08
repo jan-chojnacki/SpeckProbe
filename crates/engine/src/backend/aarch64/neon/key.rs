@@ -11,6 +11,7 @@ use std::arch::aarch64::{
 };
 
 #[derive(Debug, Copy, Clone)]
+#[repr(C, align(16))]
 pub struct NEONKey<const LANES: usize, const BYTES: usize, const PREFIX: usize> {
     bytes: [[u8; BYTES]; LANES],
     pa: uint8x16_t,

@@ -1,9 +1,13 @@
 use crate::domain::key::Key;
 use crate::domain::simd_key::SimdKey;
 use speck::SpeckVersion;
-use std::arch::x86_64::{__m256i, _mm256_loadu_si256, _mm256_setzero_si256};
+use std::arch::x86_64::{__m256i, _mm256_load_si256, _mm256_setzero_si256};
+
+#[repr(align(32))]
+struct Align32<T>(T);
 
 #[derive(Debug, Copy, Clone)]
+#[repr(C, align(32))]
 pub struct AVX2Key<const LANES: usize, const BYTES: usize, const PREFIX: usize> {
     bytes: [[u8; BYTES]; LANES],
     pa: __m256i,
@@ -41,59 +45,57 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> AVX2Key<LANES,
 
         match speck_version {
             SpeckVersion::Speck48_96 => {
-                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], 0]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], 0]));
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck64_96 => {
-                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3]]));
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck64_128 => {
-                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
-                let b: [[u8; 4]; LANES] = bytes.map(|b| [b[4], b[5], b[6], b[7]]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3]]));
+                let b = Align32(bytes.map(|b| [b[4], b[5], b[6], b[7]]));
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
-                    pb = _mm256_loadu_si256(b.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                    pb = _mm256_load_si256(b.0.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck96_144 => {
-                let a: [[u8; 8]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]));
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck128_128 => {
-                let a: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]));
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck128_192 => {
-                let a: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                let b: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]));
+                let b =
+                    Align32(bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]));
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
-                    pb = _mm256_loadu_si256(b.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                    pb = _mm256_load_si256(b.0.as_ptr().cast());
                 }
             }
             SpeckVersion::Speck128_256 => {
-                let a: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                let b: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-                let c: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
+                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]));
+                let b =
+                    Align32(bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]));
+                let c = Align32(
+                    bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
+                );
                 unsafe {
-                    pa = _mm256_loadu_si256(a.as_ptr().cast());
-                    pb = _mm256_loadu_si256(b.as_ptr().cast());
-                    pc = _mm256_loadu_si256(c.as_ptr().cast());
+                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                    pb = _mm256_load_si256(b.0.as_ptr().cast());
+                    pc = _mm256_load_si256(c.0.as_ptr().cast());
                 }
             }
             _ => {}
@@ -129,16 +131,16 @@ impl<const PREFIX: usize> AVX2Key<16, 8, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u16x4_key(&self) -> [__m256i; 4] {
-        let a: [[u8; 2]; 16] = self.bytes.map(|b| [b[0], b[1]]);
-        let b: [[u8; 2]; 16] = self.bytes.map(|b| [b[2], b[3]]);
-        let c: [[u8; 2]; 16] = self.bytes.map(|b| [b[4], b[5]]);
-        let d: [[u8; 2]; 16] = self.bytes.map(|b| [b[6], b[7]]);
+        let a = Align32(self.bytes.map(|b| [b[0], b[1]]));
+        let b = Align32(self.bytes.map(|b| [b[2], b[3]]));
+        let c = Align32(self.bytes.map(|b| [b[4], b[5]]));
+        let d = Align32(self.bytes.map(|b| [b[6], b[7]]));
         unsafe {
             [
-                _mm256_loadu_si256(a.as_ptr().cast()),
-                _mm256_loadu_si256(b.as_ptr().cast()),
-                _mm256_loadu_si256(c.as_ptr().cast()),
-                _mm256_loadu_si256(d.as_ptr().cast()),
+                _mm256_load_si256(a.0.as_ptr().cast()),
+                _mm256_load_si256(b.0.as_ptr().cast()),
+                _mm256_load_si256(c.0.as_ptr().cast()),
+                _mm256_load_si256(d.0.as_ptr().cast()),
             ]
         }
     }
@@ -150,14 +152,14 @@ impl<const PREFIX: usize> AVX2Key<8, 9, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u24x3_key(&self) -> [__m256i; 3] {
-        let a: [[u8; 4]; 8] = self.bytes.map(|b| [b[0], b[1], b[2], 0]);
-        let b: [[u8; 4]; 8] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
-        let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
+        let a = Align32(self.bytes.map(|b| [b[0], b[1], b[2], 0]));
+        let b = Align32(self.bytes.map(|b| [b[3], b[4], b[5], 0]));
+        let c = Align32(self.bytes.map(|b| [b[6], b[7], b[8], 0]));
         unsafe {
             [
-                _mm256_loadu_si256(a.as_ptr().cast()),
-                _mm256_loadu_si256(b.as_ptr().cast()),
-                _mm256_loadu_si256(c.as_ptr().cast()),
+                _mm256_load_si256(a.0.as_ptr().cast()),
+                _mm256_load_si256(b.0.as_ptr().cast()),
+                _mm256_load_si256(c.0.as_ptr().cast()),
             ]
         }
     }
@@ -169,15 +171,15 @@ impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u24x4_key(&self) -> [__m256i; 4] {
-        let b: [[u8; 4]; 8] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
-        let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
-        let d: [[u8; 4]; 8] = self.bytes.map(|b| [b[9], b[10], b[11], 0]);
+        let b = Align32(self.bytes.map(|b| [b[3], b[4], b[5], 0]));
+        let c = Align32(self.bytes.map(|b| [b[6], b[7], b[8], 0]));
+        let d = Align32(self.bytes.map(|b| [b[9], b[10], b[11], 0]));
         unsafe {
             [
                 self.pa,
-                _mm256_loadu_si256(b.as_ptr().cast()),
-                _mm256_loadu_si256(c.as_ptr().cast()),
-                _mm256_loadu_si256(d.as_ptr().cast()),
+                _mm256_load_si256(b.0.as_ptr().cast()),
+                _mm256_load_si256(c.0.as_ptr().cast()),
+                _mm256_load_si256(d.0.as_ptr().cast()),
             ]
         }
     }
@@ -187,13 +189,13 @@ impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u32x3_key(&self) -> [__m256i; 3] {
-        let b: [[u8; 4]; 8] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
-        let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
+        let b = Align32(self.bytes.map(|b| [b[4], b[5], b[6], b[7]]));
+        let c = Align32(self.bytes.map(|b| [b[8], b[9], b[10], b[11]]));
         unsafe {
             [
                 self.pa,
-                _mm256_loadu_si256(b.as_ptr().cast()),
-                _mm256_loadu_si256(c.as_ptr().cast()),
+                _mm256_load_si256(b.0.as_ptr().cast()),
+                _mm256_load_si256(c.0.as_ptr().cast()),
             ]
         }
     }
@@ -205,14 +207,14 @@ impl<const PREFIX: usize> AVX2Key<8, 16, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u32x4_key(&self) -> [__m256i; 4] {
-        let c: [[u8; 4]; 8] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
-        let d: [[u8; 4]; 8] = self.bytes.map(|b| [b[12], b[13], b[14], b[15]]);
+        let c = Align32(self.bytes.map(|b| [b[8], b[9], b[10], b[11]]));
+        let d = Align32(self.bytes.map(|b| [b[12], b[13], b[14], b[15]]));
         unsafe {
             [
                 self.pa,
                 self.pb,
-                _mm256_loadu_si256(c.as_ptr().cast()),
-                _mm256_loadu_si256(d.as_ptr().cast()),
+                _mm256_load_si256(c.0.as_ptr().cast()),
+                _mm256_load_si256(d.0.as_ptr().cast()),
             ]
         }
     }
@@ -224,16 +226,18 @@ impl<const PREFIX: usize> AVX2Key<4, 12, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u48x2_key(&self) -> [__m256i; 2] {
-        let a: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
-        let b: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
+        let a = Align32(
+            self.bytes
+                .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]),
+        );
+        let b = Align32(
+            self.bytes
+                .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]),
+        );
         unsafe {
             [
-                _mm256_loadu_si256(a.as_ptr().cast()),
-                _mm256_loadu_si256(b.as_ptr().cast()),
+                _mm256_load_si256(a.0.as_ptr().cast()),
+                _mm256_load_si256(b.0.as_ptr().cast()),
             ]
         }
     }
@@ -245,17 +249,19 @@ impl<const PREFIX: usize> AVX2Key<4, 18, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u48x3_key(&self) -> [__m256i; 3] {
-        let b: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
-        let c: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]);
+        let b = Align32(
+            self.bytes
+                .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]),
+        );
+        let c = Align32(
+            self.bytes
+                .map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]),
+        );
         unsafe {
             [
                 self.pa,
-                _mm256_loadu_si256(b.as_ptr().cast()),
-                _mm256_loadu_si256(c.as_ptr().cast()),
+                _mm256_load_si256(b.0.as_ptr().cast()),
+                _mm256_load_si256(c.0.as_ptr().cast()),
             ]
         }
     }
@@ -267,10 +273,11 @@ impl<const PREFIX: usize> AVX2Key<4, 16, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u64x2_key(&self) -> [__m256i; 2] {
-        let b: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-        unsafe { [self.pa, _mm256_loadu_si256(b.as_ptr().cast())] }
+        let b = Align32(
+            self.bytes
+                .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+        );
+        unsafe { [self.pa, _mm256_load_si256(b.0.as_ptr().cast())] }
     }
 }
 
@@ -280,10 +287,11 @@ impl<const PREFIX: usize> AVX2Key<4, 24, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u64x3_key(&self) -> [__m256i; 3] {
-        let c: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
-        unsafe { [self.pa, self.pb, _mm256_loadu_si256(c.as_ptr().cast())] }
+        let c = Align32(
+            self.bytes
+                .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
+        );
+        unsafe { [self.pa, self.pb, _mm256_load_si256(c.0.as_ptr().cast())] }
     }
 }
 
@@ -293,15 +301,16 @@ impl<const PREFIX: usize> AVX2Key<4, 32, PREFIX> {
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u64x4_key(&self) -> [__m256i; 4] {
-        let d: [[u8; 8]; 4] = self
-            .bytes
-            .map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]);
+        let d = Align32(
+            self.bytes
+                .map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]),
+        );
         unsafe {
             [
                 self.pa,
                 self.pb,
                 self.pc,
-                _mm256_loadu_si256(d.as_ptr().cast()),
+                _mm256_load_si256(d.0.as_ptr().cast()),
             ]
         }
     }
