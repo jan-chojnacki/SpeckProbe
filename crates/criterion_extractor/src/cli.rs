@@ -29,13 +29,13 @@ pub enum Command {
 #[derive(Debug, Args)]
 pub struct ExtractArgs {
     /// Ścieżka do katalogu z wynikami Criterion (szuka plików raw.csv w podkatalogach new)
-    #[arg(short, long, default_value = CRITERION_PATH)]
+    #[arg(short = 'i', long, default_value = CRITERION_PATH)]
     pub(crate) criterion_path: PathBuf,
     /// Ścieżka pliku wyjściowego CSV z połączonymi rekordami
-    #[arg(short, long, default_value = OUTPUT_PATH)]
+    #[arg(short = 'o', long, default_value = OUTPUT_PATH)]
     pub(crate) output_path: PathBuf,
     /// Czyści plik wyjściowy przed zapisem (domyślnie dopisuje rekordy)
-    #[arg(long, default_value_t = false)]
+    #[arg(short = 'c', long, default_value_t = false)]
     pub(crate) clear_output: bool,
 }
 
@@ -46,9 +46,9 @@ pub struct MergeArgs {
     /// Drugi plik wejściowy CSV
     pub(crate) second_input: PathBuf,
     /// Ścieżka pliku wyjściowego CSV
-    #[arg(short, long, default_value = OUTPUT_PATH)]
+    #[arg(short = 'o', long, default_value = OUTPUT_PATH)]
     pub(crate) output_path: PathBuf,
     /// Czyści plik wyjściowy przed zapisem (domyślnie dopisuje rekordy)
-    #[arg(long, default_value_t = false)]
+    #[arg(short = 'i', long, default_value_t = false)]
     pub(crate) clear_output: bool,
 }
