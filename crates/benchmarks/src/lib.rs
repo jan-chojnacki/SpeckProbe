@@ -82,12 +82,13 @@ macro_rules! define_engine_bench {
         fn $fn_name(g: &mut criterion::BenchmarkGroup<criterion::measurement::WallTime>) {
             seq_macro::seq!(I in 1..=2{
                 let end = $crate::calculate_end!(I);
+                let zero: $word = unsafe { std::mem::zeroed() };
                 let task = Task::<$word, { $bytes }, { $bytes - I }> {
                     prefix: [0; $bytes - I],
                     start: 0,
                     end,
-                    data: [0, 0],
-                    expected: [0, 0],
+                    data: [zero; 2],
+                    expected: [zero; 2],
                 };
 
                 let mut out: Vec<Key<{ $bytes }, { $bytes - I }>> = Vec::new();

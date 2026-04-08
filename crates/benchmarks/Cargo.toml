@@ -34,9 +34,17 @@ harness = false
 #harness = false
 
 [[bench]]
-name = "task_producer_benches"
+name = "engine_scalar_benches"
 harness = false
 
 [[bench]]
-name = "engine_scalar_benches"
+name = "engine_sse2_benches"
+harness = false
+
+[[bench]]
+name = "engine_avx2_benches"
+harness = false
+
+[[bench]]
+name = "engine_avx512_benches"
 harness = false
