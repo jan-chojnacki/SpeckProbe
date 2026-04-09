@@ -28,10 +28,10 @@ harness = false
 [[bench]]
 name = "speck_avx512_benches"
 harness = false
-#
-#[[bench]]
-#name = "speck_neon_benches"
-#harness = false
+
+[[bench]]
+name = "speck_neon_benches"
+harness = false
 
 [[bench]]
 name = "engine_scalar_benches"
