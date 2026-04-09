@@ -22,7 +22,7 @@ pub struct CliArgs {
 pub enum Command {
     /// Wyciąga rekordy z wyników Criterion i dopisuje je do pliku CSV
     Extract(ExtractArgs),
-    /// Łączy dwa pliki CSV w jeden plik wynikowy
+    /// Łączy dwa pliki CSV, zapisując wynik do pierwszego pliku wejściowego
     Merge(MergeArgs),
 }
 
@@ -45,10 +45,4 @@ pub struct MergeArgs {
     pub(crate) first_input: PathBuf,
     /// Drugi plik wejściowy CSV
     pub(crate) second_input: PathBuf,
-    /// Ścieżka pliku wyjściowego CSV
-    #[arg(short = 'o', long, default_value = OUTPUT_PATH)]
-    pub(crate) output_path: PathBuf,
-    /// Czyści plik wyjściowy przed zapisem (domyślnie dopisuje rekordy)
-    #[arg(short = 'i', long, default_value_t = false)]
-    pub(crate) clear_output: bool,
 }

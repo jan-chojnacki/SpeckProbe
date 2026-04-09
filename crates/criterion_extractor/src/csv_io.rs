@@ -94,39 +94,40 @@ fn read_headers(path: &Path) -> Result<Option<StringRecord>, Box<dyn Error>> {
     Ok(Some(headers))
 }
 
-fn copy_records(path: &Path, writer: &mut csv::Writer<File>) -> Result<(), Box<dyn Error>> {
+fn read_records(path: &Path) -> Result<Vec<StringRecord>, Box<dyn Error>> {
     let mut reader = csv::Reader::from_path(path)?;
+    let mut records = Vec::new();
 
     for record in reader.records() {
-        writer.write_record(&record?)?;
+        records.push(record?);
     }
 
-    Ok(())
+    Ok(records)
 }
 
 pub(crate) fn merge_csv_files(
     first_input: &Path,
     second_input: &Path,
-    output_path: &Path,
-    clear_output: bool,
 ) -> Result<(), Box<dyn Error>> {
-    ensure_parent_dir(output_path)?;
-    let output_has_data = file_has_data(output_path)?;
-    let write_headers = clear_output || !output_has_data;
-    let output_file = open_output_file(output_path, clear_output)?;
+    ensure_parent_dir(first_input)?;
+    let first_records = read_records(first_input)?;
+    let second_records = read_records(second_input)?;
+    let output_file = open_output_file(first_input, true)?;
     let mut writer = csv::WriterBuilder::new()
         .has_headers(false)
         .from_writer(output_file);
 
-    if write_headers {
-        let headers = read_headers(first_input)?.or(read_headers(second_input)?);
-        if let Some(headers) = headers {
-            writer.write_record(&headers)?;
-        }
+    let headers = read_headers(first_input)?.or(read_headers(second_input)?);
+    if let Some(headers) = headers {
+        writer.write_record(&headers)?;
     }
 
-    copy_records(first_input, &mut writer)?;
-    copy_records(second_input, &mut writer)?;
+    for record in first_records {
+        writer.write_record(&record)?;
+    }
+    for record in second_records {
+        writer.write_record(&record)?;
+    }
     writer.flush()?;
     Ok(())
 }

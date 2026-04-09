@@ -17,11 +17,6 @@ fn run_extract(args: ExtractArgs) -> AppResult<()> {
 }
 
 fn run_merge(args: MergeArgs) -> AppResult<()> {
-    csv_io::merge_csv_files(
-        &args.first_input,
-        &args.second_input,
-        &args.output_path,
-        args.clear_output,
-    )?;
+    csv_io::merge_csv_files(&args.first_input, &args.second_input)?;
     Ok(())
 }
