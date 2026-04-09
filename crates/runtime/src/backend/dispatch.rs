@@ -33,7 +33,7 @@ pub fn dispatch(runtime_request: RuntimeRequest) -> Result<DispatchOutput, Dispa
         BackendHint::Avx512 => unsafe {
             dispatch_for_backend!(avx512, runtime_request, version, mode, suffix)
         },
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         BackendHint::Neon => unsafe {
             dispatch_for_backend!(neon, runtime_request, version, mode, suffix)
         },

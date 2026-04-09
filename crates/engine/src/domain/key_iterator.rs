@@ -74,7 +74,7 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
         AVX512Key::new(&self.prefix, v, self.speck_version)
     }
 
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]

@@ -1,12 +1,12 @@
 use crate::aarch64::neon::key::NEONKey;
 use crate::domain::key::Key;
-#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{
     uint16x8_t, uint32x4_t, uint64x2_t, vandq_u16, vandq_u32, vandq_u64, vceqq_u16, vceqq_u32,
     vceqq_u64, vst1q_u16, vst1q_u32, vst1q_u64,
 };
 
-#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+#[cfg(target_arch = "aarch64")]
 #[target_feature(enable = "neon")]
 #[doc = "# Safety"]
 #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -31,7 +31,7 @@ pub fn neon_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     }
 }
 
-#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+#[cfg(target_arch = "aarch64")]
 #[target_feature(enable = "neon")]
 #[doc = "# Safety"]
 #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -56,7 +56,7 @@ pub fn neon_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     }
 }
 
-#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+#[cfg(target_arch = "aarch64")]
 #[target_feature(enable = "neon")]
 #[doc = "# Safety"]
 #[doc = "Caller must ensure CPU support for `neon` before calling this function."]

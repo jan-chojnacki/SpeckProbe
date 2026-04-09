@@ -6,7 +6,7 @@ use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_32_64,
@@ -19,7 +19,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_48_72,
@@ -32,7 +32,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_48_96,
@@ -45,7 +45,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_64_96,
@@ -58,7 +58,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_64_128,
@@ -71,7 +71,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_96_96,
@@ -84,7 +84,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_96_144,
@@ -97,7 +97,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_128_128,
@@ -110,7 +110,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_128_192,
@@ -123,7 +123,7 @@ define_runtime_variants_default!(
 );
 define_runtime_variants_default!(
     attrs = [
-        #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+        #[cfg(target_arch = "aarch64")]
         #[target_feature(enable = "neon")]
     ],
     neon_128_256,

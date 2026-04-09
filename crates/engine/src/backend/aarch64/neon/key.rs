@@ -4,7 +4,7 @@ use speck::SpeckVersion;
 
 #[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::uint8x16_t;
-#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+#[cfg(target_arch = "aarch64")]
 use std::arch::aarch64::{
     uint16x8_t, uint32x4_t, uint64x2_t, vdupq_n_u8, vld1q_u8, vreinterpretq_u16_u8,
     vreinterpretq_u32_u8, vreinterpretq_u64_u8,
@@ -30,7 +30,7 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> SimdKey<LANES>
 impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES, BYTES, PREFIX> {
     const SUFFIX: usize = BYTES - PREFIX;
 
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -132,7 +132,7 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES,
 }
 
 impl<const PREFIX: usize> NEONKey<8, 8, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -153,7 +153,7 @@ impl<const PREFIX: usize> NEONKey<8, 8, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<4, 9, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -172,7 +172,7 @@ impl<const PREFIX: usize> NEONKey<4, 9, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -190,7 +190,7 @@ impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
         }
     }
 
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -208,7 +208,7 @@ impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<4, 16, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -227,7 +227,7 @@ impl<const PREFIX: usize> NEONKey<4, 16, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<2, 12, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -248,7 +248,7 @@ impl<const PREFIX: usize> NEONKey<2, 12, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<2, 18, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -270,7 +270,7 @@ impl<const PREFIX: usize> NEONKey<2, 18, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<2, 16, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -288,7 +288,7 @@ impl<const PREFIX: usize> NEONKey<2, 16, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<2, 24, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
@@ -307,7 +307,7 @@ impl<const PREFIX: usize> NEONKey<2, 24, PREFIX> {
 }
 
 impl<const PREFIX: usize> NEONKey<2, 32, PREFIX> {
-    #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+    #[cfg(target_arch = "aarch64")]
     #[target_feature(enable = "neon")]
     #[doc = "# Safety"]
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
