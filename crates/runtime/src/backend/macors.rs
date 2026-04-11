@@ -36,13 +36,14 @@ macro_rules! define_runtime {
                 .map(|[a, b]| [*a as $validator_word, *b as $validator_word])
                 .collect();
 
-            let mut runtime = $crate::orchestrator::Runtime::<_, _, $engine_word, $validator_word, $bytes, { $bytes - $suffix }>::new(
+            let mut runtime = $crate::orchestrator::Orchestrator::<_, _, $engine_word, $validator_word, $bytes, { $bytes - $suffix }>::new(
                 start,
                 end,
                 &data,
                 &expected,
                 runtime_request.runtime_config.num_threads,
                 runtime_request.runtime_config.cap,
+                runtime_request.internal_config.cli_tx,
                 |task, out| engine::[<$($simd)? search_encrypt_inflight_ $version>](task, out),
                 engine::[<$mode _validate_encrypt_ $version>],
                 |block| ($converter)(block),

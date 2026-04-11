@@ -1,6 +1,8 @@
+use cli::ProgressUi;
+use runtime::Runtime;
 use runtime::api::BackendHint::Auto;
 use runtime::api::CipherMode::Ecb;
-use runtime::api::{CipherConfig, RuntimeConfig, RuntimeRequest, SearchSpace};
+use runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use speck::SpeckVersion::Speck32_64;
 use std::time::Instant;
 
@@ -19,22 +21,22 @@ fn main() {
 
     let search_space: SearchSpace = SearchSpace {
         start: vec![0; 5],
-        end: vec![255, 0, 0, 0, 0],
+        end: vec![255, 15, 0, 0, 0],
         data: vec![[0, 0], [1, 1]],
         expected: vec![[0, 0], [1, 1]],
     };
 
-    let runtime_request: RuntimeRequest = RuntimeRequest {
-        cipher_config,
-        runtime_config,
-        search_space,
-    };
+    let mut runtime = Runtime::new(cipher_config, runtime_config, search_space.clone());
+    let rx = runtime.get_rx_channel();
+
+    let ui = ProgressUi::start(rx, &search_space.start, &search_space.end);
 
     let t0 = Instant::now();
+    let result = runtime.run().unwrap();
+    let elapsed = t0.elapsed();
 
-    runtime::backend::dispatch::dispatch(runtime_request).expect("TODO: panic message");
+    ui.join();
 
-    let t1 = t0.elapsed();
-
-    println!("{:?}", t1);
+    println!("{:?}", elapsed);
+    println!("{}", result.0.len());
 }

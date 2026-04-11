@@ -1,12 +1,18 @@
+use crate::TaskDone;
+use crossbeam::channel::Sender;
 use speck::SpeckVersion;
 
 pub type DispatchOutput = (Vec<Vec<u8>>, Option<Vec<u8>>);
+
+#[derive(Debug, Clone)]
 pub struct RuntimeRequest {
     pub cipher_config: CipherConfig,
     pub runtime_config: RuntimeConfig,
     pub search_space: SearchSpace,
+    pub internal_config: InternalConfig,
 }
 
+#[derive(Debug, Clone)]
 pub struct RuntimeConfig {
     pub suffix_bytes_size: usize,
     pub num_threads: usize,
@@ -14,11 +20,18 @@ pub struct RuntimeConfig {
     pub backend_hint: BackendHint,
 }
 
+#[derive(Debug, Clone)]
+pub struct InternalConfig {
+    pub cli_tx: Sender<TaskDone>,
+}
+
+#[derive(Debug, Clone)]
 pub struct CipherConfig {
     pub cipher_mode: CipherMode,
     pub speck_version: SpeckVersion,
 }
 
+#[derive(Debug, Clone)]
 pub struct SearchSpace {
     pub start: Vec<u8>,
     pub end: Vec<u8>,
@@ -32,7 +45,7 @@ pub enum CipherMode {
     Cbc,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum BackendHint {
     Auto,
     Scalar,

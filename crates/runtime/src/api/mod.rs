@@ -3,6 +3,7 @@ pub use request::BackendHint;
 pub use request::CipherConfig;
 pub use request::CipherMode;
 pub use request::DispatchOutput;
+pub use request::InternalConfig;
 pub use request::RuntimeConfig;
 pub use request::RuntimeRequest;
 pub use request::SearchSpace;
