@@ -9,7 +9,7 @@ impl ProgressScale {
     pub fn from_range(start: &[u8], end: &[u8]) -> (Self, u64) {
         let start = le_to_u256(start);
         let end = le_to_u256(end);
-        let count = end - start;
+        let count = (end - start) + 1;
         let pb_len = count.try_into().unwrap_or(u64::MAX);
         let bytes = significant_bytes(count);
         (Self { bytes }, pb_len)

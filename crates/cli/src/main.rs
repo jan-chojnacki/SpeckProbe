@@ -1,4 +1,4 @@
-use cli::ProgressUi;
+use cli::{ProgressUi, display_banner, display_info};
 use runtime::Runtime;
 use runtime::api::BackendHint::Auto;
 use runtime::api::CipherMode::Ecb;
@@ -21,15 +21,27 @@ fn main() {
 
     let search_space: SearchSpace = SearchSpace {
         start: vec![0; 5],
-        end: vec![255, 15, 0, 0, 0],
+        end: vec![255, 255, 0, 0, 0],
         data: vec![[0, 0], [1, 1]],
         expected: vec![[0, 0], [1, 1]],
     };
 
-    let mut runtime = Runtime::new(cipher_config, runtime_config, search_space.clone());
+    display_banner();
+    display_info(
+        cipher_config.clone(),
+        runtime_config.clone(),
+        search_space.clone(),
+    );
+
+    let mut runtime = Runtime::new(cipher_config, runtime_config.clone(), search_space.clone());
     let rx = runtime.get_rx_channel();
 
-    let ui = ProgressUi::start(rx, &search_space.start, &search_space.end);
+    let ui = ProgressUi::start(
+        rx,
+        &search_space.start,
+        &search_space.end,
+        runtime_config.suffix_bytes_size,
+    );
 
     let t0 = Instant::now();
     let result = runtime.run().unwrap();

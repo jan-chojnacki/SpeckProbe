@@ -39,13 +39,13 @@ pub struct SearchSpace {
     pub expected: Vec<[u64; 2]>,
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
 pub enum CipherMode {
     Ecb,
     Cbc,
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Eq, PartialEq, strum::Display)]
 pub enum BackendHint {
     Auto,
     Scalar,
