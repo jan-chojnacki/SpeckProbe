@@ -25,21 +25,45 @@ macro_rules! impl_encrypt_block {
     };
 }
 
-impl_encrypt_block!(encrypt_block_32_64, u16, 4, 7, 2, 21);
-impl_encrypt_block!(encrypt_block_48_72_u24, U24, 3, 8, 3, 21);
-impl_encrypt_block!(encrypt_block_48_96_u24, U24, 4, 8, 3, 22);
-impl_encrypt_block!(encrypt_block_64_96, u32, 3, 8, 3, 25);
-impl_encrypt_block!(encrypt_block_64_128, u32, 4, 8, 3, 26);
-impl_encrypt_block!(encrypt_block_96_96_u48, U48, 2, 8, 3, 27);
-impl_encrypt_block!(encrypt_block_96_144_u48, U48, 3, 8, 3, 28);
-impl_encrypt_block!(encrypt_block_128_128, u64, 2, 8, 3, 31);
-impl_encrypt_block!(encrypt_block_128_192, u64, 3, 8, 3, 32);
-impl_encrypt_block!(encrypt_block_128_256, u64, 4, 8, 3, 33);
+impl_encrypt_block!(scalar_encrypt_block_32_64, u16, 4, 7, 2, 21);
+impl_encrypt_block!(scalar_encrypt_block_48_72_u24, U24, 3, 8, 3, 21);
+impl_encrypt_block!(scalar_encrypt_block_48_96_u24, U24, 4, 8, 3, 22);
+impl_encrypt_block!(scalar_encrypt_block_64_96, u32, 3, 8, 3, 25);
+impl_encrypt_block!(scalar_encrypt_block_64_128, u32, 4, 8, 3, 26);
+impl_encrypt_block!(scalar_encrypt_block_96_96_u48, U48, 2, 8, 3, 27);
+impl_encrypt_block!(scalar_encrypt_block_96_144_u48, U48, 3, 8, 3, 28);
+impl_encrypt_block!(scalar_encrypt_block_128_128, u64, 2, 8, 3, 31);
+impl_encrypt_block!(scalar_encrypt_block_128_192, u64, 3, 8, 3, 32);
+impl_encrypt_block!(scalar_encrypt_block_128_256, u64, 4, 8, 3, 33);
 
-impl_adapter!(encrypt_block_48_72, encrypt_block_48_72_u24, U24, u32, 3);
-impl_adapter!(encrypt_block_48_96, encrypt_block_48_96_u24, U24, u32, 4);
-impl_adapter!(encrypt_block_96_96, encrypt_block_96_96_u48, U48, u64, 2);
-impl_adapter!(encrypt_block_96_144, encrypt_block_96_144_u48, U48, u64, 3);
+impl_adapter!(
+    scalar_encrypt_block_48_72,
+    scalar_encrypt_block_48_72_u24,
+    U24,
+    u32,
+    3
+);
+impl_adapter!(
+    scalar_encrypt_block_48_96,
+    scalar_encrypt_block_48_96_u24,
+    U24,
+    u32,
+    4
+);
+impl_adapter!(
+    scalar_encrypt_block_96_96,
+    scalar_encrypt_block_96_96_u48,
+    U48,
+    u64,
+    2
+);
+impl_adapter!(
+    scalar_encrypt_block_96_144,
+    scalar_encrypt_block_96_144_u48,
+    U48,
+    u64,
+    3
+);
 
 //runda - 1
 macro_rules! impl_encrypt_block_inflight {
@@ -64,41 +88,41 @@ macro_rules! impl_encrypt_block_inflight {
     };
 }
 
-impl_encrypt_block_inflight!(encrypt_block_inflight_32_64, u16, 4, 7, 2, 21);
-impl_encrypt_block_inflight!(encrypt_block_inflight_48_72_u24, U24, 3, 8, 3, 21);
-impl_encrypt_block_inflight!(encrypt_block_inflight_48_96_u24, U24, 4, 8, 3, 22);
-impl_encrypt_block_inflight!(encrypt_block_inflight_64_96, u32, 3, 8, 3, 25);
-impl_encrypt_block_inflight!(encrypt_block_inflight_64_128, u32, 4, 8, 3, 26);
-impl_encrypt_block_inflight!(encrypt_block_inflight_96_96_u48, U48, 2, 8, 3, 27);
-impl_encrypt_block_inflight!(encrypt_block_inflight_96_144_u48, U48, 3, 8, 3, 28);
-impl_encrypt_block_inflight!(encrypt_block_inflight_128_128, u64, 2, 8, 3, 31);
-impl_encrypt_block_inflight!(encrypt_block_inflight_128_192, u64, 3, 8, 3, 32);
-impl_encrypt_block_inflight!(encrypt_block_inflight_128_256, u64, 4, 8, 3, 33);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_32_64, u16, 4, 7, 2, 21);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_48_72_u24, U24, 3, 8, 3, 21);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_48_96_u24, U24, 4, 8, 3, 22);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_64_96, u32, 3, 8, 3, 25);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_64_128, u32, 4, 8, 3, 26);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_96_96_u48, U48, 2, 8, 3, 27);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_96_144_u48, U48, 3, 8, 3, 28);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_128_128, u64, 2, 8, 3, 31);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_128_192, u64, 3, 8, 3, 32);
+impl_encrypt_block_inflight!(scalar_encrypt_block_inflight_128_256, u64, 4, 8, 3, 33);
 
 impl_adapter!(
-    encrypt_block_inflight_48_72,
-    encrypt_block_inflight_48_72_u24,
+    scalar_encrypt_block_inflight_48_72,
+    scalar_encrypt_block_inflight_48_72_u24,
     U24,
     u32,
     3
 );
 impl_adapter!(
-    encrypt_block_inflight_48_96,
-    encrypt_block_inflight_48_96_u24,
+    scalar_encrypt_block_inflight_48_96,
+    scalar_encrypt_block_inflight_48_96_u24,
     U24,
     u32,
     4
 );
 impl_adapter!(
-    encrypt_block_inflight_96_96,
-    encrypt_block_inflight_96_96_u48,
+    scalar_encrypt_block_inflight_96_96,
+    scalar_encrypt_block_inflight_96_96_u48,
     U48,
     u64,
     2
 );
 impl_adapter!(
-    encrypt_block_inflight_96_144,
-    encrypt_block_inflight_96_144_u48,
+    scalar_encrypt_block_inflight_96_144,
+    scalar_encrypt_block_inflight_96_144_u48,
     U48,
     u64,
     3

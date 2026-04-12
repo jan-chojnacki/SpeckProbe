@@ -1,12 +1,17 @@
-use crate::backend::macors::define_runtime_variants_default;
+use crate::backend::macros::define_backend_dispatch;
 
-define_runtime_variants_default!(scalar_32_64, 32_64, u16, bytes = 8);
-define_runtime_variants_default!(scalar_48_72, 48_72, u32, bytes = 9);
-define_runtime_variants_default!(scalar_48_96, 48_96, u32, bytes = 12);
-define_runtime_variants_default!(scalar_64_96, 64_96, u32, bytes = 12);
-define_runtime_variants_default!(scalar_64_128, 64_128, u32, bytes = 16);
-define_runtime_variants_default!(scalar_96_96, 96_96, u64, bytes = 12);
-define_runtime_variants_default!(scalar_96_144, 96_144, u64, bytes = 18);
-define_runtime_variants_default!(scalar_128_128, 128_128, u64, bytes = 16);
-define_runtime_variants_default!(scalar_128_192, 128_192, u64, bytes = 24);
-define_runtime_variants_default!(scalar_128_256, 128_256, u64, bytes = 32);
+define_backend_dispatch! {
+    simd = scalar_,
+    versions = [
+        (32_64,   bytes=8,  ew=u16, vw=u16, converter=|x| x),
+        (48_72,   bytes=9,  ew=u32, vw=u32, converter=|x| x),
+        (48_96,   bytes=12, ew=u32, vw=u32, converter=|x| x),
+        (64_96,   bytes=12, ew=u32, vw=u32, converter=|x| x),
+        (64_128,  bytes=16, ew=u32, vw=u32, converter=|x| x),
+        (96_96,   bytes=12, ew=u64, vw=u64, converter=|x| x),
+        (96_144,  bytes=18, ew=u64, vw=u64, converter=|x| x),
+        (128_128, bytes=16, ew=u64, vw=u64, converter=|x| x),
+        (128_192, bytes=24, ew=u64, vw=u64, converter=|x| x),
+        (128_256, bytes=32, ew=u64, vw=u64, converter=|x| x),
+    ]
+}

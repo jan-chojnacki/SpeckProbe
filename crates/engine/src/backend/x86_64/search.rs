@@ -1,3 +1,4 @@
+use crate::backend::macros::define_search;
 #[cfg(target_arch = "x86_64")]
 use crate::backend::x86_64::avx2::comparator::{
     avx2_block_compare_u16, avx2_block_compare_u32, avx2_block_compare_u64,
@@ -10,195 +11,157 @@ use crate::backend::x86_64::avx512::comparator::{
 use crate::backend::x86_64::sse2::comparator::{
     sse2_block_compare_u16, sse2_block_compare_u32, sse2_block_compare_u64,
 };
-use crate::domain::key::Key;
-use crate::domain::key_iterator::KeyIterator;
-use crate::domain::task::Task;
 use paste::paste;
 use speck::SpeckVersion;
 use std::arch::x86_64::{__m128i, __m256i, __m512i};
 
-macro_rules! define_search {
-    (
-    $(#[$meta:meta])*
-    version = $version:path,
-    bytes = $bytes:literal,
-    vector = $vector:ty,
-    comparator = $comparator:path,
-    key_conversion = $key_conversion:ident,
-    new_key = $new_key:ident,
-    name = $name:tt,
-    simd = $simd:tt
-    ) => {paste! {
-        $(#[$meta])*
-        #[doc = "# Safety"]
-        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
-        pub fn [<$simd _search_encrypt_ $name>] <const PREFIX: usize>(
-            task: Task<$vector, $bytes, PREFIX>,
-            out: &mut Vec<Key<$bytes, PREFIX>>,
-        ) {
-            let mut iter =
-                KeyIterator::<$bytes, PREFIX>::new(task.start, task.end, task.prefix, $version);
-            let mut key = iter.$new_key();
-
-            while iter.simd_next_into(&mut key).is_some() {
-                let result = speck::[<$simd _encrypt_block_ $name>](task.data, key.$key_conversion());
-                $comparator(&task.expected, &result, &key, out);
-            }
-        }
-
-        $(#[$meta])*
-        #[doc = "# Safety"]
-        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
-        pub fn [<$simd _search_encrypt_inflight_ $name>]<const PREFIX: usize>(
-            task: Task<$vector, $bytes, PREFIX>,
-            out: &mut Vec<Key<$bytes, PREFIX>>,
-        ) {
-            let mut iter =
-                KeyIterator::<$bytes, PREFIX>::new(task.start, task.end, task.prefix, $version);
-            let mut key = iter.$new_key();
-
-            while iter.simd_next_into(&mut key).is_some() {
-                let result = speck::[<$simd _encrypt_block_inflight_ $name>](task.data, key.$key_conversion());
-                $comparator(&task.expected, &result, &key, out);
-            }
-        }
-
-        $(#[$meta])*
-        #[doc = "# Safety"]
-        #[doc = "Caller must ensure CPU support for `" $simd "` before calling this function."]
-        pub fn [<$simd _search_decrypt_ $name>]<const PREFIX: usize>(
-            task: Task<$vector, $bytes, PREFIX>,
-            out: &mut Vec<Key<$bytes, PREFIX>>,
-        ) {
-            let mut iter =
-                KeyIterator::<$bytes, PREFIX>::new(task.start, task.end, task.prefix, $version);
-            let mut key = iter.$new_key();
-
-            while iter.simd_next_into(&mut key).is_some() {
-                let result = speck::[<$simd _decrypt_block_ $name>](task.data, key.$key_conversion());
-                $comparator(&task.expected, &result, &key, out);
-            }
-        }
-    }};
-}
-
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
     vector = __m128i,
     comparator = sse2_block_compare_u16,
     key_conversion = sse2_u16x4_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 32_64,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
     vector = __m128i,
     comparator = sse2_block_compare_u32,
     key_conversion = sse2_u24x3_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 48_72,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
     vector = __m128i,
     comparator = sse2_block_compare_u32,
     key_conversion = sse2_u24x4_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 48_96,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
     vector = __m128i,
     comparator = sse2_block_compare_u32,
     key_conversion = sse2_u32x3_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 64_96,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
     vector = __m128i,
     comparator = sse2_block_compare_u32,
     key_conversion = sse2_u32x4_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 64_128,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
     vector = __m128i,
     comparator = sse2_block_compare_u64,
     key_conversion = sse2_u48x2_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 96_96,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
     vector = __m128i,
     comparator = sse2_block_compare_u64,
     key_conversion = sse2_u48x3_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 96_144,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
     vector = __m128i,
     comparator = sse2_block_compare_u64,
     key_conversion = sse2_u64x2_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 128_128,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
     vector = __m128i,
     comparator = sse2_block_compare_u64,
     key_conversion = sse2_u64x3_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 128_192,
     simd = sse2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
     version = SpeckVersion::Speck128_256,
     bytes = 32,
     vector = __m128i,
     comparator = sse2_block_compare_u64,
     key_conversion = sse2_u64x4_key,
     new_key = sse2_new_key,
+    next_key = simd_next_into,
     name = 128_256,
     simd = sse2
 );
@@ -206,120 +169,150 @@ define_search!(
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
     vector = __m256i,
     comparator = avx2_block_compare_u16,
     key_conversion = avx2_u16x4_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 32_64,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
     vector = __m256i,
     comparator = avx2_block_compare_u32,
     key_conversion = avx2_u24x3_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 48_72,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
     vector = __m256i,
     comparator = avx2_block_compare_u32,
     key_conversion = avx2_u24x4_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 48_96,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
     vector = __m256i,
     comparator = avx2_block_compare_u32,
     key_conversion = avx2_u32x3_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 64_96,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
     vector = __m256i,
     comparator = avx2_block_compare_u32,
     key_conversion = avx2_u32x4_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 64_128,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
     vector = __m256i,
     comparator = avx2_block_compare_u64,
     key_conversion = avx2_u48x2_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 96_96,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
     vector = __m256i,
     comparator = avx2_block_compare_u64,
     key_conversion = avx2_u48x3_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 96_144,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
     vector = __m256i,
     comparator = avx2_block_compare_u64,
     key_conversion = avx2_u64x2_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 128_128,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
     vector = __m256i,
     comparator = avx2_block_compare_u64,
     key_conversion = avx2_u64x3_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 128_192,
     simd = avx2
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     version = SpeckVersion::Speck128_256,
     bytes = 32,
     vector = __m256i,
     comparator = avx2_block_compare_u64,
     key_conversion = avx2_u64x4_key,
     new_key = avx2_new_key,
+    next_key = simd_next_into,
     name = 128_256,
     simd = avx2
 );
@@ -327,120 +320,150 @@ define_search!(
 define_search!(
     #[cfg(target_arch = "x86_64")]
     #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
     vector = __m512i,
     comparator = avx512_block_compare_u16,
     key_conversion = avx512_u16x4_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 32_64,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
     vector = __m512i,
     comparator = avx512_block_compare_u32,
     key_conversion = avx512_u24x3_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 48_72,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
     vector = __m512i,
     comparator = avx512_block_compare_u32,
     key_conversion = avx512_u24x4_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 48_96,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
     vector = __m512i,
     comparator = avx512_block_compare_u32,
     key_conversion = avx512_u32x3_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 64_96,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
     vector = __m512i,
     comparator = avx512_block_compare_u32,
     key_conversion = avx512_u32x4_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 64_128,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
     vector = __m512i,
     comparator = avx512_block_compare_u64,
     key_conversion = avx512_u48x2_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 96_96,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
     vector = __m512i,
     comparator = avx512_block_compare_u64,
     key_conversion = avx512_u48x3_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 96_144,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
     vector = __m512i,
     comparator = avx512_block_compare_u64,
     key_conversion = avx512_u64x2_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 128_128,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
     vector = __m512i,
     comparator = avx512_block_compare_u64,
     key_conversion = avx512_u64x3_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 128_192,
     simd = avx512
 );
 define_search!(
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     version = SpeckVersion::Speck128_256,
     bytes = 32,
     vector = __m512i,
     comparator = avx512_block_compare_u64,
     key_conversion = avx512_u64x4_key,
     new_key = avx512_new_key,
+    next_key = simd_next_into,
     name = 128_256,
     simd = avx512
 );

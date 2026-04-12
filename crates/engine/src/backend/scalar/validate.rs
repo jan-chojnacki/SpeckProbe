@@ -17,7 +17,7 @@ macro_rules! define_validate {
                 key: &Key<$bytes, PREFIX>,
             ) -> bool {
                 for (p, e) in pt.iter().zip(expected) {
-                    let result = speck::[<encrypt_block_ $name>](*p, key.$key_conversion());
+                    let result = speck::[<scalar_encrypt_block_ $name>](*p, key.$key_conversion());
                     if !(result[0] == e[0] && result[1] == e[1]) {
                         return false;
                     }
@@ -33,7 +33,7 @@ macro_rules! define_validate {
                 key: &Key<$bytes, PREFIX>,
             ) -> bool {
                 for (c, e) in ct.iter().zip(expected) {
-                    let result = speck::[<decrypt_block_ $name>](*c, key.$key_conversion());
+                    let result = speck::[<scalar_decrypt_block_ $name>](*c, key.$key_conversion());
                     if !(result[0] == e[0] && result[1] == e[1]) {
                         return false;
                     }

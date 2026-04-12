@@ -9,9 +9,9 @@ define_engine_bench!(
     bytes = 8,
     word = u16,
     prefix = "32_64",
-    encrypt = engine::search_encrypt_32_64,
-    encrypt_inflight = engine::search_encrypt_inflight_32_64,
-    decrypt = engine::search_decrypt_32_64
+    encrypt = engine::scalar_search_encrypt_32_64,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_32_64,
+    decrypt = engine::scalar_search_decrypt_32_64
 );
 
 define_engine_bench!(
@@ -19,9 +19,9 @@ define_engine_bench!(
     bytes = 9,
     word = u32,
     prefix = "48_72",
-    encrypt = engine::search_encrypt_48_72,
-    encrypt_inflight = engine::search_encrypt_inflight_48_72,
-    decrypt = engine::search_decrypt_48_72
+    encrypt = engine::scalar_search_encrypt_48_72,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_48_72,
+    decrypt = engine::scalar_search_decrypt_48_72
 );
 
 define_engine_bench!(
@@ -29,9 +29,9 @@ define_engine_bench!(
     bytes = 12,
     word = u32,
     prefix = "48_96",
-    encrypt = engine::search_encrypt_48_96,
-    encrypt_inflight = engine::search_encrypt_inflight_48_96,
-    decrypt = engine::search_decrypt_48_96
+    encrypt = engine::scalar_search_encrypt_48_96,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_48_96,
+    decrypt = engine::scalar_search_decrypt_48_96
 );
 
 define_engine_bench!(
@@ -39,9 +39,9 @@ define_engine_bench!(
     bytes = 12,
     word = u32,
     prefix = "64_96",
-    encrypt = engine::search_encrypt_64_96,
-    encrypt_inflight = engine::search_encrypt_inflight_64_96,
-    decrypt = engine::search_decrypt_64_96
+    encrypt = engine::scalar_search_encrypt_64_96,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_64_96,
+    decrypt = engine::scalar_search_decrypt_64_96
 );
 
 define_engine_bench!(
@@ -49,9 +49,9 @@ define_engine_bench!(
     bytes = 16,
     word = u32,
     prefix = "64_128",
-    encrypt = engine::search_encrypt_64_128,
-    encrypt_inflight = engine::search_encrypt_inflight_64_128,
-    decrypt = engine::search_decrypt_64_128
+    encrypt = engine::scalar_search_encrypt_64_128,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_64_128,
+    decrypt = engine::scalar_search_decrypt_64_128
 );
 
 define_engine_bench!(
@@ -59,9 +59,9 @@ define_engine_bench!(
     bytes = 12,
     word = u64,
     prefix = "96_96",
-    encrypt = engine::search_encrypt_96_96,
-    encrypt_inflight = engine::search_encrypt_inflight_96_96,
-    decrypt = engine::search_decrypt_96_96
+    encrypt = engine::scalar_search_encrypt_96_96,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_96_96,
+    decrypt = engine::scalar_search_decrypt_96_96
 );
 
 define_engine_bench!(
@@ -69,9 +69,9 @@ define_engine_bench!(
     bytes = 18,
     word = u64,
     prefix = "96_144",
-    encrypt = engine::search_encrypt_96_144,
-    encrypt_inflight = engine::search_encrypt_inflight_96_144,
-    decrypt = engine::search_decrypt_96_144
+    encrypt = engine::scalar_search_encrypt_96_144,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_96_144,
+    decrypt = engine::scalar_search_decrypt_96_144
 );
 
 define_engine_bench!(
@@ -79,9 +79,9 @@ define_engine_bench!(
     bytes = 16,
     word = u64,
     prefix = "128_128",
-    encrypt = engine::search_encrypt_128_128,
-    encrypt_inflight = engine::search_encrypt_inflight_128_128,
-    decrypt = engine::search_decrypt_128_128
+    encrypt = engine::scalar_search_encrypt_128_128,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_128_128,
+    decrypt = engine::scalar_search_decrypt_128_128
 );
 
 define_engine_bench!(
@@ -89,9 +89,9 @@ define_engine_bench!(
     bytes = 24,
     word = u64,
     prefix = "128_192",
-    encrypt = engine::search_encrypt_128_192,
-    encrypt_inflight = engine::search_encrypt_inflight_128_192,
-    decrypt = engine::search_decrypt_128_192
+    encrypt = engine::scalar_search_encrypt_128_192,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_128_192,
+    decrypt = engine::scalar_search_decrypt_128_192
 );
 
 define_engine_bench!(
@@ -99,9 +99,9 @@ define_engine_bench!(
     bytes = 32,
     word = u64,
     prefix = "128_256",
-    encrypt = engine::search_encrypt_128_256,
-    encrypt_inflight = engine::search_encrypt_inflight_128_256,
-    decrypt = engine::search_decrypt_128_256
+    encrypt = engine::scalar_search_encrypt_128_256,
+    encrypt_inflight = engine::scalar_search_encrypt_inflight_128_256,
+    decrypt = engine::scalar_search_decrypt_128_256
 );
 
 fn benchmark(c: &mut Criterion) {

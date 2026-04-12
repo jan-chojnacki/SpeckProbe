@@ -26,18 +26,42 @@ macro_rules! impl_decrypt_block {
     };
 }
 
-impl_decrypt_block!(decrypt_block_32_64, u16, 4, 7, 2, 21);
-impl_decrypt_block!(decrypt_block_48_72_u24, U24, 3, 8, 3, 21);
-impl_decrypt_block!(decrypt_block_48_96_u24, U24, 4, 8, 3, 22);
-impl_decrypt_block!(decrypt_block_64_96, u32, 3, 8, 3, 25);
-impl_decrypt_block!(decrypt_block_64_128, u32, 4, 8, 3, 26);
-impl_decrypt_block!(decrypt_block_96_96_u48, U48, 2, 8, 3, 27);
-impl_decrypt_block!(decrypt_block_96_144_48, U48, 3, 8, 3, 28);
-impl_decrypt_block!(decrypt_block_128_128, u64, 2, 8, 3, 31);
-impl_decrypt_block!(decrypt_block_128_192, u64, 3, 8, 3, 32);
-impl_decrypt_block!(decrypt_block_128_256, u64, 4, 8, 3, 33);
+impl_decrypt_block!(scalar_decrypt_block_32_64, u16, 4, 7, 2, 21);
+impl_decrypt_block!(scalar_decrypt_block_48_72_u24, U24, 3, 8, 3, 21);
+impl_decrypt_block!(scalar_decrypt_block_48_96_u24, U24, 4, 8, 3, 22);
+impl_decrypt_block!(scalar_decrypt_block_64_96, u32, 3, 8, 3, 25);
+impl_decrypt_block!(scalar_decrypt_block_64_128, u32, 4, 8, 3, 26);
+impl_decrypt_block!(scalar_decrypt_block_96_96_u48, U48, 2, 8, 3, 27);
+impl_decrypt_block!(scalar_decrypt_block_96_144_48, U48, 3, 8, 3, 28);
+impl_decrypt_block!(scalar_decrypt_block_128_128, u64, 2, 8, 3, 31);
+impl_decrypt_block!(scalar_decrypt_block_128_192, u64, 3, 8, 3, 32);
+impl_decrypt_block!(scalar_decrypt_block_128_256, u64, 4, 8, 3, 33);
 
-impl_adapter!(decrypt_block_48_72, decrypt_block_48_72_u24, U24, u32, 3);
-impl_adapter!(decrypt_block_48_96, decrypt_block_48_96_u24, U24, u32, 4);
-impl_adapter!(decrypt_block_96_96, decrypt_block_96_96_u48, U48, u64, 2);
-impl_adapter!(decrypt_block_96_144, decrypt_block_96_144_48, U48, u64, 3);
+impl_adapter!(
+    scalar_decrypt_block_48_72,
+    scalar_decrypt_block_48_72_u24,
+    U24,
+    u32,
+    3
+);
+impl_adapter!(
+    scalar_decrypt_block_48_96,
+    scalar_decrypt_block_48_96_u24,
+    U24,
+    u32,
+    4
+);
+impl_adapter!(
+    scalar_decrypt_block_96_96,
+    scalar_decrypt_block_96_96_u48,
+    U48,
+    u64,
+    2
+);
+impl_adapter!(
+    scalar_decrypt_block_96_144,
+    scalar_decrypt_block_96_144_48,
+    U48,
+    u64,
+    3
+);

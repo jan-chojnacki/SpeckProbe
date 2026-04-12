@@ -9,9 +9,9 @@ define_cipher_bench!(
     prefix = "32_64",
     key = [0, 0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_32_64,
-    encrypt_inflight = speck::encrypt_block_inflight_32_64,
-    decrypt = speck::decrypt_block_32_64
+    encrypt = speck::scalar_encrypt_block_32_64,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_32_64,
+    decrypt = speck::scalar_decrypt_block_32_64
 );
 
 define_cipher_bench!(
@@ -19,9 +19,9 @@ define_cipher_bench!(
     prefix = "48_72",
     key = [0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_48_72,
-    encrypt_inflight = speck::encrypt_block_inflight_48_72,
-    decrypt = speck::decrypt_block_48_72
+    encrypt = speck::scalar_encrypt_block_48_72,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_48_72,
+    decrypt = speck::scalar_decrypt_block_48_72
 );
 
 define_cipher_bench!(
@@ -29,9 +29,9 @@ define_cipher_bench!(
     prefix = "48_96",
     key = [0, 0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_48_96,
-    encrypt_inflight = speck::encrypt_block_inflight_48_96,
-    decrypt = speck::decrypt_block_48_96
+    encrypt = speck::scalar_encrypt_block_48_96,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_48_96,
+    decrypt = speck::scalar_decrypt_block_48_96
 );
 
 define_cipher_bench!(
@@ -39,9 +39,9 @@ define_cipher_bench!(
     prefix = "64_96",
     key = [0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_64_96,
-    encrypt_inflight = speck::encrypt_block_inflight_64_96,
-    decrypt = speck::decrypt_block_64_96
+    encrypt = speck::scalar_encrypt_block_64_96,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_64_96,
+    decrypt = speck::scalar_decrypt_block_64_96
 );
 
 define_cipher_bench!(
@@ -49,9 +49,9 @@ define_cipher_bench!(
     prefix = "64_128",
     key = [0, 0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_64_128,
-    encrypt_inflight = speck::encrypt_block_inflight_64_128,
-    decrypt = speck::decrypt_block_64_128
+    encrypt = speck::scalar_encrypt_block_64_128,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_64_128,
+    decrypt = speck::scalar_decrypt_block_64_128
 );
 
 define_cipher_bench!(
@@ -59,9 +59,9 @@ define_cipher_bench!(
     prefix = "96_96",
     key = [0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_96_96,
-    encrypt_inflight = speck::encrypt_block_inflight_96_96,
-    decrypt = speck::decrypt_block_96_96
+    encrypt = speck::scalar_encrypt_block_96_96,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_96_96,
+    decrypt = speck::scalar_decrypt_block_96_96
 );
 
 define_cipher_bench!(
@@ -69,9 +69,9 @@ define_cipher_bench!(
     prefix = "96_144",
     key = [0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_96_144,
-    encrypt_inflight = speck::encrypt_block_inflight_96_144,
-    decrypt = speck::decrypt_block_96_144
+    encrypt = speck::scalar_encrypt_block_96_144,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_96_144,
+    decrypt = speck::scalar_decrypt_block_96_144
 );
 
 define_cipher_bench!(
@@ -79,9 +79,9 @@ define_cipher_bench!(
     prefix = "128_128",
     key = [0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_128_128,
-    encrypt_inflight = speck::encrypt_block_inflight_128_128,
-    decrypt = speck::decrypt_block_128_128
+    encrypt = speck::scalar_encrypt_block_128_128,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_128_128,
+    decrypt = speck::scalar_decrypt_block_128_128
 );
 
 define_cipher_bench!(
@@ -89,9 +89,9 @@ define_cipher_bench!(
     prefix = "128_192",
     key = [0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_128_192,
-    encrypt_inflight = speck::encrypt_block_inflight_128_192,
-    decrypt = speck::decrypt_block_128_192
+    encrypt = speck::scalar_encrypt_block_128_192,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_128_192,
+    decrypt = speck::scalar_decrypt_block_128_192
 );
 
 define_cipher_bench!(
@@ -99,9 +99,9 @@ define_cipher_bench!(
     prefix = "128_256",
     key = [0, 0, 0, 0],
     pt = [0, 0],
-    encrypt = speck::encrypt_block_128_256,
-    encrypt_inflight = speck::encrypt_block_inflight_128_256,
-    decrypt = speck::decrypt_block_128_256
+    encrypt = speck::scalar_encrypt_block_128_256,
+    encrypt_inflight = speck::scalar_encrypt_block_inflight_128_256,
+    decrypt = speck::scalar_decrypt_block_128_256
 );
 
 fn benchmark(c: &mut Criterion) {

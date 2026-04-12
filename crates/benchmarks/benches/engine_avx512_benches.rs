@@ -20,8 +20,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_48_72_bench,
     bytes = 9,
     word = __m512i,
@@ -32,8 +32,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_48_96_bench,
     bytes = 12,
     word = __m512i,
@@ -44,8 +44,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_64_96_bench,
     bytes = 12,
     word = __m512i,
@@ -56,8 +56,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_64_128_bench,
     bytes = 16,
     word = __m512i,
@@ -68,8 +68,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_96_96_bench,
     bytes = 12,
     word = __m512i,
@@ -80,8 +80,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_96_144_bench,
     bytes = 18,
     word = __m512i,
@@ -92,8 +92,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_128_128_bench,
     bytes = 16,
     word = __m512i,
@@ -104,8 +104,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_128_192_bench,
     bytes = 24,
     word = __m512i,
@@ -116,8 +116,8 @@ define_engine_bench!(
 );
 
 define_engine_bench!(
-    #[cfg(all(target_arch = "x86_64", target_feature = "avx512f"))]
-    #[target_feature(enable = "avx512f")]
+    #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+    #[target_feature(enable = "avx512bw")]
     avx512_128_256_bench,
     bytes = 32,
     word = __m512i,
@@ -127,11 +127,7 @@ define_engine_bench!(
     decrypt = engine::avx512_search_decrypt_128_256
 );
 
-#[cfg(all(
-    target_arch = "x86_64",
-    target_feature = "avx512f",
-    target_feature = "avx512bw"
-))]
+#[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
 fn benchmark(c: &mut Criterion) {
     let mut g = c.benchmark_group("engine/avx512");
 
@@ -151,11 +147,7 @@ fn benchmark(c: &mut Criterion) {
     g.finish();
 }
 
-#[cfg(not(all(
-    target_arch = "x86_64",
-    target_feature = "avx512f",
-    target_feature = "avx512bw"
-)))]
+#[cfg(not(all(target_arch = "x86_64", target_feature = "avx512bw")))]
 fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
