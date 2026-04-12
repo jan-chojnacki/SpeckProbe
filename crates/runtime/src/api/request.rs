@@ -29,6 +29,14 @@ pub struct InternalConfig {
 pub struct CipherConfig {
     pub cipher_mode: CipherMode,
     pub speck_version: SpeckVersion,
+    pub cipher_function: CipherFunction,
+}
+
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
+pub enum CipherFunction {
+    Encrypt,
+    Decrypt,
+    EncryptInflight,
 }
 
 #[derive(Debug, Clone)]

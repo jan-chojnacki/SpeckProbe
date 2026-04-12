@@ -1,4 +1,6 @@
-use crate::api::{BackendHint, CipherMode, DispatchError, DispatchOutput, RuntimeRequest};
+use crate::api::{
+    BackendHint, CipherFunction, CipherMode, DispatchError, DispatchOutput, RuntimeRequest,
+};
 use crate::backend::macors::dispatch_for_backend;
 use speck::SpeckVersion;
 
@@ -16,26 +18,28 @@ pub fn dispatch(runtime_request: RuntimeRequest) -> Result<DispatchOutput, Dispa
         return Err(DispatchError::UnsupportedMode { mode });
     }
 
+    let function: CipherFunction = runtime_request.cipher_config.cipher_function;
+
     match runtime_request.runtime_config.backend_hint {
-        BackendHint::Auto => dispatch_backend(runtime_request, suffix, version, mode),
+        BackendHint::Auto => dispatch_backend(runtime_request, suffix, version, mode, function),
         BackendHint::Scalar => {
-            dispatch_for_backend!(scalar, runtime_request, version, mode, suffix)
+            dispatch_for_backend!(scalar, runtime_request, version, mode, suffix, function)
         }
         #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
         BackendHint::Sse2 => unsafe {
-            dispatch_for_backend!(sse2, runtime_request, version, mode, suffix)
+            dispatch_for_backend!(sse2, runtime_request, version, mode, suffix, function)
         },
         #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
         BackendHint::Avx2 => unsafe {
-            dispatch_for_backend!(avx2, runtime_request, version, mode, suffix)
+            dispatch_for_backend!(avx2, runtime_request, version, mode, suffix, function)
         },
         #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
         BackendHint::Avx512 => unsafe {
-            dispatch_for_backend!(avx512, runtime_request, version, mode, suffix)
+            dispatch_for_backend!(avx512, runtime_request, version, mode, suffix, function)
         },
         #[cfg(target_arch = "aarch64")]
         BackendHint::Neon => unsafe {
-            dispatch_for_backend!(neon, runtime_request, version, mode, suffix)
+            dispatch_for_backend!(neon, runtime_request, version, mode, suffix, function)
         },
     }
 }
@@ -56,12 +60,13 @@ fn dispatch_backend(
     suffix: usize,
     version: SpeckVersion,
     mode: CipherMode,
+    function: CipherFunction,
 ) -> Result<DispatchOutput, DispatchError> {
     multiversion::target::match_target! {
-        "x86_64+avx512bw" => unsafe { dispatch_for_backend!(avx512, runtime_request, version, mode, suffix) },
-        "x86_64+avx2" => unsafe { dispatch_for_backend!(avx2, runtime_request, version, mode, suffix) },
-        "x86_64+sse2" => unsafe { dispatch_for_backend!(sse2, runtime_request, version, mode, suffix) },
-        "aarch64+neon" => unsafe { dispatch_for_backend!(neon, runtime_request, version, mode, suffix) },
-        _ => dispatch_for_backend!(scalar, runtime_request, version, mode, suffix),
+        "x86_64+avx512bw" => unsafe { dispatch_for_backend!(avx512, runtime_request, version, mode, suffix, function) },
+        "x86_64+avx2" => unsafe { dispatch_for_backend!(avx2, runtime_request, version, mode, suffix, function) },
+        "x86_64+sse2" => unsafe { dispatch_for_backend!(sse2, runtime_request, version, mode, suffix, function) },
+        "aarch64+neon" => unsafe { dispatch_for_backend!(neon, runtime_request, version, mode, suffix, function) },
+        _ => dispatch_for_backend!(scalar, runtime_request, version, mode, suffix, function),
     }
 }

@@ -1,6 +1,7 @@
 use cli::{ProgressUi, display_banner, display_info};
 use runtime::Runtime;
 use runtime::api::BackendHint::Auto;
+use runtime::api::CipherFunction::EncryptInflight;
 use runtime::api::CipherMode::Ecb;
 use runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use speck::SpeckVersion::Speck32_64;
@@ -10,6 +11,7 @@ fn main() {
     let cipher_config: CipherConfig = CipherConfig {
         cipher_mode: Ecb,
         speck_version: Speck32_64,
+        cipher_function: EncryptInflight,
     };
 
     let runtime_config: RuntimeConfig = RuntimeConfig {

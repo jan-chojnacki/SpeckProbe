@@ -1,6 +1,7 @@
 mod request;
 pub use request::BackendHint;
 pub use request::CipherConfig;
+pub use request::CipherFunction;
 pub use request::CipherMode;
 pub use request::DispatchOutput;
 pub use request::InternalConfig;
