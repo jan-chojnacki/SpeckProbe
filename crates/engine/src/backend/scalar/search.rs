@@ -4,6 +4,7 @@ use paste::paste;
 use speck::SpeckVersion;
 
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck32_64,
     bytes = 8,
     vector = u16,
@@ -15,6 +16,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck48_72,
     bytes = 9,
     vector = u32,
@@ -26,6 +28,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck48_96,
     bytes = 12,
     vector = u32,
@@ -37,6 +40,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck64_96,
     bytes = 12,
     vector = u32,
@@ -48,6 +52,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck64_128,
     bytes = 16,
     vector = u32,
@@ -59,6 +64,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck96_96,
     bytes = 12,
     vector = u64,
@@ -70,6 +76,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck96_144,
     bytes = 18,
     vector = u64,
@@ -81,6 +88,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck128_128,
     bytes = 16,
     vector = u64,
@@ -92,6 +100,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck128_192,
     bytes = 24,
     vector = u64,
@@ -103,6 +112,7 @@ define_search!(
     simd = scalar
 );
 define_search!(
+    #[inline(always)]
     version = SpeckVersion::Speck128_256,
     bytes = 32,
     vector = u64,
