@@ -3,18 +3,40 @@ use colored::Colorize;
 use console::{Alignment, pad_str};
 use indicatif::{ProgressBar, ProgressStyle};
 use primitive_types::U256;
-use runtime::api::{BackendHint, CipherConfig, RuntimeConfig, SearchSpace};
+use runtime::api::{BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace};
 use terminal_size::{Width, terminal_size};
 use textwrap::{Options, fill};
 
 pub fn display_banner() {
     print!("{}", crate::BANNER);
     let text = format!("{}v{}{}", "(".blue(), crate::VERSION.cyan(), ")".blue());
-    println!("{}", pad_str(&text, 69, Alignment::Right, None));
+    println!("{}", pad_str(&text, 57, Alignment::Right, None));
 }
 
 fn display_line(text: &str, value: &str, width: usize) -> String {
     let text = format!("{} {}: {}", " •".cyan(), text, value.bright_blue());
+
+    fill(
+        &text,
+        Options::new(width)
+            .initial_indent("")
+            .subsequent_indent("    "),
+    )
+}
+
+fn display_line_info(text: &str, width: usize) -> String {
+    let text = format!("{} {}", " •".cyan(), text);
+
+    fill(
+        &text,
+        Options::new(width)
+            .initial_indent("")
+            .subsequent_indent("    "),
+    )
+}
+
+fn display_spurious_key(idx: usize, text: &str, width: usize) -> String {
+    let text = format!("    {}: {}", idx.to_string().cyan(), text.bright_blue());
 
     fill(
         &text,
@@ -39,6 +61,57 @@ fn display_line_additional(text: &str, value: &str, add: &str, width: usize) -> 
             .initial_indent("")
             .subsequent_indent("    "),
     )
+}
+
+fn display_found_key(text: &str, value: &str, width: usize) -> String {
+    let text = format!("{} {}: {}.", " •".green(), text, value.bright_blue());
+
+    fill(
+        &text,
+        Options::new(width)
+            .initial_indent("")
+            .subsequent_indent("    "),
+    )
+}
+
+fn display_not_found(value: &str, width: usize) -> String {
+    let text = format!(
+        "{} Key not found, found {} spurious key/s",
+        " •".red(),
+        value.bright_blue(),
+    );
+
+    fill(
+        &text,
+        Options::new(width)
+            .initial_indent("")
+            .subsequent_indent("    "),
+    )
+}
+
+pub fn display_results(results: DispatchOutput, spurious: bool) {
+    let width = terminal_size()
+        .map(|(Width(w), _)| w as usize)
+        .unwrap_or(80);
+
+    if spurious {
+        println!("{}", display_line_info("Spurious key/s:", width));
+        for (idx, key) in results.0.iter().enumerate() {
+            let key: String = key.iter().map(|b| format!("{:02x} ", b)).collect();
+            println!("{}", display_spurious_key(idx, &key, width));
+        }
+    }
+
+    match results.1 {
+        None => {
+            let message: String = display_not_found(&results.0.len().to_string(), width);
+            println!("{}", message);
+        }
+        Some(key) => {
+            let key: String = key.iter().map(|b| format!("{:02x} ", b)).collect();
+            println!("{}", display_found_key("Found key", &key, width));
+        }
+    }
 }
 
 pub fn display_info(
@@ -83,7 +156,6 @@ pub fn display_info(
     }
     println!("{}", display_line("Start", &start, width));
     println!("{}", display_line("End", &end, width));
-    println!();
 }
 
 pub fn build_progress_bar(len: u64) -> ProgressBar {
