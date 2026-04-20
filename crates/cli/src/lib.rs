@@ -6,8 +6,6 @@ pub(crate) mod progress_ui;
 pub mod args;
 pub mod domain;
 pub mod enums;
-pub mod parser;
-pub mod validator;
 
 pub use helpers::display_banner;
 pub use helpers::display_info;
