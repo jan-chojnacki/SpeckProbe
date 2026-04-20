@@ -1,4 +1,3 @@
-use crate::helpers::{le_to_u256, significant_bytes};
 use primitive_types::U256;
 
 pub struct ProgressScale {
@@ -19,4 +18,18 @@ impl ProgressScale {
         let shift = (8 * self.bytes).saturating_sub(64) as usize;
         (state >> shift).low_u64()
     }
+}
+
+fn le_to_u256(bytes: &[u8]) -> U256 {
+    let mut buf = [0u8; 32];
+    buf[..bytes.len()].copy_from_slice(bytes);
+    U256::from_little_endian(&buf)
+}
+
+fn significant_bytes(value: U256) -> u32 {
+    let le = value.to_little_endian();
+    le.iter()
+        .rposition(|&b| b != 0)
+        .map(|i| i as u32 + 1)
+        .unwrap_or(1)
 }

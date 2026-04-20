@@ -17,8 +17,10 @@ textwrap = "0.16"
 terminal_size = "0.4"
 human_format = "1"
 thiserror = "2"
-figment = "0.10"
 serde = { version = "1.0", features = ["derive"] }
-serde_with = { version = "3", features = ["base64"] }
 base64 = "0.22"
 toml = "1"
+
+[[bin]]
+name = "speck-probe"
+path = "src/main.rs"

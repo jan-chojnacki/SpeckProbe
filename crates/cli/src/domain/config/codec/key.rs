@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-pub fn serialize_as_hex<S>(data: &Vec<u8>, s: S) -> Result<S::Ok, S::Error>
+pub fn serialize_as_hex<S>(data: &[u8], s: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {

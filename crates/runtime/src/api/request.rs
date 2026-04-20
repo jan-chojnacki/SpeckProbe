@@ -16,7 +16,6 @@ pub struct RuntimeRequest {
 pub struct RuntimeConfig {
     pub suffix_bytes_size: usize,
     pub num_threads: usize,
-    pub cap: usize,
     pub backend_hint: BackendHint,
 }
 

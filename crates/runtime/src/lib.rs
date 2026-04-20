@@ -4,12 +4,13 @@ use crate::api::{
 };
 use crate::backend::dispatch::dispatch;
 use crossbeam::channel::{Receiver, Sender, bounded};
-use engine::domain::key::Key;
 
 pub mod api;
 pub mod backend;
 pub mod domain;
 pub mod orchestrator;
+
+pub const CAP: usize = 256;
 
 #[derive(Debug)]
 pub struct TaskDone {}
@@ -28,9 +29,8 @@ impl Runtime {
         runtime_config: RuntimeConfig,
         search_space: SearchSpace,
     ) -> Self {
-        let cap = runtime_config.cap;
         let num_threads = runtime_config.num_threads;
-        let (tx, rx) = bounded::<TaskDone>(cap * num_threads);
+        let (tx, rx) = bounded::<TaskDone>(CAP * num_threads);
 
         Self {
             tx: Some(tx),

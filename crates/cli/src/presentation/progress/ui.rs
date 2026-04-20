@@ -1,8 +1,7 @@
-use crate::helpers::build_progress_bar;
-use crate::progress_scale::ProgressScale;
+use crate::presentation::progress::scale::ProgressScale;
 use crossbeam::channel::Receiver;
 use human_format::Formatter;
-use indicatif::{HumanCount, ProgressBar};
+use indicatif::{ProgressBar, ProgressStyle};
 use primitive_types::U256;
 use runtime::TaskDone;
 use std::ops::Add;
@@ -94,4 +93,15 @@ fn spawn_renderer(
         tick();
         pb.finish();
     })
+}
+
+pub fn build_progress_bar(len: u64) -> ProgressBar {
+    let pb = ProgressBar::new(len);
+    let style = ProgressStyle::with_template(
+        "{spinner:.yellow} [{elapsed_precise}] [{bar:36.cyan/blue}] {percent}% | {msg} ({eta})",
+    )
+    .unwrap()
+    .progress_chars("=>-");
+    pb.set_style(style);
+    pb
 }

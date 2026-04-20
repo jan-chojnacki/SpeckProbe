@@ -1,3 +1,4 @@
+use crate::CAP;
 use crate::api::{DispatchOutput, RuntimeRequest};
 use crate::domain::word::{EngineWord, ValidatorWord};
 use crate::orchestrator::Orchestrator;
@@ -46,7 +47,7 @@ where
         &data,
         &expected,
         request.runtime_config.num_threads,
-        request.runtime_config.cap,
+        CAP,
         request.internal_config.cli_tx,
         search_fn,
         validate_fn,

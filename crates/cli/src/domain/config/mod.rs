@@ -1,13 +1,11 @@
-mod data_serde;
-pub mod generate_sample;
-pub mod io;
-mod key_serde;
+mod codec;
+pub mod enums;
+pub mod sample;
 
-use crate::enums::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
-use data_serde::deserialize_u64_pairs;
-use data_serde::serialize_u64_pairs;
-use key_serde::deserialize_from_hex;
-use key_serde::serialize_as_hex;
+pub use enums::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
+
+use codec::data::{deserialize_u64_pairs, serialize_u64_pairs};
+use codec::key::{deserialize_from_hex, serialize_as_hex};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -17,7 +15,6 @@ pub struct Config {
     pub cipher_function: CipherFunction,
     pub suffix_bytes_size: usize,
     pub num_threads: usize,
-    pub cap: usize,
     pub backend_hint: BackendHint,
     #[serde(
         serialize_with = "serialize_as_hex",

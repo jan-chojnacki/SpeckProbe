@@ -19,8 +19,6 @@ impl std::fmt::Display for ActiveBackend {
     }
 }
 
-/// Zwraca backend który zostałby wybrany przy BackendHint::Auto.
-/// Używa tego samego priorytetu co multiversion w dispatch_backend.
 pub fn detect_auto_backend() -> ActiveBackend {
     #[cfg(target_arch = "x86_64")]
     {

@@ -2,7 +2,7 @@ use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
 use serde::Deserialize;
 
-pub fn serialize_u64_pairs<S>(data: &Vec<[u64; 2]>, s: S) -> Result<S::Ok, S::Error>
+pub fn serialize_u64_pairs<S>(data: &[[u64; 2]], s: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
 {

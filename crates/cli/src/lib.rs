@@ -1,15 +1,7 @@
-pub(crate) mod detect_backend;
-pub mod helpers;
-pub(crate) mod progress_scale;
-pub(crate) mod progress_ui;
-
-pub mod args;
+pub mod application;
 pub mod domain;
-pub mod enums;
-
-pub use helpers::display_banner;
-pub use helpers::display_info;
-pub use progress_ui::ProgressUi;
+pub mod infrastructure;
+pub mod presentation;
 
 pub const BANNER: &str = r#"
   ____                  _    ____            _
