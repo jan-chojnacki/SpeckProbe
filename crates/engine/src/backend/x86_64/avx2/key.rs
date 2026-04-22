@@ -10,7 +10,6 @@ struct Align32<T>(T);
 #[repr(C, align(32))]
 pub struct AVX2Key<const LANES: usize, const BYTES: usize, const PREFIX: usize> {
     bytes: [[u8; BYTES]; LANES],
-    pa: __m256i,
     pb: __m256i,
     pc: __m256i,
     pd: __m256i,
@@ -40,76 +39,135 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> AVX2Key<LANES,
             bytes[i][..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
         }
 
-        let mut pa = _mm256_setzero_si256();
         let mut pb = _mm256_setzero_si256();
         let mut pc = _mm256_setzero_si256();
         let mut pd = _mm256_setzero_si256();
 
         match speck_version {
+            SpeckVersion::Speck32_64 => {
+                if Self::SUFFIX < 2 {
+                    let b = Align32(bytes.map(|b| [b[2], b[3]]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 4 {
+                    let c = Align32(bytes.map(|b| [b[4], b[5]]));
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 6 {
+                    let d = Align32(bytes.map(|b| [b[6], b[7]]));
+                    pd = unsafe { _mm256_load_si256(d.0.as_ptr().cast()) }
+                }
+            }
+            SpeckVersion::Speck48_72 => {
+                if Self::SUFFIX < 3 {
+                    let b = Align32(bytes.map(|b| [b[3], b[4], b[5], 0]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 6 {
+                    let c = Align32(bytes.map(|b| [b[6], b[7], b[8], 0]));
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
+                }
+            }
             SpeckVersion::Speck48_96 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], 0]));
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                if Self::SUFFIX < 3 {
+                    let b = Align32(bytes.map(|b| [b[3], b[4], b[5], 0]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 6 {
+                    let c = Align32(bytes.map(|b| [b[6], b[7], b[8], 0]));
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 9 {
+                    let d = Align32(bytes.map(|b| [b[9], b[10], b[11], 0]));
+                    pd = unsafe { _mm256_load_si256(d.0.as_ptr().cast()) }
                 }
             }
             SpeckVersion::Speck64_96 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3]]));
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                if Self::SUFFIX < 4 {
+                    let b = Align32(bytes.map(|b| [b[4], b[5], b[6], b[7]]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 8 {
+                    let c = Align32(bytes.map(|b| [b[8], b[9], b[10], b[11]]));
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
                 }
             }
             SpeckVersion::Speck64_128 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3]]));
-                let b = Align32(bytes.map(|b| [b[4], b[5], b[6], b[7]]));
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
-                    pb = _mm256_load_si256(b.0.as_ptr().cast());
+                if Self::SUFFIX < 4 {
+                    let b = Align32(bytes.map(|b| [b[4], b[5], b[6], b[7]]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 8 {
+                    let c = Align32(bytes.map(|b| [b[8], b[9], b[10], b[11]]));
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 12 {
+                    let d = Align32(bytes.map(|b| [b[12], b[13], b[14], b[15]]));
+                    pd = unsafe { _mm256_load_si256(d.0.as_ptr().cast()) }
+                }
+            }
+            SpeckVersion::Speck96_96 => {
+                if Self::SUFFIX < 6 {
+                    let b = Align32(bytes.map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
                 }
             }
             SpeckVersion::Speck96_144 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]));
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                if Self::SUFFIX < 6 {
+                    let b = Align32(bytes.map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]));
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 12 {
+                    let c =
+                        Align32(bytes.map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]));
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
                 }
             }
             SpeckVersion::Speck128_128 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]));
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
+                if Self::SUFFIX < 8 {
+                    let b = Align32(
+                        bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+                    );
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
                 }
             }
             SpeckVersion::Speck128_192 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]));
-                let b =
-                    Align32(bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]));
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
-                    pb = _mm256_load_si256(b.0.as_ptr().cast());
+                if Self::SUFFIX < 8 {
+                    let b = Align32(
+                        bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+                    );
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 16 {
+                    let c = Align32(
+                        bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
+                    );
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
                 }
             }
             SpeckVersion::Speck128_256 => {
-                let a = Align32(bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]));
-                let b =
-                    Align32(bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]));
-                let c = Align32(
-                    bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
-                );
-                unsafe {
-                    pa = _mm256_load_si256(a.0.as_ptr().cast());
-                    pb = _mm256_load_si256(b.0.as_ptr().cast());
-                    pc = _mm256_load_si256(c.0.as_ptr().cast());
+                if Self::SUFFIX < 8 {
+                    let b = Align32(
+                        bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+                    );
+                    pb = unsafe { _mm256_load_si256(b.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 16 {
+                    let c = Align32(
+                        bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
+                    );
+                    pc = unsafe { _mm256_load_si256(c.0.as_ptr().cast()) }
+                }
+                if Self::SUFFIX < 24 {
+                    let d = Align32(
+                        bytes.map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]),
+                    );
+                    pd = unsafe { _mm256_load_si256(d.0.as_ptr().cast()) }
                 }
             }
-            _ => {}
         }
 
-        Self {
-            bytes,
-            pa,
-            pb,
-            pc,
-            pd,
-        }
+        Self { bytes, pb, pc, pd }
     }
 
     pub fn update(&mut self, v: [u64; LANES]) {
@@ -140,16 +198,35 @@ impl<const PREFIX: usize> AVX2Key<16, 8, PREFIX> {
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u16x4_key(&self) -> [__m256i; 4] {
         let a = Align32(self.bytes.map(|b| [b[0], b[1]]));
-        let b = Align32(self.bytes.map(|b| [b[2], b[3]]));
-        let c = Align32(self.bytes.map(|b| [b[4], b[5]]));
-        let d = Align32(self.bytes.map(|b| [b[6], b[7]]));
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-                _mm256_load_si256(d.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 2 {
+                kb = self.pb;
+            } else {
+                let b = Align32(self.bytes.map(|b| [b[2], b[3]]));
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 4 {
+                kc = self.pc;
+            } else {
+                let c = Align32(self.bytes.map(|b| [b[4], b[5]]));
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            let kd: __m256i;
+            if Self::SUFFIX < 6 {
+                kd = self.pd;
+            } else {
+                let d = Align32(self.bytes.map(|b| [b[6], b[7]]));
+                kd = _mm256_load_si256(d.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc, kd]
         }
     }
 }
@@ -161,14 +238,27 @@ impl<const PREFIX: usize> AVX2Key<8, 9, PREFIX> {
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u24x3_key(&self) -> [__m256i; 3] {
         let a = Align32(self.bytes.map(|b| [b[0], b[1], b[2], 0]));
-        let b = Align32(self.bytes.map(|b| [b[3], b[4], b[5], 0]));
-        let c = Align32(self.bytes.map(|b| [b[6], b[7], b[8], 0]));
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 3 {
+                kb = self.pb;
+            } else {
+                let b = Align32(self.bytes.map(|b| [b[3], b[4], b[5], 0]));
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 6 {
+                kc = self.pc;
+            } else {
+                let c = Align32(self.bytes.map(|b| [b[6], b[7], b[8], 0]));
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc]
         }
     }
 }
@@ -180,16 +270,35 @@ impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u24x4_key(&self) -> [__m256i; 4] {
         let a = Align32(self.bytes.map(|b| [b[0], b[1], b[2], 0]));
-        let b = Align32(self.bytes.map(|b| [b[3], b[4], b[5], 0]));
-        let c = Align32(self.bytes.map(|b| [b[6], b[7], b[8], 0]));
-        let d = Align32(self.bytes.map(|b| [b[9], b[10], b[11], 0]));
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-                _mm256_load_si256(d.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 3 {
+                kb = self.pb;
+            } else {
+                let b = Align32(self.bytes.map(|b| [b[3], b[4], b[5], 0]));
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 6 {
+                kc = self.pc;
+            } else {
+                let c = Align32(self.bytes.map(|b| [b[6], b[7], b[8], 0]));
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            let kd: __m256i;
+            if Self::SUFFIX < 9 {
+                kd = self.pd;
+            } else {
+                let d = Align32(self.bytes.map(|b| [b[9], b[10], b[11], 0]));
+                kd = _mm256_load_si256(d.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc, kd]
         }
     }
 
@@ -199,14 +308,27 @@ impl<const PREFIX: usize> AVX2Key<8, 12, PREFIX> {
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u32x3_key(&self) -> [__m256i; 3] {
         let a = Align32(self.bytes.map(|b| [b[0], b[1], b[2], b[3]]));
-        let b = Align32(self.bytes.map(|b| [b[4], b[5], b[6], b[7]]));
-        let c = Align32(self.bytes.map(|b| [b[8], b[9], b[10], b[11]]));
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 4 {
+                kb = self.pb;
+            } else {
+                let b = Align32(self.bytes.map(|b| [b[4], b[5], b[6], b[7]]));
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 8 {
+                kc = self.pc;
+            } else {
+                let c = Align32(self.bytes.map(|b| [b[8], b[9], b[10], b[11]]));
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc]
         }
     }
 }
@@ -218,16 +340,35 @@ impl<const PREFIX: usize> AVX2Key<8, 16, PREFIX> {
     #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
     pub fn avx2_u32x4_key(&self) -> [__m256i; 4] {
         let a = Align32(self.bytes.map(|b| [b[0], b[1], b[2], b[3]]));
-        let b = Align32(self.bytes.map(|b| [b[4], b[5], b[6], b[7]]));
-        let c = Align32(self.bytes.map(|b| [b[8], b[9], b[10], b[11]]));
-        let d = Align32(self.bytes.map(|b| [b[12], b[13], b[14], b[15]]));
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-                _mm256_load_si256(d.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 4 {
+                kb = self.pb;
+            } else {
+                let b = Align32(self.bytes.map(|b| [b[4], b[5], b[6], b[7]]));
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 8 {
+                kc = self.pc;
+            } else {
+                let c = Align32(self.bytes.map(|b| [b[8], b[9], b[10], b[11]]));
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            let kd: __m256i;
+            if Self::SUFFIX < 12 {
+                kd = self.pd;
+            } else {
+                let d = Align32(self.bytes.map(|b| [b[12], b[13], b[14], b[15]]));
+                kd = _mm256_load_si256(d.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc, kd]
         }
     }
 }
@@ -242,15 +383,22 @@ impl<const PREFIX: usize> AVX2Key<4, 12, PREFIX> {
             self.bytes
                 .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]),
         );
-        let b = Align32(
-            self.bytes
-                .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]),
-        );
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 6 {
+                kb = self.pb;
+            } else {
+                let b = Align32(
+                    self.bytes
+                        .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]),
+                );
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            [ka, kb]
         }
     }
 }
@@ -265,20 +413,33 @@ impl<const PREFIX: usize> AVX2Key<4, 18, PREFIX> {
             self.bytes
                 .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]),
         );
-        let b = Align32(
-            self.bytes
-                .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]),
-        );
-        let c = Align32(
-            self.bytes
-                .map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]),
-        );
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 6 {
+                kb = self.pb;
+            } else {
+                let b = Align32(
+                    self.bytes
+                        .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]),
+                );
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 12 {
+                kc = self.pc;
+            } else {
+                let c = Align32(
+                    self.bytes
+                        .map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]),
+                );
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc]
         }
     }
 }
@@ -293,15 +454,22 @@ impl<const PREFIX: usize> AVX2Key<4, 16, PREFIX> {
             self.bytes
                 .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]),
         );
-        let b = Align32(
-            self.bytes
-                .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
-        );
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 8 {
+                kb = self.pb;
+            } else {
+                let b = Align32(
+                    self.bytes
+                        .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+                );
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            [ka, kb]
         }
     }
 }
@@ -316,20 +484,33 @@ impl<const PREFIX: usize> AVX2Key<4, 24, PREFIX> {
             self.bytes
                 .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]),
         );
-        let b = Align32(
-            self.bytes
-                .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
-        );
-        let c = Align32(
-            self.bytes
-                .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
-        );
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 4 {
+                kb = self.pb;
+            } else {
+                let b = Align32(
+                    self.bytes
+                        .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+                );
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 8 {
+                kc = self.pc;
+            } else {
+                let c = Align32(
+                    self.bytes
+                        .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
+                );
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc]
         }
     }
 }
@@ -344,25 +525,44 @@ impl<const PREFIX: usize> AVX2Key<4, 32, PREFIX> {
             self.bytes
                 .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]),
         );
-        let b = Align32(
-            self.bytes
-                .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
-        );
-        let c = Align32(
-            self.bytes
-                .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
-        );
-        let d = Align32(
-            self.bytes
-                .map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]),
-        );
+
         unsafe {
-            [
-                _mm256_load_si256(a.0.as_ptr().cast()),
-                _mm256_load_si256(b.0.as_ptr().cast()),
-                _mm256_load_si256(c.0.as_ptr().cast()),
-                _mm256_load_si256(d.0.as_ptr().cast()),
-            ]
+            let ka = _mm256_load_si256(a.0.as_ptr().cast());
+
+            let kb: __m256i;
+            if Self::SUFFIX < 4 {
+                kb = self.pb;
+            } else {
+                let b = Align32(
+                    self.bytes
+                        .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]),
+                );
+                kb = _mm256_load_si256(b.0.as_ptr().cast());
+            }
+
+            let kc: __m256i;
+            if Self::SUFFIX < 8 {
+                kc = self.pc;
+            } else {
+                let c = Align32(
+                    self.bytes
+                        .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]),
+                );
+                kc = _mm256_load_si256(c.0.as_ptr().cast());
+            }
+
+            let kd: __m256i;
+            if Self::SUFFIX < 12 {
+                kd = self.pd;
+            } else {
+                let d = Align32(
+                    self.bytes
+                        .map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]),
+                );
+                kd = _mm256_load_si256(d.0.as_ptr().cast());
+            }
+
+            [ka, kb, kc, kd]
         }
     }
 }
@@ -374,7 +574,8 @@ mod tests {
     use speck::SpeckVersion;
 
     #[rstest]
-    #[case([], 0x0100_0908_1110_1918u64, [[0x1918u16; 16], [0x1110u16; 16], [0x0908u16; 16], [0x0100u16; 16]])]
+    #[case([], 0x0100_0908_1110_1918u64, [[0x1918u16; 16], [0x1110u16; 16], [0x0908u16; 16], [0x0100u16; 16]]
+    )]
     fn avx2_key_conversion_32_64(
         #[case] prefix: [u8; 0],
         #[case] value: u64,
@@ -394,7 +595,8 @@ mod tests {
     }
 
     #[rstest]
-    #[case([0x02], 0x0100_0a09_0812_1110u64, [[0x0012_1110u32; 8], [0x000a_0908u32; 8], [0x0002_0100u32; 8]])]
+    #[case([0x02], 0x0100_0a09_0812_1110u64, [[0x0012_1110u32; 8], [0x000a_0908u32; 8], [0x0002_0100u32; 8]]
+    )]
     fn avx2_key_conversion_48_72(
         #[case] prefix: [u8; 1],
         #[case] value: u64,
@@ -413,7 +615,8 @@ mod tests {
     }
 
     #[rstest]
-    #[case([0x0a, 0x00, 0x01, 0x02], 0x0908_1211_101a_1918u64, [[0x001a_1918u32; 8], [0x0012_1110u32; 8], [0x000a_0908u32; 8], [0x0002_0100u32; 8]])]
+    #[case([0x0a, 0x00, 0x01, 0x02], 0x0908_1211_101a_1918u64, [[0x001a_1918u32; 8], [0x0012_1110u32; 8], [0x000a_0908u32; 8], [0x0002_0100u32; 8]]
+    )]
     fn avx2_key_conversion_48_96(
         #[case] prefix: [u8; 4],
         #[case] value: u64,
@@ -433,7 +636,8 @@ mod tests {
     }
 
     #[rstest]
-    #[case([0x00, 0x01, 0x02, 0x03], 0x0b0a_0908_1312_1110u64, [[0x1312_1110u32; 8], [0x0b0a_0908u32; 8], [0x0302_0100u32; 8]])]
+    #[case([0x00, 0x01, 0x02, 0x03], 0x0b0a_0908_1312_1110u64, [[0x1312_1110u32; 8], [0x0b0a_0908u32; 8], [0x0302_0100u32; 8]]
+    )]
     fn avx2_key_conversion_64_96(
         #[case] prefix: [u8; 4],
         #[case] value: u64,
@@ -452,7 +656,8 @@ mod tests {
     }
 
     #[rstest]
-    #[case([0x08, 0x09, 0x0a, 0x0b, 0x00, 0x01, 0x02, 0x03], 0x1312_1110_1b1a_1918u64, [[0x1b1a_1918u32; 8], [0x1312_1110u32; 8], [0x0b0a_0908u32; 8], [0x0302_0100u32; 8]])]
+    #[case([0x08, 0x09, 0x0a, 0x0b, 0x00, 0x01, 0x02, 0x03], 0x1312_1110_1b1a_1918u64, [[0x1b1a_1918u32; 8], [0x1312_1110u32; 8], [0x0b0a_0908u32; 8], [0x0302_0100u32; 8]]
+    )]
     fn avx2_key_conversion_64_128(
         #[case] prefix: [u8; 8],
         #[case] value: u64,
@@ -472,7 +677,8 @@ mod tests {
     }
 
     #[rstest]
-    #[case([0x02, 0x03, 0x04, 0x05], 0x0100_0d0c_0b0a_0908u64, [[0x0000_0d0c_0b0a_0908u64; 4], [0x0000_0504_0302_0100u64; 4]])]
+    #[case([0x02, 0x03, 0x04, 0x05], 0x0100_0d0c_0b0a_0908u64, [[0x0000_0d0c_0b0a_0908u64; 4], [0x0000_0504_0302_0100u64; 4]]
+    )]
     fn avx2_key_conversion_96_96(
         #[case] prefix: [u8; 4],
         #[case] value: u64,
