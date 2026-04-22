@@ -10,7 +10,7 @@ pub fn criterion_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
-        .without_plots()
+    // .without_plots()
 }
 
 #[macro_export]
