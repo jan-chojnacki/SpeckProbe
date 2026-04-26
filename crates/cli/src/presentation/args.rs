@@ -22,7 +22,11 @@ pub enum Commands {
         force: bool,
     },
     Benchmark {
+        config_path: PathBuf,
+    },
+    SampleBenchmarkConfig {
+        config_path: PathBuf,
         #[arg(short, long)]
-        bits: usize,
+        force: bool,
     },
 }

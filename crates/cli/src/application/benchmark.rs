@@ -1,8 +1,11 @@
 use crate::application::error::ApplicationError;
+use crate::domain::config::benchmark::BenchmarkConfig;
 use crate::domain::config::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
+use crate::infrastructure::benchmark_config_repository::load_benchmark_config;
 use runtime::Runtime;
 use runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use std::hint::black_box;
+use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 pub struct BenchmarkTarget {
@@ -15,11 +18,33 @@ pub struct BenchmarkTarget {
 
 pub type BenchmarkTargets = Vec<BenchmarkTarget>;
 
-pub type BenchmarkConfig = (CipherConfig, RuntimeConfig, SearchSpace);
+pub type BenchmarkConfig_ = (CipherConfig, RuntimeConfig, SearchSpace);
 
 pub type BenchmarkResults = (BenchmarkTarget, usize, Duration);
 
-fn create_config(target: &BenchmarkTarget, bits: usize) -> BenchmarkConfig {
+pub fn targets_from_config(config: &BenchmarkConfig) -> BenchmarkTargets {
+    let mut targets = Vec::new();
+    for &version in &config.speck_versions {
+        for &function in &config.cipher_functions {
+            for &mode in &config.cipher_modes {
+                for &backend in &config.backend_hints {
+                    for &suffix_bytes in &config.suffix_bytes_values {
+                        targets.push(BenchmarkTarget {
+                            cipher_mode: mode,
+                            speck_version: version,
+                            cipher_function: function,
+                            backend_hint: backend,
+                            suffix_bytes,
+                        });
+                    }
+                }
+            }
+        }
+    }
+    targets
+}
+
+fn create_runtime_config(target: &BenchmarkTarget, bits: usize) -> BenchmarkConfig_ {
     debug_assert!(bits > 8);
     debug_assert!(bits < 64);
 
@@ -62,7 +87,7 @@ fn create_config(target: &BenchmarkTarget, bits: usize) -> BenchmarkConfig {
 }
 
 fn benchmark_pass(target: &BenchmarkTarget, bits: usize) -> Result<Duration, ApplicationError> {
-    let config = create_config(&target, bits);
+    let config = create_runtime_config(target, bits);
     let mut runtime = Runtime::new(
         black_box(config.0),
         black_box(config.1),
@@ -74,13 +99,17 @@ fn benchmark_pass(target: &BenchmarkTarget, bits: usize) -> Result<Duration, App
     Ok(start.elapsed())
 }
 
-pub fn execute(targets: BenchmarkTargets, bits: usize) -> Result<(), ApplicationError> {
+pub fn execute(config_path: PathBuf) -> Result<(), ApplicationError> {
+    let config = load_benchmark_config(&config_path)?;
+    let targets = targets_from_config(&config);
+
     for t in targets {
-        let mut results: Vec<(usize, Duration)> = Vec::with_capacity((9..=bits).count());
+        let mut results: Vec<(usize, Duration)> =
+            Vec::with_capacity(((t.suffix_bytes * 8 + 1)..=config.bits).count());
 
-        dbg!(((t.suffix_bytes * 8 + 1)..=bits).count());
+        dbg!(((t.suffix_bytes * 8 + 1)..=config.bits).count());
 
-        for b in (t.suffix_bytes * 8 + 1)..=bits {
+        for b in (t.suffix_bytes * 8 + 1)..=config.bits {
             let result = benchmark_pass(&t, b)?;
             results.push((b, result));
         }

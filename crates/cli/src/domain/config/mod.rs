@@ -1,3 +1,5 @@
+pub mod benchmark;
+pub mod benchmark_sample;
 mod codec;
 pub mod enums;
 pub mod sample;
