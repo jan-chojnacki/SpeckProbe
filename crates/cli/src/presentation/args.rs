@@ -21,4 +21,8 @@ pub enum Commands {
         #[arg(short, long)]
         force: bool,
     },
+    Benchmark {
+        #[arg(short, long)]
+        bits: usize,
+    },
 }

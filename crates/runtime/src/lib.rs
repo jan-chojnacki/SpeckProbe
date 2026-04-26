@@ -17,7 +17,6 @@ pub struct TaskDone {}
 
 pub struct Runtime {
     tx: Option<Sender<TaskDone>>,
-    rx: Option<Receiver<TaskDone>>,
     cipher_config: Option<CipherConfig>,
     runtime_config: Option<RuntimeConfig>,
     search_space: Option<SearchSpace>,
@@ -29,24 +28,27 @@ impl Runtime {
         runtime_config: RuntimeConfig,
         search_space: SearchSpace,
     ) -> Self {
-        let num_threads = runtime_config.num_threads;
-        let (tx, rx) = bounded::<TaskDone>(CAP * num_threads);
-
         Self {
-            tx: Some(tx),
-            rx: Some(rx),
+            tx: None,
             cipher_config: Some(cipher_config),
             runtime_config: Some(runtime_config),
             search_space: Some(search_space),
         }
     }
 
-    pub fn get_rx_channel(&mut self) -> Receiver<TaskDone> {
-        self.rx.take().expect("TODO")
+    pub fn enable_progress(&mut self) -> Receiver<TaskDone> {
+        let num_threads = self
+            .runtime_config
+            .as_ref()
+            .expect("enable_progress() must be called before run()")
+            .num_threads;
+        let (tx, rx) = bounded::<TaskDone>(CAP * num_threads);
+        self.tx = Some(tx);
+        rx
     }
 
     pub fn run(&mut self) -> Result<DispatchOutput, DispatchError> {
-        let cli_tx = self.tx.take().expect("run() can be called only once");
+        let cli_tx = self.tx.take();
         let cipher_config = self
             .cipher_config
             .take()

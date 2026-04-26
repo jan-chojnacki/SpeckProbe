@@ -1,7 +1,7 @@
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, ValueEnum, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, ValueEnum, Serialize, Deserialize)]
 pub enum SpeckVersion {
     #[value(name = "32/64")]
     Speck32_64,

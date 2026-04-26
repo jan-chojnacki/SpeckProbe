@@ -47,7 +47,7 @@ where
         expected: &[[VW; 2]],
         num_threads: usize,
         cap: usize,
-        cli_tx: Sender<TaskDone>,
+        cli_tx: Option<Sender<TaskDone>>,
         function: FS,
         validator: FV,
         convert: impl Fn([VW; 2]) -> [EW; 2],
@@ -74,7 +74,7 @@ where
         Self {
             task_producer: Some(task_producer),
             pool,
-            cli_tx: Some(cli_tx),
+            cli_tx,
             tx: Some(tx),
             rx,
             stop,
@@ -89,9 +89,9 @@ where
         let validator = self.spawn_validator();
 
         let tx = self.tx.take().expect("run() can be called only once");
-        let cli_tx = self.cli_tx.take().expect("run() can be called only once");
+        let cli_tx = self.cli_tx.take();
 
-        self.run_pool(&tx, &cli_tx);
+        self.run_pool(&tx, cli_tx);
         drop(tx);
 
         validator.join().unwrap()
@@ -130,7 +130,7 @@ where
         validator(data, expected, hit)
     }
 
-    fn run_pool(&mut self, tx: &Sender<Vec<Key<BYTES, PREFIX>>>, cli_tx: &Sender<TaskDone>) {
+    fn run_pool(&mut self, tx: &Sender<Vec<Key<BYTES, PREFIX>>>, cli_tx: Option<Sender<TaskDone>>) {
         let task_producer = self
             .task_producer
             .take()
@@ -149,7 +149,9 @@ where
                     out.clear();
                     function(task, out);
 
-                    cli_tx.send(TaskDone {}).expect("TODO");
+                    if let Some(ref tx) = cli_tx {
+                        tx.send(TaskDone {}).expect("progress channel closed");
+                    }
                     if out.is_empty() {
                         return Ok(());
                     }

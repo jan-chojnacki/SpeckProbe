@@ -21,7 +21,7 @@ pub struct RuntimeConfig {
 
 #[derive(Debug, Clone)]
 pub struct InternalConfig {
-    pub cli_tx: Sender<TaskDone>,
+    pub cli_tx: Option<Sender<TaskDone>>,
 }
 
 #[derive(Debug, Clone)]

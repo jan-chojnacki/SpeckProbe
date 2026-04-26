@@ -36,7 +36,7 @@ pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ApplicationError> {
     );
 
     let mut runtime = Runtime::new(cipher_config, runtime_config.clone(), search_space.clone());
-    let rx = runtime.get_rx_channel();
+    let rx = runtime.enable_progress();
 
     let ui = ProgressUi::start(
         rx,
