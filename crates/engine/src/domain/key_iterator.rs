@@ -66,9 +66,9 @@ impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
     }
 
     #[cfg(target_arch = "x86_64")]
-    #[target_feature(enable = "avx512f")]
+    #[target_feature(enable = "avx512bw")]
     #[doc = "# Safety"]
-    #[doc = "Caller must ensure CPU support for `avx512f` before calling this function."]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
     pub fn avx512_new_key<const LANES: usize>(&self) -> AVX512Key<LANES, BYTES, PREFIX> {
         let v = std::array::from_fn(|i| self.current + i as u64);
         AVX512Key::new(&self.prefix, v, self.speck_version)
