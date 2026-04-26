@@ -14,9 +14,9 @@ use std::arch::aarch64::{
 #[repr(C, align(16))]
 pub struct NEONKey<const LANES: usize, const BYTES: usize, const PREFIX: usize> {
     bytes: [[u8; BYTES]; LANES],
-    pa: uint8x16_t,
     pb: uint8x16_t,
     pc: uint8x16_t,
+    pd: uint8x16_t,
 }
 
 impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> SimdKey<LANES>
@@ -43,71 +43,122 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES,
             bytes[i][..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
         }
 
-        let mut pa = vdupq_n_u8(0);
         let mut pb = vdupq_n_u8(0);
         let mut pc = vdupq_n_u8(0);
+        let mut pd = vdupq_n_u8(0);
 
         match speck_version {
+            SpeckVersion::Speck32_64 => {
+                if Self::SUFFIX < 2 {
+                    let b = bytes.map(|b| [b[2], b[3]]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 4 {
+                    let c = bytes.map(|b| [b[4], b[5]]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 6 {
+                    let d = bytes.map(|b| [b[6], b[7]]);
+                    pd = unsafe { vld1q_u8(d.as_ptr().cast()) };
+                }
+            }
+            SpeckVersion::Speck48_72 => {
+                if Self::SUFFIX < 3 {
+                    let b = bytes.map(|b| [b[3], b[4], b[5], 0]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 6 {
+                    let c = bytes.map(|b| [b[6], b[7], b[8], 0]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
+                }
+            }
             SpeckVersion::Speck48_96 => {
-                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], 0]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
+                if Self::SUFFIX < 3 {
+                    let b = bytes.map(|b| [b[3], b[4], b[5], 0]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 6 {
+                    let c = bytes.map(|b| [b[6], b[7], b[8], 0]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 9 {
+                    let d = bytes.map(|b| [b[9], b[10], b[11], 0]);
+                    pd = unsafe { vld1q_u8(d.as_ptr().cast()) };
                 }
             }
             SpeckVersion::Speck64_96 => {
-                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
+                if Self::SUFFIX < 4 {
+                    let b = bytes.map(|b| [b[4], b[5], b[6], b[7]]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 8 {
+                    let c = bytes.map(|b| [b[8], b[9], b[10], b[11]]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
                 }
             }
             SpeckVersion::Speck64_128 => {
-                let a: [[u8; 4]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3]]);
-                let b: [[u8; 4]; LANES] = bytes.map(|b| [b[4], b[5], b[6], b[7]]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
-                    pb = vld1q_u8(b.as_ptr().cast());
+                if Self::SUFFIX < 4 {
+                    let b = bytes.map(|b| [b[4], b[5], b[6], b[7]]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 8 {
+                    let c = bytes.map(|b| [b[8], b[9], b[10], b[11]]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 12 {
+                    let d = bytes.map(|b| [b[12], b[13], b[14], b[15]]);
+                    pd = unsafe { vld1q_u8(d.as_ptr().cast()) };
+                }
+            }
+            SpeckVersion::Speck96_96 => {
+                if Self::SUFFIX < 6 {
+                    let b = bytes.map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
                 }
             }
             SpeckVersion::Speck96_144 => {
-                let a: [[u8; 8]; LANES] = bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
+                if Self::SUFFIX < 6 {
+                    let b = bytes.map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 12 {
+                    let c = bytes.map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
                 }
             }
             SpeckVersion::Speck128_128 => {
-                let a: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
+                if Self::SUFFIX < 8 {
+                    let b = bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
                 }
             }
             SpeckVersion::Speck128_192 => {
-                let a: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                let b: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
-                    pb = vld1q_u8(b.as_ptr().cast());
+                if Self::SUFFIX < 8 {
+                    let b = bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 16 {
+                    let c = bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
                 }
             }
             SpeckVersion::Speck128_256 => {
-                let a: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-                let b: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-                let c: [[u8; 8]; LANES] =
-                    bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
-                unsafe {
-                    pa = vld1q_u8(a.as_ptr().cast());
-                    pb = vld1q_u8(b.as_ptr().cast());
-                    pc = vld1q_u8(c.as_ptr().cast());
+                if Self::SUFFIX < 8 {
+                    let b = bytes.map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                    pb = unsafe { vld1q_u8(b.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 16 {
+                    let c = bytes.map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
+                    pc = unsafe { vld1q_u8(c.as_ptr().cast()) };
+                }
+                if Self::SUFFIX < 24 {
+                    let d = bytes.map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]);
+                    pd = unsafe { vld1q_u8(d.as_ptr().cast()) };
                 }
             }
-            _ => {}
         }
 
-        Self { bytes, pa, pb, pc }
+        Self { bytes, pb, pc, pd }
     }
 
     pub fn update(&mut self, v: [u64; LANES]) {
@@ -138,16 +189,31 @@ impl<const PREFIX: usize> NEONKey<8, 8, PREFIX> {
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u16x4_key(&self) -> [uint16x8_t; 4] {
         let a: [[u8; 2]; 8] = self.bytes.map(|b| [b[0], b[1]]);
-        let b: [[u8; 2]; 8] = self.bytes.map(|b| [b[2], b[3]]);
-        let c: [[u8; 2]; 8] = self.bytes.map(|b| [b[4], b[5]]);
-        let d: [[u8; 2]; 8] = self.bytes.map(|b| [b[6], b[7]]);
         unsafe {
-            [
-                vreinterpretq_u16_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u16_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u16_u8(vld1q_u8(c.as_ptr().cast())),
-                vreinterpretq_u16_u8(vld1q_u8(d.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u16_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 2 {
+                vreinterpretq_u16_u8(self.pb)
+            } else {
+                let b: [[u8; 2]; 8] = self.bytes.map(|b| [b[2], b[3]]);
+                vreinterpretq_u16_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 4 {
+                vreinterpretq_u16_u8(self.pc)
+            } else {
+                let c: [[u8; 2]; 8] = self.bytes.map(|b| [b[4], b[5]]);
+                vreinterpretq_u16_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            let kd = if Self::SUFFIX < 6 {
+                vreinterpretq_u16_u8(self.pd)
+            } else {
+                let d: [[u8; 2]; 8] = self.bytes.map(|b| [b[6], b[7]]);
+                vreinterpretq_u16_u8(vld1q_u8(d.as_ptr().cast()))
+            };
+
+            [ka, kb, kc, kd]
         }
     }
 }
@@ -159,14 +225,24 @@ impl<const PREFIX: usize> NEONKey<4, 9, PREFIX> {
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u24x3_key(&self) -> [uint32x4_t; 3] {
         let a: [[u8; 4]; 4] = self.bytes.map(|b| [b[0], b[1], b[2], 0]);
-        let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
-        let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
         unsafe {
-            [
-                vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 3 {
+                vreinterpretq_u32_u8(self.pb)
+            } else {
+                let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
+                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 6 {
+                vreinterpretq_u32_u8(self.pc)
+            } else {
+                let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
+                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            [ka, kb, kc]
         }
     }
 }
@@ -178,16 +254,31 @@ impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u24x4_key(&self) -> [uint32x4_t; 4] {
         let a: [[u8; 4]; 4] = self.bytes.map(|b| [b[0], b[1], b[2], 0]);
-        let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
-        let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
-        let d: [[u8; 4]; 4] = self.bytes.map(|b| [b[9], b[10], b[11], 0]);
         unsafe {
-            [
-                vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(d.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 3 {
+                vreinterpretq_u32_u8(self.pb)
+            } else {
+                let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[3], b[4], b[5], 0]);
+                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 6 {
+                vreinterpretq_u32_u8(self.pc)
+            } else {
+                let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[6], b[7], b[8], 0]);
+                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            let kd = if Self::SUFFIX < 9 {
+                vreinterpretq_u32_u8(self.pd)
+            } else {
+                let d: [[u8; 4]; 4] = self.bytes.map(|b| [b[9], b[10], b[11], 0]);
+                vreinterpretq_u32_u8(vld1q_u8(d.as_ptr().cast()))
+            };
+
+            [ka, kb, kc, kd]
         }
     }
 
@@ -197,14 +288,24 @@ impl<const PREFIX: usize> NEONKey<4, 12, PREFIX> {
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u32x3_key(&self) -> [uint32x4_t; 3] {
         let a: [[u8; 4]; 4] = self.bytes.map(|b| [b[0], b[1], b[2], b[3]]);
-        let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
-        let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
         unsafe {
-            [
-                vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 4 {
+                vreinterpretq_u32_u8(self.pb)
+            } else {
+                let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
+                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 8 {
+                vreinterpretq_u32_u8(self.pc)
+            } else {
+                let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
+                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            [ka, kb, kc]
         }
     }
 }
@@ -216,16 +317,31 @@ impl<const PREFIX: usize> NEONKey<4, 16, PREFIX> {
     #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
     pub fn neon_u32x4_key(&self) -> [uint32x4_t; 4] {
         let a: [[u8; 4]; 4] = self.bytes.map(|b| [b[0], b[1], b[2], b[3]]);
-        let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
-        let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
-        let d: [[u8; 4]; 4] = self.bytes.map(|b| [b[12], b[13], b[14], b[15]]);
         unsafe {
-            [
-                vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast())),
-                vreinterpretq_u32_u8(vld1q_u8(d.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u32_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 4 {
+                vreinterpretq_u32_u8(self.pb)
+            } else {
+                let b: [[u8; 4]; 4] = self.bytes.map(|b| [b[4], b[5], b[6], b[7]]);
+                vreinterpretq_u32_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 8 {
+                vreinterpretq_u32_u8(self.pc)
+            } else {
+                let c: [[u8; 4]; 4] = self.bytes.map(|b| [b[8], b[9], b[10], b[11]]);
+                vreinterpretq_u32_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            let kd = if Self::SUFFIX < 12 {
+                vreinterpretq_u32_u8(self.pd)
+            } else {
+                let d: [[u8; 4]; 4] = self.bytes.map(|b| [b[12], b[13], b[14], b[15]]);
+                vreinterpretq_u32_u8(vld1q_u8(d.as_ptr().cast()))
+            };
+
+            [ka, kb, kc, kd]
         }
     }
 }
@@ -239,14 +355,19 @@ impl<const PREFIX: usize> NEONKey<2, 12, PREFIX> {
         let a: [[u8; 8]; 2] = self
             .bytes
             .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
-        let b: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
         unsafe {
-            [
-                vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 6 {
+                vreinterpretq_u64_u8(self.pb)
+            } else {
+                let b: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
+                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            [ka, kb]
         }
     }
 }
@@ -260,18 +381,28 @@ impl<const PREFIX: usize> NEONKey<2, 18, PREFIX> {
         let a: [[u8; 8]; 2] = self
             .bytes
             .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], 0, 0]);
-        let b: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
-        let c: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]);
         unsafe {
-            [
-                vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(c.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 6 {
+                vreinterpretq_u64_u8(self.pb)
+            } else {
+                let b: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[6], b[7], b[8], b[9], b[10], b[11], 0, 0]);
+                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 12 {
+                vreinterpretq_u64_u8(self.pc)
+            } else {
+                let c: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[12], b[13], b[14], b[15], b[16], b[17], 0, 0]);
+                vreinterpretq_u64_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            [ka, kb, kc]
         }
     }
 }
@@ -285,14 +416,19 @@ impl<const PREFIX: usize> NEONKey<2, 16, PREFIX> {
         let a: [[u8; 8]; 2] = self
             .bytes
             .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-        let b: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
         unsafe {
-            [
-                vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 8 {
+                vreinterpretq_u64_u8(self.pb)
+            } else {
+                let b: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            [ka, kb]
         }
     }
 }
@@ -306,18 +442,28 @@ impl<const PREFIX: usize> NEONKey<2, 24, PREFIX> {
         let a: [[u8; 8]; 2] = self
             .bytes
             .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-        let b: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-        let c: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
         unsafe {
-            [
-                vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(c.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 8 {
+                vreinterpretq_u64_u8(self.pb)
+            } else {
+                let b: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 16 {
+                vreinterpretq_u64_u8(self.pc)
+            } else {
+                let c: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
+                vreinterpretq_u64_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            [ka, kb, kc]
         }
     }
 }
@@ -331,22 +477,37 @@ impl<const PREFIX: usize> NEONKey<2, 32, PREFIX> {
         let a: [[u8; 8]; 2] = self
             .bytes
             .map(|b| [b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
-        let b: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
-        let c: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
-        let d: [[u8; 8]; 2] = self
-            .bytes
-            .map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]);
         unsafe {
-            [
-                vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(c.as_ptr().cast())),
-                vreinterpretq_u64_u8(vld1q_u8(d.as_ptr().cast())),
-            ]
+            let ka = vreinterpretq_u64_u8(vld1q_u8(a.as_ptr().cast()));
+
+            let kb = if Self::SUFFIX < 8 {
+                vreinterpretq_u64_u8(self.pb)
+            } else {
+                let b: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[8], b[9], b[10], b[11], b[12], b[13], b[14], b[15]]);
+                vreinterpretq_u64_u8(vld1q_u8(b.as_ptr().cast()))
+            };
+
+            let kc = if Self::SUFFIX < 16 {
+                vreinterpretq_u64_u8(self.pc)
+            } else {
+                let c: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[16], b[17], b[18], b[19], b[20], b[21], b[22], b[23]]);
+                vreinterpretq_u64_u8(vld1q_u8(c.as_ptr().cast()))
+            };
+
+            let kd = if Self::SUFFIX < 24 {
+                vreinterpretq_u64_u8(self.pd)
+            } else {
+                let d: [[u8; 8]; 2] = self
+                    .bytes
+                    .map(|b| [b[24], b[25], b[26], b[27], b[28], b[29], b[30], b[31]]);
+                vreinterpretq_u64_u8(vld1q_u8(d.as_ptr().cast()))
+            };
+
+            [ka, kb, kc, kd]
         }
     }
 }
