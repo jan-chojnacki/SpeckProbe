@@ -13,7 +13,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Commands::SampleConfig { config_path, force } => {
             generate_config::execute(config_path, force)?
         }
-        Commands::Benchmark { config_path } => benchmark::execute(config_path)?,
+        Commands::Benchmark {
+            config_path,
+            output_path,
+        } => benchmark::execute(config_path, output_path)?,
         Commands::SampleBenchmarkConfig { config_path, force } => {
             generate_benchmark_config::execute(config_path, force)?
         }

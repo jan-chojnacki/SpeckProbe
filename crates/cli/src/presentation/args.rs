@@ -23,6 +23,8 @@ pub enum Commands {
     },
     Benchmark {
         config_path: PathBuf,
+        #[arg(short, long, default_value = "./system_benchmark.csv")]
+        output_path: PathBuf,
     },
     SampleBenchmarkConfig {
         config_path: PathBuf,

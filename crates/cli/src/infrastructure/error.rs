@@ -6,4 +6,6 @@ pub enum ConfigRepositoryError {
     TomlDe(#[from] toml::de::Error),
     #[error(transparent)]
     TomlSer(#[from] toml::ser::Error),
+    #[error(transparent)]
+    CsvWrite(#[from] csv::Error),
 }

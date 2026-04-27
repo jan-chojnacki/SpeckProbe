@@ -1,7 +1,9 @@
 use crate::application::error::ApplicationError;
+use crate::domain::benchmark_record::BenchmarkRecord;
 use crate::domain::config::benchmark::BenchmarkConfig;
 use crate::domain::config::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
 use crate::infrastructure::benchmark_config_repository::load_benchmark_config;
+use crate::infrastructure::benchmark_csv_repository::save_records;
 use runtime::Runtime;
 use runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use std::hint::black_box;
@@ -99,24 +101,31 @@ fn benchmark_pass(target: &BenchmarkTarget, bits: usize) -> Result<Duration, App
     Ok(start.elapsed())
 }
 
-pub fn execute(config_path: PathBuf) -> Result<(), ApplicationError> {
+pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ApplicationError> {
     let config = load_benchmark_config(&config_path)?;
     let targets = targets_from_config(&config);
+    let architecture = std::env::consts::ARCH.to_string();
+    let mut all_records: Vec<BenchmarkRecord> = Vec::new();
 
     for t in targets {
-        let mut results: Vec<(usize, Duration)> =
-            Vec::with_capacity(((t.suffix_bytes * 8 + 1)..=config.bits).count());
-
-        dbg!(((t.suffix_bytes * 8 + 1)..=config.bits).count());
-
-        for b in (t.suffix_bytes * 8 + 1)..=config.bits {
-            let result = benchmark_pass(&t, b)?;
-            results.push((b, result));
+        for bits in (t.suffix_bytes * 8 + 1)..=config.bits {
+            let duration = benchmark_pass(&t, bits)?;
+            let throughput_num = 1u64 << bits;
+            all_records.push(BenchmarkRecord {
+                bits_measured: bits,
+                benchmark: "system",
+                backend: t.backend_hint,
+                architecture: architecture.clone(),
+                function: t.cipher_function,
+                version: t.speck_version,
+                suffix: t.suffix_bytes,
+                throughput_num,
+                unit: "ns",
+                duration_ns: duration.as_nanos(),
+            });
         }
-
-        dbg!(t.backend_hint);
-        dbg!(results.last().unwrap());
     }
 
+    save_records(&all_records, &output_path)?;
     Ok(())
 }
