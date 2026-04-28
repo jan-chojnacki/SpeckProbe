@@ -4,9 +4,9 @@
 Cargo.lock
 perf.data
 perf.data.old
-output.csv
 data
 cfg.toml
 cfgn.toml
 bench.toml
-system_benchmark.csv
+/output
+/config

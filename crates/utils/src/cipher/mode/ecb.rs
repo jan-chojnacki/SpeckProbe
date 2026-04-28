@@ -62,7 +62,8 @@ impl SPECK {
             write_word(plaintext_block[1], &mut output);
         }
 
-        self.strip_pkcs7_padding(&output)
+        // self.strip_pkcs7_padding(&output)
+        output
     }
 
     pub(in crate::cipher) fn encrypt_ecb(&self, data: &[u8]) -> Result<Vec<u8>, SPECKError> {

@@ -1,8 +1,10 @@
 use crate::domain::backend::detect_auto_backend;
+use crate::domain::config::benchmark::BenchmarkConfig;
 use colored::Colorize;
 use console::{Alignment, pad_str};
 use runtime::api::{BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace};
 use std::fmt::Display;
+use std::path::Path;
 use terminal_size::{Width, terminal_size};
 use textwrap::{Options, fill};
 
@@ -188,4 +190,94 @@ pub fn display_info(
     }
     println!("{}", bullet().label("Start").value(&start).render(width));
     println!("{}", bullet().label("End").value(&end).render(width));
+}
+
+pub fn display_benchmark_info(config: &BenchmarkConfig, output_path: &Path, total_passes: usize) {
+    let width = terminal_size()
+        .map(|(Width(w), _)| w as usize)
+        .unwrap_or(80);
+
+    let bullet = || Line::new(" •".cyan());
+
+    let versions = config
+        .speck_versions
+        .iter()
+        .map(|v| v.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    let modes = config
+        .cipher_modes
+        .iter()
+        .map(|m| m.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    let functions = config
+        .cipher_functions
+        .iter()
+        .map(|f| f.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    let backends = config
+        .backend_hints
+        .iter()
+        .map(|b| b.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+    let suffixes = config
+        .suffix_bytes_values
+        .iter()
+        .map(|s| s.to_string())
+        .collect::<Vec<_>>()
+        .join(", ");
+
+    println!(
+        "{}",
+        bullet()
+            .label("Bits")
+            .value(config.bits.to_string())
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Speck versions")
+            .value(&versions)
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet().label("Cipher modes").value(&modes).render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Cipher functions")
+            .value(&functions)
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet().label("Backends").value(&backends).render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Suffix bytes")
+            .value(&suffixes)
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Total passes")
+            .value(total_passes.to_string())
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Output")
+            .value(output_path.display().to_string())
+            .render(width)
+    );
 }

@@ -105,3 +105,14 @@ pub fn build_progress_bar(len: u64) -> ProgressBar {
     pb.set_style(style);
     pb
 }
+
+pub fn build_benchmark_progress_bar(len: u64) -> ProgressBar {
+    let pb = ProgressBar::new(len);
+    let style = ProgressStyle::with_template(
+        "{spinner:.yellow} [{elapsed_precise}] [{bar:51.cyan/blue}] {percent}% ({eta})",
+    )
+    .unwrap()
+    .progress_chars("=>-");
+    pb.set_style(style);
+    pb
+}

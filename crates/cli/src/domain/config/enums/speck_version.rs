@@ -1,5 +1,6 @@
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Debug, Copy, Clone, ValueEnum, Serialize, Deserialize)]
 pub enum SpeckVersion {
@@ -23,6 +24,24 @@ pub enum SpeckVersion {
     Speck128_192,
     #[value(name = "128/256")]
     Speck128_256,
+}
+
+impl fmt::Display for SpeckVersion {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            SpeckVersion::Speck32_64 => "32/64",
+            SpeckVersion::Speck48_72 => "48/72",
+            SpeckVersion::Speck48_96 => "48/96",
+            SpeckVersion::Speck64_96 => "64/96",
+            SpeckVersion::Speck64_128 => "64/128",
+            SpeckVersion::Speck96_96 => "96/96",
+            SpeckVersion::Speck96_144 => "96/144",
+            SpeckVersion::Speck128_128 => "128/128",
+            SpeckVersion::Speck128_192 => "128/192",
+            SpeckVersion::Speck128_256 => "128/256",
+        };
+        write!(f, "{}", s)
+    }
 }
 
 impl From<SpeckVersion> for speck::SpeckVersion {

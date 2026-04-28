@@ -2,8 +2,10 @@ use crate::application::error::ApplicationError;
 use crate::domain::benchmark_record::BenchmarkRecord;
 use crate::domain::config::benchmark::BenchmarkConfig;
 use crate::domain::config::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
-use crate::infrastructure::benchmark_config_repository::load_benchmark_config;
 use crate::infrastructure::benchmark_csv_repository::save_records;
+use crate::infrastructure::config_repository::load_config;
+use crate::presentation::display::{display_banner, display_benchmark_info};
+use crate::presentation::progress::ui::build_benchmark_progress_bar;
 use runtime::Runtime;
 use runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use std::hint::black_box;
@@ -102,8 +104,19 @@ fn benchmark_pass(target: &BenchmarkTarget, bits: usize) -> Result<Duration, App
 }
 
 pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ApplicationError> {
-    let config = load_benchmark_config(&config_path)?;
+    let config = load_config::<BenchmarkConfig>(&config_path)?;
     let targets = targets_from_config(&config);
+
+    let total_passes: usize = targets
+        .iter()
+        .map(|t| config.bits.saturating_sub(t.suffix_bytes * 8))
+        .sum();
+
+    display_banner();
+    display_benchmark_info(&config, &output_path, total_passes);
+
+    let pb = build_benchmark_progress_bar(total_passes as u64);
+
     let architecture = std::env::consts::ARCH.to_string();
     let mut all_records: Vec<BenchmarkRecord> = Vec::new();
 
@@ -123,9 +136,12 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), Applica
                 unit: "ns",
                 duration_ns: duration.as_nanos(),
             });
+
+            pb.inc(1);
         }
     }
 
+    pb.finish();
     save_records(&all_records, &output_path)?;
     Ok(())
 }

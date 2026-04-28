@@ -1,5 +1,6 @@
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 #[derive(Debug, Copy, Clone, ValueEnum, Serialize, Deserialize)]
 pub enum BackendHint {
@@ -13,6 +14,24 @@ pub enum BackendHint {
     Avx512,
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     Neon,
+}
+
+impl fmt::Display for BackendHint {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let s = match self {
+            BackendHint::Auto => "Auto",
+            BackendHint::Scalar => "Scalar",
+            #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+            BackendHint::Sse2 => "SSE2",
+            #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+            BackendHint::Avx2 => "AVX2",
+            #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+            BackendHint::Avx512 => "AVX512",
+            #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+            BackendHint::Neon => "NEON",
+        };
+        write!(f, "{}", s)
+    }
 }
 
 impl From<BackendHint> for runtime::api::BackendHint {

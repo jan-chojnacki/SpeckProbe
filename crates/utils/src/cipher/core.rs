@@ -4,7 +4,7 @@ impl SPECK {
     pub(in crate::cipher) fn add_pkcs7_padding(&self, data: &[u8]) -> Vec<u8> {
         let mut out = Vec::from(data);
 
-        let expected_length = self.speck_version.block_size_bytes();
+        let expected_length = self.speck_version.block_size_bytes() * 2;
         let length = out.len();
 
         let remainder = length % expected_length;
@@ -27,7 +27,7 @@ impl SPECK {
         }
 
         let pad = *data.last().unwrap() as usize;
-        if pad == 0 || pad > self.speck_version.block_size_bytes() || pad > data.len() {
+        if pad == 0 || pad > self.speck_version.block_size_bytes() * 2 || pad > data.len() {
             return data.to_vec();
         }
 

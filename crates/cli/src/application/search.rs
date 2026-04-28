@@ -7,7 +7,7 @@ use runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use std::path::PathBuf;
 
 pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ApplicationError> {
-    let config = load_config(&path)?;
+    let config = load_config::<crate::domain::config::SearchConfig>(&path)?;
 
     let cipher_config = CipherConfig {
         cipher_mode: config.cipher_mode.into(),

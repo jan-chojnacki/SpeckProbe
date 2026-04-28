@@ -1,5 +1,6 @@
 pub mod benchmark;
+pub mod encrypt;
 pub mod error;
-pub mod generate_benchmark_config;
-pub mod generate_config;
+pub mod extract_criterion;
+pub mod sample;
 pub mod search;
