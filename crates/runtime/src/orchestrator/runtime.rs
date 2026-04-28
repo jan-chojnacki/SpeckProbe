@@ -109,12 +109,13 @@ where
 
             for hit in rx.into_iter().flatten() {
                 let ok = Self::validate(&validator, &data, &expected, &hit);
-                global_results.push(hit);
 
                 if ok {
                     stop.store(true, Ordering::Relaxed);
                     return (global_results, Some(hit));
                 }
+
+                global_results.push(hit);
             }
 
             (global_results, None)

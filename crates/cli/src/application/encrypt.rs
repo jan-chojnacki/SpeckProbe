@@ -28,10 +28,10 @@ pub fn execute(
 
 fn to_base64(text: &[u8], speck_version: speck::SpeckVersion) -> String {
     let bytes: Vec<u64> = text
-        .chunks(speck_version.block_size_bytes())
+        .chunks(speck_version.word_size_bytes())
         .map(|x| {
             let mut buff = [0u8; 8];
-            buff[..speck_version.block_size_bytes()].copy_from_slice(x);
+            buff[..speck_version.word_size_bytes()].copy_from_slice(x);
             u64::from_le_bytes(buff)
         })
         .collect();
