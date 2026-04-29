@@ -1,5 +1,5 @@
 use super::fs::{ensure_parent_dir, file_has_data, open_file};
-use crate::probe::record::BenchmarkRecord;
+use crate::benchmark::BenchmarkRecord;
 use crate::store::StoreError;
 use std::path::Path;
 

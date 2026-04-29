@@ -1,9 +1,8 @@
+use crate::benchmark::{BenchmarkConfig, BenchmarkRecord};
 use crate::cli::display::{display_banner, display_benchmark_info};
 use crate::cli::progress::ui::build_benchmark_progress_bar;
 use crate::probe::ProbeError;
-use crate::probe::config::BenchmarkConfig;
 use crate::probe::ops::benchmark::{run_pass, targets_from_config};
-use crate::probe::record::BenchmarkRecord;
 use crate::store::{load_config, save_benchmark_records};
 use std::path::PathBuf;
 

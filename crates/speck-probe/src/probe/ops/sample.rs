@@ -21,7 +21,7 @@ pub fn encrypt(path: PathBuf, force: bool) -> Result<(), ProbeError> {
 /// Writes a sample benchmark config to `path`.
 pub fn benchmark(path: PathBuf, force: bool) -> Result<(), ProbeError> {
     prepare_path(&path, force)?;
-    store::save_config(&config::benchmark::sample(), &path)?;
+    store::save_config(&crate::benchmark::sample(), &path)?;
     Ok(())
 }
 

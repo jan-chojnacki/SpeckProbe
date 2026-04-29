@@ -1,4 +1,4 @@
-use crate::probe::config::BenchmarkConfig;
+use crate::benchmark::BenchmarkConfig;
 use crate::probe::config::enums::SpeckVersion;
 use crate::probe::error::ProbeError;
 use crate::runtime::Runtime;

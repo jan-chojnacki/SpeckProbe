@@ -1,5 +1,5 @@
+use crate::benchmark::BenchmarkConfig;
 use crate::probe::backend::detect;
-use crate::probe::config::BenchmarkConfig;
 use crate::runtime::api::{BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace};
 use colored::Colorize;
 use console::{Alignment, pad_str};
