@@ -11,5 +11,5 @@ macro_rules! avx2_expand_key_inline {
         });
 
         $round_keys[$rounds] = k;
-    };
+    }
 }
