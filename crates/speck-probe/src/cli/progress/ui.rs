@@ -1,4 +1,4 @@
-use crate::cli::presentation::progress::scale::ProgressScale;
+use crate::cli::progress::scale::ProgressScale;
 use crate::runtime::TaskDone;
 use crossbeam::channel::Receiver;
 use human_format::Formatter;

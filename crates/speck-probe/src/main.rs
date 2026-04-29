@@ -1,6 +1,7 @@
 use clap::Parser;
-use speck_probe::cli::command::{benchmark, encrypt, extract_criterion, sample, search};
-use speck_probe::cli::presentation::args::{Args, Commands, SampleCommand};
+use speck_probe::cli::{
+    Args, Commands, SampleCommand, benchmark, encrypt, extract_criterion, sample, search,
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();

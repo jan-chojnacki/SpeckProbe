@@ -86,13 +86,8 @@ fn prepend_bytes(key: Vec<u8>, count: usize, fill: u8) -> Vec<u8> {
 }
 
 pub fn display_banner() {
-    print!("{}", crate::cli::BANNER);
-    let text = format!(
-        "{}v{}{}",
-        "(".blue(),
-        crate::cli::VERSION.cyan(),
-        ")".blue()
-    );
+    print!("{}", super::BANNER);
+    let text = format!("{}v{}{}", "(".blue(), super::VERSION.cyan(), ")".blue());
     println!("{}", pad_str(&text, 57, Alignment::Right, None));
 }
 

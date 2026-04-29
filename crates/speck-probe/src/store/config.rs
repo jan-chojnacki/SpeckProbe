@@ -5,7 +5,7 @@ use std::fs;
 use std::path::Path;
 
 /// Deserializes a TOML file at `path` into `Config`.
-pub fn load<Config>(path: &Path) -> Result<Config, StoreError>
+pub fn load_config<Config>(path: &Path) -> Result<Config, StoreError>
 where
     Config: DeserializeOwned,
 {
@@ -15,7 +15,7 @@ where
 }
 
 /// Serializes `config` as pretty TOML and writes it to `path`.
-pub fn save<Config>(config: &Config, path: &Path) -> Result<(), StoreError>
+pub fn save_config<Config>(config: &Config, path: &Path) -> Result<(), StoreError>
 where
     Config: Serialize,
 {

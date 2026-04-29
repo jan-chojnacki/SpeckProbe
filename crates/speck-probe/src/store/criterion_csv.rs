@@ -13,7 +13,10 @@ fn read_from_file(path: &Path, architecture: &str) -> Result<Vec<CriterionRecord
 }
 
 /// Reads and merges Criterion CSV files from `paths`, tagging each record with `architecture`.
-pub fn read_all(paths: &[PathBuf], architecture: &str) -> Result<Vec<CriterionRecord>, StoreError> {
+pub fn read_criterion_records(
+    paths: &[PathBuf],
+    architecture: &str,
+) -> Result<Vec<CriterionRecord>, StoreError> {
     let mut all = Vec::new();
     for path in paths {
         all.extend(read_from_file(path, architecture)?);
@@ -22,7 +25,11 @@ pub fn read_all(paths: &[PathBuf], architecture: &str) -> Result<Vec<CriterionRe
 }
 
 /// Writes `records` to the CSV at `path`. When `clear` is true the file is truncated first.
-pub fn save(records: &[CriterionRecord], path: &Path, clear: bool) -> Result<(), StoreError> {
+pub fn save_criterion_records(
+    records: &[CriterionRecord],
+    path: &Path,
+    clear: bool,
+) -> Result<(), StoreError> {
     ensure_parent_dir(path)?;
     let write_headers = clear || !file_has_data(path)?;
     let file = open_file(path, clear)?;

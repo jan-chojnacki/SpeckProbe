@@ -1,5 +1,5 @@
-use crate::cli::presentation::display::{display_banner, display_benchmark_info};
-use crate::cli::presentation::progress::ui::build_benchmark_progress_bar;
+use crate::cli::display::{display_banner, display_benchmark_info};
+use crate::cli::progress::ui::build_benchmark_progress_bar;
 use crate::probe::ProbeError;
 use crate::probe::config::BenchmarkConfig;
 use crate::probe::ops::benchmark::{run_pass, targets_from_config};
