@@ -1,4 +1,4 @@
-use super::CipherMode;
+use crate::runtime::api::CipherMode;
 use thiserror::Error;
 
 #[derive(Debug, Error, Eq, PartialEq)]

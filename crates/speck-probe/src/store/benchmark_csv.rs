@@ -1,6 +1,6 @@
 use super::fs::{ensure_parent_dir, file_has_data, open_file};
 use crate::probe::record::BenchmarkRecord;
-use crate::probe::store::StoreError;
+use crate::store::StoreError;
 use std::path::Path;
 
 /// Appends `records` to the CSV at `path`, writing a header row only when the file is empty.

@@ -1,4 +1,4 @@
-use crate::probe::store::StoreError;
+use crate::store::StoreError;
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 use std::fs;

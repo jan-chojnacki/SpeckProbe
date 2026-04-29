@@ -1,4 +1,5 @@
-use crate::probe::config::{BackendHint, CipherFunction, SpeckVersion};
+use crate::probe::config::SpeckVersion;
+use crate::runtime::api::{BackendHint, CipherFunction};
 use serde::Serialize;
 
 /// A single timing measurement produced by one benchmark pass.

@@ -1,6 +1,6 @@
 use crate::probe::config;
 use crate::probe::error::ProbeError;
-use crate::probe::store::{self, StoreError};
+use crate::store::{self, StoreError};
 use std::fs;
 use std::path::{Path, PathBuf};
 

@@ -4,7 +4,6 @@ use std::arch::aarch64::{
     uint16x8_t, uint32x4_t, uint64x2_t, vandq_u16, vandq_u32, vandq_u64, vceqq_u16, vceqq_u32,
     vceqq_u64, vst1q_u16, vst1q_u32, vst1q_u64,
 };
-use crate::domain::Key;
 
 #[cfg(target_arch = "aarch64")]
 #[target_feature(enable = "neon")]

@@ -1,9 +1,9 @@
 use crate::cli::presentation::display::{display_banner, display_info, display_results};
 use crate::cli::presentation::progress::ProgressUi;
 use crate::probe::ops::search::into_runtime_configs;
-use crate::probe::store::load_config;
 use crate::probe::{ProbeError, config::SearchConfig};
 use crate::runtime::Runtime;
+use crate::store::load_config;
 use std::path::PathBuf;
 
 /// Loads a search config, runs the key search, and prints results.

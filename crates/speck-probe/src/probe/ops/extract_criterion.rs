@@ -1,5 +1,5 @@
 use crate::probe::error::ProbeError;
-use crate::probe::store;
+use crate::store;
 use std::path::Path;
 
 /// Collects Criterion CSV files under `criterion_path` and writes them to `output_path`.

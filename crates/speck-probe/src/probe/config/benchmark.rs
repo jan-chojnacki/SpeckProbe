@@ -1,4 +1,5 @@
-use crate::probe::config::enums::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
+use crate::probe::config::enums::SpeckVersion;
+use crate::runtime::api::{BackendHint, CipherFunction, CipherMode};
 use serde::{Deserialize, Serialize};
 
 /// Configuration for a full benchmark run covering all listed parameter combinations.

@@ -1,7 +1,8 @@
-use crate::probe::config::enums::{CipherMode, SpeckVersion};
+use crate::probe::config::enums::SpeckVersion;
 use crate::probe::config::serde::key::{
     deserialize_from_hex, deserialize_from_hex_opt, serialize_as_hex, serialize_as_hex_opt,
 };
+use crate::runtime::api::CipherMode;
 use serde::{Deserialize, Serialize};
 
 /// Configuration for a single encrypt/decrypt operation.

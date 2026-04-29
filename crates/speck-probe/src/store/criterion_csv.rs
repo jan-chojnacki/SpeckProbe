@@ -1,6 +1,6 @@
 use super::fs::{ensure_parent_dir, file_has_data, open_file};
 use crate::probe::record::criterion::{CriterionRecord, RawRecord};
-use crate::probe::store::StoreError;
+use crate::store::StoreError;
 use std::path::{Path, PathBuf};
 
 fn read_from_file(path: &Path, architecture: &str) -> Result<Vec<CriterionRecord>, StoreError> {

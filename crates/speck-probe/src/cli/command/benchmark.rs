@@ -4,7 +4,7 @@ use crate::probe::ProbeError;
 use crate::probe::config::BenchmarkConfig;
 use crate::probe::ops::benchmark::{run_pass, targets_from_config};
 use crate::probe::record::BenchmarkRecord;
-use crate::probe::store::{load_config, save_benchmark_records};
+use crate::store::{load_config, save_benchmark_records};
 use std::path::PathBuf;
 
 /// Loads a benchmark config, runs all passes, and writes results to a CSV file.

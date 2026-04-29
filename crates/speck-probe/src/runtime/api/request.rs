@@ -1,5 +1,7 @@
 use crate::runtime::TaskDone;
+use clap::ValueEnum;
 use crossbeam::channel::Sender;
+use serde::{Deserialize, Serialize};
 use speck::SpeckVersion;
 
 pub type DispatchOutput = (Vec<Vec<u8>>, Option<Vec<u8>>);
@@ -31,7 +33,7 @@ pub struct CipherConfig {
     pub cipher_function: CipherFunction,
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display, ValueEnum, Serialize, Deserialize)]
 pub enum CipherFunction {
     Encrypt,
     Decrypt,
@@ -46,13 +48,17 @@ pub struct SearchSpace {
     pub expected: Vec<[u64; 2]>,
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display)]
+/// Block cipher mode of operation.
+#[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display, ValueEnum, Serialize, Deserialize)]
 pub enum CipherMode {
+    /// Electronic Code Book
     Ecb,
+    /// Cipher Block Chaining
     Cbc,
 }
 
-#[derive(Debug, Clone, Copy, Eq, PartialEq, strum::Display)]
+/// Hint for selecting a SIMD backend; `Auto` picks the best available at runtime.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, strum::Display, ValueEnum, Serialize, Deserialize)]
 pub enum BackendHint {
     Auto,
     Scalar,

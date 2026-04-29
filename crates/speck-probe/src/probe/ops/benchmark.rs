@@ -1,8 +1,10 @@
 use crate::probe::config::BenchmarkConfig;
-use crate::probe::config::enums::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
+use crate::probe::config::enums::SpeckVersion;
 use crate::probe::error::ProbeError;
 use crate::runtime::Runtime;
-use crate::runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
+use crate::runtime::api::{
+    BackendHint, CipherConfig, CipherFunction, CipherMode, RuntimeConfig, SearchSpace,
+};
 use std::hint::black_box;
 use std::time::{Duration, Instant};
 

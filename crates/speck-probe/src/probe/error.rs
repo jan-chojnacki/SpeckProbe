@@ -1,4 +1,4 @@
-use crate::probe::store::StoreError;
+use crate::store::StoreError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum ProbeError {

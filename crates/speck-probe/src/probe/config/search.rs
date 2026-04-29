@@ -1,6 +1,7 @@
-use crate::probe::config::enums::{BackendHint, CipherFunction, CipherMode, SpeckVersion};
+use crate::probe::config::enums::SpeckVersion;
 use crate::probe::config::serde::data::{deserialize_u64_pairs, serialize_u64_pairs};
 use crate::probe::config::serde::key::{deserialize_from_hex, serialize_as_hex};
+use crate::runtime::api::{BackendHint, CipherFunction, CipherMode};
 use serde::{Deserialize, Serialize};
 
 /// Configuration for a key-search operation.

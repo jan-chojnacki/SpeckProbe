@@ -1,6 +1,6 @@
-use crate::cipher::CipherMode;
 use crate::cipher::error::SPECKError;
 use crate::cipher::error::SPECKError::{InvalidIvLength, InvalidKeyLength, IvMissing};
+use crate::runtime::api::CipherMode;
 use speck::SpeckVersion;
 
 /// SPECK block cipher wrapper supporting ECB and CBC operation modes.
@@ -47,7 +47,7 @@ impl SPECK {
         }
 
         let mut iv_buf = Vec::new();
-        if mode == CipherMode::CBC {
+        if mode == CipherMode::Cbc {
             match iv {
                 None => {
                     return Err(IvMissing { mode });
@@ -80,8 +80,8 @@ impl SPECK {
     /// Input is PKCS#7-padded to the block boundary before encryption.
     pub fn encrypt(&self, data: &[u8]) -> Result<Vec<u8>, SPECKError> {
         match self.mode {
-            CipherMode::ECB => self.encrypt_ecb(data),
-            CipherMode::CBC => self.encrypt_cbc(data),
+            CipherMode::Ecb => self.encrypt_ecb(data),
+            CipherMode::Cbc => self.encrypt_cbc(data),
         }
     }
 
@@ -89,8 +89,8 @@ impl SPECK {
     /// Returns an error if `data` is not a multiple of the block size.
     pub fn decrypt(&self, data: &[u8]) -> Result<Vec<u8>, SPECKError> {
         match self.mode {
-            CipherMode::ECB => self.decrypt_ecb(data),
-            CipherMode::CBC => self.decrypt_cbc(data),
+            CipherMode::Ecb => self.decrypt_ecb(data),
+            CipherMode::Cbc => self.decrypt_cbc(data),
         }
     }
 

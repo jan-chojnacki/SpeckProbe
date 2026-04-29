@@ -1,4 +1,5 @@
-use crate::probe::config::enums::{CipherMode, SpeckVersion};
+use crate::probe::config::enums::SpeckVersion;
+use crate::runtime::api::CipherMode;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 

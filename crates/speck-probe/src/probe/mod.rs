@@ -7,6 +7,6 @@ pub mod config;
 pub mod error;
 pub mod ops;
 pub mod record;
-pub mod store;
 
+use crate::store;
 pub use error::ProbeError;

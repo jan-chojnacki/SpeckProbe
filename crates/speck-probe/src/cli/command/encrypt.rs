@@ -1,6 +1,7 @@
 use crate::probe::ProbeError;
-use crate::probe::config::enums::{CipherMode, SpeckVersion};
+use crate::probe::config::enums::SpeckVersion;
 use crate::probe::ops::encrypt::execute as run_encrypt;
+use crate::runtime::api::CipherMode;
 
 /// Encrypts `data` and prints both the resulting plaintext and ciphertext as base64.
 pub fn execute(
