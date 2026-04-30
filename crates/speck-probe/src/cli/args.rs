@@ -69,12 +69,6 @@ pub enum SampleCommand {
         #[arg(short, long)]
         force: bool,
     },
-    Encrypt {
-        #[arg(default_value = "./config/encrypt.toml")]
-        config_path: PathBuf,
-        #[arg(short, long)]
-        force: bool,
-    },
 }
 
 /// A CLI argument that parses space-separated lowercase hex bytes (e.g. `"0a 1b 2c"`).

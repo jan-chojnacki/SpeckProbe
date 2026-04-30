@@ -19,20 +19,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             criterion_path,
             output_path,
             clear_output,
-        } => extract_criterion::execute(criterion_path, output_path, clear_output)?,
+        } => extract_criterion::handle_extract(criterion_path, output_path, clear_output)?,
         Commands::Encrypt {
             speck_version,
             cipher_mode,
             key,
             iv,
             data,
-        } => encrypt::execute(speck_version, cipher_mode, key.0, iv.map(|iv| iv.0), data)?,
+        } => encrypt::handle_encrypt(speck_version, cipher_mode, key.0, iv.map(|iv| iv.0), data)?,
         Commands::Sample { command: s } => match s {
-            SampleCommand::Search { config_path, force } => sample::search(config_path, force)?,
-            SampleCommand::Benchmark { config_path, force } => {
-                sample::benchmark(config_path, force)?
+            SampleCommand::Search { config_path, force } => {
+                sample::handle_sample_search(config_path, force)?
             }
-            SampleCommand::Encrypt { config_path, force } => sample::encrypt(config_path, force)?,
+            SampleCommand::Benchmark { config_path, force } => {
+                sample::handle_sample_benchmark(config_path, force)?
+            }
         },
     }
 

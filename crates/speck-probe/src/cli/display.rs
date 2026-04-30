@@ -1,5 +1,4 @@
 use crate::benchmark::BenchmarkConfig;
-use crate::probe::backend::detect;
 use crate::runtime::api::{BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace};
 use colored::Colorize;
 use console::{Alignment, pad_str};
@@ -277,4 +276,63 @@ fn terminal_width() -> usize {
     terminal_size()
         .map(|(Width(w), _)| w as usize)
         .unwrap_or(80)
+}
+
+/// The SIMD backend that will be selected at runtime.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ActiveBackend {
+    #[cfg(target_arch = "x86_64")]
+    Avx512,
+    #[cfg(target_arch = "x86_64")]
+    Avx2,
+    #[cfg(target_arch = "x86_64")]
+    Sse2,
+    #[cfg(target_arch = "aarch64")]
+    Neon,
+    Scalar,
+}
+
+impl fmt::Display for ActiveBackend {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            #[cfg(target_arch = "x86_64")]
+            ActiveBackend::Avx512 => write!(f, "AVX-512"),
+            #[cfg(target_arch = "x86_64")]
+            ActiveBackend::Avx2 => write!(f, "AVX2"),
+            #[cfg(target_arch = "x86_64")]
+            ActiveBackend::Sse2 => write!(f, "SSE2"),
+            #[cfg(target_arch = "aarch64")]
+            ActiveBackend::Neon => write!(f, "NEON"),
+            ActiveBackend::Scalar => write!(f, "Scalar"),
+        }
+    }
+}
+
+/// Detects the best available SIMD backend for the current CPU at runtime.
+///
+/// # Example
+/// ```
+/// let backend = probe::backend::detect();
+/// println!("Active backend: {backend}");
+/// ```
+fn detect() -> ActiveBackend {
+    #[cfg(target_arch = "x86_64")]
+    {
+        if is_x86_feature_detected!("avx512bw") {
+            return ActiveBackend::Avx512;
+        }
+        if is_x86_feature_detected!("avx2") {
+            return ActiveBackend::Avx2;
+        }
+        if is_x86_feature_detected!("sse2") {
+            return ActiveBackend::Sse2;
+        }
+    }
+    #[cfg(target_arch = "aarch64")]
+    {
+        if std::arch::is_aarch64_feature_detected!("neon") {
+            return ActiveBackend::Neon;
+        }
+    }
+    ActiveBackend::Scalar
 }
