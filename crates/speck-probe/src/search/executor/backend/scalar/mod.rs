@@ -1,3 +1,7 @@
+pub(crate) mod comparator;
+pub(crate) mod search;
+pub(crate) mod validate;
+
 use crate::search::executor::backend::macros::define_backend_dispatch;
 
 define_backend_dispatch! {

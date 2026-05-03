@@ -8,10 +8,10 @@ pub mod word;
 pub use error::DispatchError;
 pub use runtime::Runtime;
 
+use crate::speck::SpeckVersion;
 use clap::ValueEnum;
 use crossbeam::channel::Sender;
 use serde::{Deserialize, Serialize};
-use crate::speck::SpeckVersion;
 
 pub const CAP: usize = 256;
 

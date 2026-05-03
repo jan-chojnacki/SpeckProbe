@@ -1,9 +1,9 @@
-use crate::aarch64::neon::comparator::{
+use super::neon::comparator::{
     neon_block_compare_u16, neon_block_compare_u32, neon_block_compare_u64,
 };
-use crate::backend::macros::define_search;
+use crate::search::executor::backend::macros::define_search;
+use crate::speck::SpeckVersion;
 use paste::paste;
-use speck::SpeckVersion;
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 define_search!(

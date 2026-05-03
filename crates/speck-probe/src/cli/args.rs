@@ -1,5 +1,5 @@
-use crate::speck::SpeckVersion;
 use crate::search::executor::CipherMode;
+use crate::speck::SpeckVersion;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 

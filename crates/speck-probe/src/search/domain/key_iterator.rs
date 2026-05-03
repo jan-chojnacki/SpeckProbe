@@ -1,0 +1,126 @@
+use super::Key;
+use super::SimdKey;
+#[cfg(target_arch = "aarch64")]
+use crate::backend::aarch64::neon::key::NEONKey;
+#[cfg(target_arch = "x86_64")]
+use crate::search::executor::backend::x86_64::avx2::AVX2Key;
+#[cfg(target_arch = "x86_64")]
+use crate::search::executor::backend::x86_64::avx512::AVX512Key;
+#[cfg(target_arch = "x86_64")]
+use crate::search::executor::backend::x86_64::sse2::SSE2Key;
+use crate::speck::SpeckVersion;
+use thiserror::Error;
+
+#[derive(Debug, Clone, Error, Eq, PartialEq)]
+pub enum KeyIteratorError {
+    #[error("expected {expected} bytes, got {got}")]
+    InvalidPrefixLength { expected: usize, got: usize },
+    #[error("start ({start}) + count ({count}) overflows end value")]
+    InvalidKeyCount { start: u64, count: u64 },
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct KeyIterator<const BYTES: usize, const PREFIX: usize> {
+    current: u64,
+    end: u64,
+    prefix: [u8; PREFIX],
+    speck_version: SpeckVersion,
+    finished: bool,
+}
+
+impl<const BYTES: usize, const PREFIX: usize> KeyIterator<BYTES, PREFIX> {
+    #[inline(always)]
+    pub fn new(start: u64, end: u64, prefix: [u8; PREFIX], speck_version: SpeckVersion) -> Self {
+        assert!(start <= end);
+
+        Self {
+            current: start,
+            end,
+            prefix,
+            speck_version,
+            finished: false,
+        }
+    }
+
+    #[inline(always)]
+    pub fn new_key(&self) -> Key<BYTES, PREFIX> {
+        Key::new(&self.prefix, self.current)
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[target_feature(enable = "sse2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `sse2` before calling this function."]
+    pub fn sse2_new_key<const LANES: usize>(&self) -> SSE2Key<LANES, BYTES, PREFIX> {
+        let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
+        SSE2Key::new(&self.prefix, v, self.speck_version)
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[target_feature(enable = "avx2")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx2` before calling this function."]
+    pub fn avx2_new_key<const LANES: usize>(&self) -> AVX2Key<LANES, BYTES, PREFIX> {
+        let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
+        AVX2Key::new(&self.prefix, v, self.speck_version)
+    }
+
+    #[cfg(target_arch = "x86_64")]
+    #[target_feature(enable = "avx512bw")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `avx512bw` before calling this function."]
+    pub fn avx512_new_key<const LANES: usize>(&self) -> AVX512Key<LANES, BYTES, PREFIX> {
+        let v = std::array::from_fn(|i| self.current + i as u64);
+        AVX512Key::new(&self.prefix, v, self.speck_version)
+    }
+
+    #[cfg(target_arch = "aarch64")]
+    #[target_feature(enable = "neon")]
+    #[doc = "# Safety"]
+    #[doc = "Caller must ensure CPU support for `neon` before calling this function."]
+    pub fn neon_new_key<const LANES: usize>(&self) -> NEONKey<LANES, BYTES, PREFIX> {
+        let v = std::array::from_fn(|i| self.current + i as u64);
+        NEONKey::new(&self.prefix, v, self.speck_version)
+    }
+
+    #[inline(always)]
+    pub fn next_into(&mut self, out: &mut Key<BYTES, PREFIX>) -> Option<()> {
+        if self.finished {
+            return None;
+        }
+
+        out.update(self.current);
+
+        if self.current == self.end {
+            self.finished = true;
+        } else {
+            self.current += 1;
+        }
+
+        Some(())
+    }
+
+    #[inline(always)]
+    pub fn simd_next_into<const LANES: usize>(
+        &mut self,
+        out: &mut impl SimdKey<LANES>,
+    ) -> Option<()> {
+        if self.finished {
+            return None;
+        }
+
+        debug_assert!(LANES > 0);
+
+        let v = std::array::from_fn(|i| self.current.saturating_add(i as u64));
+        out.update(v);
+
+        let last_in_chunk = self.current.saturating_add(LANES as u64 - 1);
+        if last_in_chunk >= self.end {
+            self.finished = true;
+        } else {
+            self.current += LANES as u64;
+        }
+
+        Some(())
+    }
+}

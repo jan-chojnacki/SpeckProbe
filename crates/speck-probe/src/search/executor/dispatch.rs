@@ -5,7 +5,7 @@ use crate::speck::SpeckVersion;
 use crate::search::executor::backend::x86_64;
 
 #[cfg(target_arch = "aarch64")]
-use crate::backend::aarch64;
+use crate::search::executor::backend::aarch64;
 use crate::search::executor::error::DispatchError;
 use crate::search::executor::{
     BackendHint, CipherFunction, CipherMode, DispatchOutput, RuntimeRequest,

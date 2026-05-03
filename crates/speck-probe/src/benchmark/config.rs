@@ -1,5 +1,5 @@
-use crate::speck::SpeckVersion;
 use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
+use crate::speck::SpeckVersion;
 use serde::{Deserialize, Serialize};
 
 /// Configuration for a full benchmark run covering all listed parameter combinations.

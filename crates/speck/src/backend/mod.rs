@@ -7,7 +7,6 @@ mod u24;
 mod u48;
 pub mod x86_64;
 
-
 #[cfg(target_arch = "aarch64")]
 pub use aarch64::neon::*;
 pub use scalar::*;

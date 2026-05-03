@@ -2,11 +2,11 @@ use crate::benchmark::{BenchmarkConfig, BenchmarkRecord};
 use crate::cli::display::{display_banner, display_benchmark_info};
 use crate::cli::progress::ui::build_benchmark_progress_bar;
 use crate::probe::ProbeError;
-use crate::speck::SpeckVersion;
 use crate::search::executor::Runtime;
 use crate::search::executor::{
     BackendHint, CipherConfig, CipherFunction, CipherMode, RuntimeConfig, SearchSpace,
 };
+use crate::speck::SpeckVersion;
 use crate::store::{load_config, save_benchmark_records};
 use std::hint::black_box;
 use std::path::PathBuf;

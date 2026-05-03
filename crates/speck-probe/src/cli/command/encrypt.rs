@@ -1,9 +1,9 @@
 use crate::cipher::speck::SPECK;
-use crate::speck::SpeckVersion;
 use crate::probe::ProbeError;
 use crate::search::executor::CipherMode;
-use base64::engine::general_purpose::STANDARD;
+use crate::speck::SpeckVersion;
 use base64::Engine;
+use base64::engine::general_purpose::STANDARD;
 
 /// Encrypts `data` and prints both the resulting plaintext and ciphertext as base64.
 pub fn handle_encrypt(

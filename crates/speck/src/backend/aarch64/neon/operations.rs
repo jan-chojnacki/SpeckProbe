@@ -166,9 +166,9 @@ macro_rules! neon_set {
     };
 }
 
-pub(crate) use neon_ror;
-pub(crate) use neon_rol;
 pub(crate) use neon_add;
+pub(crate) use neon_rol;
+pub(crate) use neon_ror;
+pub(crate) use neon_set;
 pub(crate) use neon_sub;
 pub(crate) use neon_xor;
-pub(crate) use neon_set;

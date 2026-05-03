@@ -154,9 +154,9 @@ macro_rules! avx512_set {
     };
 }
 
-pub(crate) use avx512_ror;
-pub(crate) use avx512_rol;
 pub(crate) use avx512_add;
+pub(crate) use avx512_rol;
+pub(crate) use avx512_ror;
+pub(crate) use avx512_set;
 pub(crate) use avx512_sub;
 pub(crate) use avx512_xor;
-pub(crate) use avx512_set;

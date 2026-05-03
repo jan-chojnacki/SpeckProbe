@@ -2,8 +2,8 @@ use super::serde::deserialize_from_hex;
 use super::serde::deserialize_u64_pairs;
 use super::serde::serialize_as_hex;
 use super::serde::serialize_u64_pairs;
-use crate::speck::SpeckVersion;
 use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
+use crate::speck::SpeckVersion;
 use serde::{Deserialize, Serialize};
 
 /// Configuration for a key-search operation.

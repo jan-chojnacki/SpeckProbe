@@ -1,7 +1,7 @@
-use std::arch::x86_64::__m512i;
-use super::avx512_expand_key_inline;
 use super::avx512_encrypt_round_inline;
+use super::avx512_expand_key_inline;
 use super::avx512_set;
+use std::arch::x86_64::__m512i;
 
 macro_rules! impl_encrypt_block_avx512 {
     ($fn_name:ident, $feature:literal, $word:tt, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {

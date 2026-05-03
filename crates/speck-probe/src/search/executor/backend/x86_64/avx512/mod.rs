@@ -1,7 +1,11 @@
+pub(crate) mod comparator;
+mod converter;
+pub(crate) use converter::avx512_u16x2_block_to_vec;
+pub(crate) use converter::avx512_u32x2_block_to_vec;
+pub(crate) use converter::avx512_u64x2_block_to_vec;
+mod key;
 use crate::search::executor::backend::macros::define_backend_dispatch;
-use engine::x86_64::avx512::converter::{
-    avx512_u16x2_block_to_vec, avx512_u32x2_block_to_vec, avx512_u64x2_block_to_vec,
-};
+pub(crate) use key::AVX512Key;
 use std::arch::x86_64::__m512i;
 
 define_backend_dispatch! {

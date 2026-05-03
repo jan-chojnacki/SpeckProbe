@@ -1,7 +1,12 @@
+pub(crate) mod comparator;
+mod converter;
+pub(crate) use converter::sse2_u16x2_block_to_vec;
+pub(crate) use converter::sse2_u32x2_block_to_vec;
+pub(crate) use converter::sse2_u64x2_block_to_vec;
+mod key;
+pub(crate) use key::SSE2Key;
+
 use crate::search::executor::backend::macros::define_backend_dispatch;
-use engine::x86_64::sse2::converter::{
-    sse2_u16x2_block_to_vec, sse2_u32x2_block_to_vec, sse2_u64x2_block_to_vec,
-};
 use std::arch::x86_64::__m128i;
 
 define_backend_dispatch! {

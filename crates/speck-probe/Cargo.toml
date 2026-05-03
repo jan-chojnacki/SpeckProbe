@@ -20,7 +20,6 @@ thiserror = "2"
 toml = "1"
 csv = "1"
 walkdir = "2.5"
-engine = { path = "../engine" }
 rayon = "1.11"
 seq-macro = "0.3.6"
 paste = "1"

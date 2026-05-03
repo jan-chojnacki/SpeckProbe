@@ -1,6 +1,6 @@
-use std::arch::x86_64::__m128i;
-use super::sse2_expand_key_inline;
 use super::sse2_decrypt_round_inline;
+use super::sse2_expand_key_inline;
+use std::arch::x86_64::__m128i;
 
 macro_rules! impl_decrypt_block_sse2 {
     ($fn_name:ident, $word:tt, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {

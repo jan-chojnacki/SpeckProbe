@@ -1,9 +1,9 @@
+use crate::search::domain::key::Key;
+use crate::search::domain::task::Task;
+use crate::search::domain::task_producer::TaskProducer;
 use crate::search::executor::TaskDone;
 use crate::search::executor::word::{EngineWord, ValidatorWord};
 use crossbeam::channel::{Receiver, Sender, bounded};
-use engine::domain::key::Key;
-use engine::domain::task::Task;
-use engine::domain::task_producer::TaskProducer;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use rayon::{ThreadPool, ThreadPoolBuilder};
 use std::sync::Arc;

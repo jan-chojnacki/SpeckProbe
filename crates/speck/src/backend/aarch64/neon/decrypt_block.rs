@@ -1,7 +1,7 @@
-use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
-use super::neon_set;
-use super::neon_expand_key_inline;
 use super::neon_decrypt_round_inline;
+use super::neon_expand_key_inline;
+use super::neon_set;
+use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 macro_rules! impl_decrypt_block_neon {
     ($fn_name:ident, $word:tt, $vec_type:ty, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {

@@ -166,10 +166,9 @@ macro_rules! sse2_set {
     };
 }
 
-
-pub(crate) use sse2_ror;
-pub(crate) use sse2_rol;
 pub(crate) use sse2_add;
+pub(crate) use sse2_rol;
+pub(crate) use sse2_ror;
+pub(crate) use sse2_set;
 pub(crate) use sse2_sub;
 pub(crate) use sse2_xor;
-pub(crate) use sse2_set;

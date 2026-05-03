@@ -166,9 +166,9 @@ macro_rules! avx2_set {
     };
 }
 
-pub(crate) use avx2_ror;
-pub(crate) use avx2_rol;
 pub(crate) use avx2_add;
+pub(crate) use avx2_rol;
+pub(crate) use avx2_ror;
+pub(crate) use avx2_set;
 pub(crate) use avx2_sub;
 pub(crate) use avx2_xor;
-pub(crate) use avx2_set;

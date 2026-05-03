@@ -1,6 +1,6 @@
-use std::arch::x86_64::__m256i;
-use super::avx2_expand_key_inline;
 use super::avx2_decrypt_round_inline;
+use super::avx2_expand_key_inline;
+use std::arch::x86_64::__m256i;
 
 macro_rules! impl_decrypt_block_avx2 {
     ($fn_name:ident, $word:tt, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {
