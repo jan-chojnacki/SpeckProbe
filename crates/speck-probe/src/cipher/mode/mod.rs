@@ -3,7 +3,7 @@ pub mod ecb;
 
 use crate::cipher::error::SPECKError;
 use crate::cipher::speck::SPECK;
-use speck::SpeckVersion;
+use crate::speck::SpeckVersion;
 
 /// Dispatches a generic cipher method call to the correct const-generic instantiation.
 ///
@@ -13,61 +13,61 @@ macro_rules! speck_dispatch {
         match $self.speck_version {
             SpeckVersion::Speck32_64 => $self.$method::<u16, 2, 4>(
                 $data,
-                speck::scalar_encrypt_block_32_64,
+                $crate::speck::scalar_encrypt_block_32_64,
                 $crate::cipher::codec::read_u16_le,
                 $crate::cipher::codec::write_u16_le,
             ),
             SpeckVersion::Speck48_72 => $self.$method::<u32, 3, 3>(
                 $data,
-                speck::scalar_encrypt_block_48_72,
+                $crate::speck::scalar_encrypt_block_48_72,
                 $crate::cipher::codec::read_u24_le,
                 $crate::cipher::codec::write_u24_le,
             ),
             SpeckVersion::Speck48_96 => $self.$method::<u32, 3, 4>(
                 $data,
-                speck::scalar_encrypt_block_48_96,
+                $crate::speck::scalar_encrypt_block_48_96,
                 $crate::cipher::codec::read_u24_le,
                 $crate::cipher::codec::write_u24_le,
             ),
             SpeckVersion::Speck64_96 => $self.$method::<u32, 4, 3>(
                 $data,
-                speck::scalar_encrypt_block_64_96,
+                $crate::speck::scalar_encrypt_block_64_96,
                 $crate::cipher::codec::read_u32_le,
                 $crate::cipher::codec::write_u32_le,
             ),
             SpeckVersion::Speck64_128 => $self.$method::<u32, 4, 4>(
                 $data,
-                speck::scalar_encrypt_block_64_128,
+                $crate::speck::scalar_encrypt_block_64_128,
                 $crate::cipher::codec::read_u32_le,
                 $crate::cipher::codec::write_u32_le,
             ),
             SpeckVersion::Speck96_96 => $self.$method::<u64, 6, 2>(
                 $data,
-                speck::scalar_encrypt_block_96_96,
+                $crate::speck::scalar_encrypt_block_96_96,
                 $crate::cipher::codec::read_u48_le,
                 $crate::cipher::codec::write_u48_le,
             ),
             SpeckVersion::Speck96_144 => $self.$method::<u64, 6, 3>(
                 $data,
-                speck::scalar_encrypt_block_96_144,
+                $crate::speck::scalar_encrypt_block_96_144,
                 $crate::cipher::codec::read_u48_le,
                 $crate::cipher::codec::write_u48_le,
             ),
             SpeckVersion::Speck128_128 => $self.$method::<u64, 8, 2>(
                 $data,
-                speck::scalar_encrypt_block_128_128,
+                $crate::speck::scalar_encrypt_block_128_128,
                 $crate::cipher::codec::read_u64_le,
                 $crate::cipher::codec::write_u64_le,
             ),
             SpeckVersion::Speck128_192 => $self.$method::<u64, 8, 3>(
                 $data,
-                speck::scalar_encrypt_block_128_192,
+                $crate::speck::scalar_encrypt_block_128_192,
                 $crate::cipher::codec::read_u64_le,
                 $crate::cipher::codec::write_u64_le,
             ),
             SpeckVersion::Speck128_256 => $self.$method::<u64, 8, 4>(
                 $data,
-                speck::scalar_encrypt_block_128_256,
+                $crate::speck::scalar_encrypt_block_128_256,
                 $crate::cipher::codec::read_u64_le,
                 $crate::cipher::codec::write_u64_le,
             ),
@@ -77,61 +77,61 @@ macro_rules! speck_dispatch {
         match $self.speck_version {
             SpeckVersion::Speck32_64 => $self.$method::<u16, 2, 4>(
                 $data,
-                speck::scalar_decrypt_block_32_64,
+                $crate::speck::scalar_decrypt_block_32_64,
                 $crate::cipher::codec::read_u16_le,
                 $crate::cipher::codec::write_u16_le,
             ),
             SpeckVersion::Speck48_72 => $self.$method::<u32, 3, 3>(
                 $data,
-                speck::scalar_decrypt_block_48_72,
+                $crate::speck::scalar_decrypt_block_48_72,
                 $crate::cipher::codec::read_u24_le,
                 $crate::cipher::codec::write_u24_le,
             ),
             SpeckVersion::Speck48_96 => $self.$method::<u32, 3, 4>(
                 $data,
-                speck::scalar_decrypt_block_48_96,
+                $crate::speck::scalar_decrypt_block_48_96,
                 $crate::cipher::codec::read_u24_le,
                 $crate::cipher::codec::write_u24_le,
             ),
             SpeckVersion::Speck64_96 => $self.$method::<u32, 4, 3>(
                 $data,
-                speck::scalar_decrypt_block_64_96,
+                $crate::speck::scalar_decrypt_block_64_96,
                 $crate::cipher::codec::read_u32_le,
                 $crate::cipher::codec::write_u32_le,
             ),
             SpeckVersion::Speck64_128 => $self.$method::<u32, 4, 4>(
                 $data,
-                speck::scalar_decrypt_block_64_128,
+                $crate::speck::scalar_decrypt_block_64_128,
                 $crate::cipher::codec::read_u32_le,
                 $crate::cipher::codec::write_u32_le,
             ),
             SpeckVersion::Speck96_96 => $self.$method::<u64, 6, 2>(
                 $data,
-                speck::scalar_decrypt_block_96_96,
+                $crate::speck::scalar_decrypt_block_96_96,
                 $crate::cipher::codec::read_u48_le,
                 $crate::cipher::codec::write_u48_le,
             ),
             SpeckVersion::Speck96_144 => $self.$method::<u64, 6, 3>(
                 $data,
-                speck::scalar_decrypt_block_96_144,
+                $crate::speck::scalar_decrypt_block_96_144,
                 $crate::cipher::codec::read_u48_le,
                 $crate::cipher::codec::write_u48_le,
             ),
             SpeckVersion::Speck128_128 => $self.$method::<u64, 8, 2>(
                 $data,
-                speck::scalar_decrypt_block_128_128,
+                $crate::speck::scalar_decrypt_block_128_128,
                 $crate::cipher::codec::read_u64_le,
                 $crate::cipher::codec::write_u64_le,
             ),
             SpeckVersion::Speck128_192 => $self.$method::<u64, 8, 3>(
                 $data,
-                speck::scalar_decrypt_block_128_192,
+                $crate::speck::scalar_decrypt_block_128_192,
                 $crate::cipher::codec::read_u64_le,
                 $crate::cipher::codec::write_u64_le,
             ),
             SpeckVersion::Speck128_256 => $self.$method::<u64, 8, 4>(
                 $data,
-                speck::scalar_decrypt_block_128_256,
+                $crate::speck::scalar_decrypt_block_128_256,
                 $crate::cipher::codec::read_u64_le,
                 $crate::cipher::codec::write_u64_le,
             ),

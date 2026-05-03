@@ -14,7 +14,6 @@ num_cpus = "1.17"
 textwrap = "0.16"
 terminal_size = "0.4"
 human_format = "1"
-speck = { path = "../speck" }
 serde = { version = "1.0", features = ["derive"] }
 base64 = "0.22"
 thiserror = "2"
@@ -27,7 +26,9 @@ seq-macro = "0.3.6"
 paste = "1"
 multiversion = "0.8"
 strum = "0.28.0"
+bytemuck = { version = "1", features = ["derive"] }
 
 [dev-dependencies]
 criterion = "0.8"
 rstest = "0.26"
+bytemuck = { version = "1", features = ["avx512_simd", "aarch64_simd"] }

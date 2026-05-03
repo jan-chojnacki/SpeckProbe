@@ -2,7 +2,7 @@ use crate::benchmark::{BenchmarkConfig, BenchmarkRecord};
 use crate::cli::display::{display_banner, display_benchmark_info};
 use crate::cli::progress::ui::build_benchmark_progress_bar;
 use crate::probe::ProbeError;
-use crate::probe::config::SpeckVersion;
+use crate::speck::SpeckVersion;
 use crate::search::executor::Runtime;
 use crate::search::executor::{
     BackendHint, CipherConfig, CipherFunction, CipherMode, RuntimeConfig, SearchSpace,
@@ -93,7 +93,7 @@ fn into_runtime_configs(
     debug_assert!(bits > 8);
     debug_assert!(bits < 64);
 
-    let speck_version: speck::SpeckVersion = target.speck_version.into();
+    let speck_version: crate::speck::SpeckVersion = target.speck_version.into();
 
     let start_key = 0u64;
     let mut start: Vec<u8> = start_key.to_le_bytes().to_vec();

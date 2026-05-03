@@ -1,5 +1,5 @@
 use crate::search::executor::backend::scalar;
-use speck::SpeckVersion;
+use crate::speck::SpeckVersion;
 
 #[cfg(target_arch = "x86_64")]
 use crate::search::executor::backend::x86_64;

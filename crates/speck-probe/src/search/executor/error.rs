@@ -1,5 +1,5 @@
 use crate::search::executor::CipherMode;
-use speck::SpeckVersion;
+use crate::speck::SpeckVersion;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum DispatchError {

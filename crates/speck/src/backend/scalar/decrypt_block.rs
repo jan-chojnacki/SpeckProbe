@@ -1,9 +1,10 @@
-use crate::backend::common::{U24, U48};
-use crate::encrypt_round_inline;
-use crate::expand_key_inline;
+use super::decrypt_round_inline;
+use super::encrypt_round_inline;
+use super::expand_key_inline;
+use crate::backend::{U24, U48};
+use crate::impl_adapter;
 use crate::key_idx;
 use crate::key_words_inline;
-use crate::{decrypt_round_inline, impl_adapter};
 use seq_macro::seq;
 use std::ops::BitXor;
 

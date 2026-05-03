@@ -5,3 +5,4 @@ pub mod extract;
 pub mod probe;
 pub mod search;
 pub mod store;
+pub mod speck;

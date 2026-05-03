@@ -1,9 +1,9 @@
 use crate::cipher::speck::SPECK;
+use crate::speck::SpeckVersion;
 use crate::probe::ProbeError;
-use crate::probe::config::enums::SpeckVersion;
 use crate::search::executor::CipherMode;
-use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
+use base64::Engine;
 
 /// Encrypts `data` and prints both the resulting plaintext and ciphertext as base64.
 pub fn handle_encrypt(
@@ -36,14 +36,14 @@ fn execute(
     let ciphertext = speck.encrypt(data.as_bytes())?;
     let plaintext = speck.decrypt(&ciphertext)?;
 
-    let version: speck::SpeckVersion = speck_version.into();
+    let version: crate::speck::SpeckVersion = speck_version.into();
     Ok((
         to_base64(&plaintext, version),
         to_base64(&ciphertext, version),
     ))
 }
 
-fn to_base64(data: &[u8], version: speck::SpeckVersion) -> String {
+fn to_base64(data: &[u8], version: crate::speck::SpeckVersion) -> String {
     let bytes: Vec<u8> = data
         .chunks(version.word_size_bytes())
         .flat_map(|chunk| {

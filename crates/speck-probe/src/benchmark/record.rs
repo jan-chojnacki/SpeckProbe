@@ -1,4 +1,4 @@
-use crate::probe::config::SpeckVersion;
+use crate::speck::SpeckVersion;
 use crate::search::executor::{BackendHint, CipherFunction};
 use serde::Serialize;
 

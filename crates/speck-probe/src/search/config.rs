@@ -2,7 +2,7 @@ use super::serde::deserialize_from_hex;
 use super::serde::deserialize_u64_pairs;
 use super::serde::serialize_as_hex;
 use super::serde::serialize_u64_pairs;
-use crate::probe::config::enums::SpeckVersion;
+use crate::speck::SpeckVersion;
 use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
 use serde::{Deserialize, Serialize};
 

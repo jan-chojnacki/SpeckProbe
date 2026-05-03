@@ -11,7 +11,7 @@ pub use runtime::Runtime;
 use clap::ValueEnum;
 use crossbeam::channel::Sender;
 use serde::{Deserialize, Serialize};
-use speck::SpeckVersion;
+use crate::speck::SpeckVersion;
 
 pub const CAP: usize = 256;
 
