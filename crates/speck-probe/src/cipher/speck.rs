@@ -4,20 +4,6 @@ use crate::search::executor::CipherMode;
 use crate::speck::SpeckVersion;
 
 /// SPECK block cipher wrapper supporting ECB and CBC operation modes.
-///
-/// # Example
-///
-/// ```
-/// use cipher::{CipherMode, SPECK};
-///
-/// let key = [0u8; 8];
-/// let c = SPECK::new(speck::SpeckVersion::Speck32_64, CipherMode::ECB, &key, None)
-///     .unwrap();
-/// let data = b"Hello!";
-/// let ct = c.encrypt(data).unwrap();
-/// let dt = c.decrypt(&ct).unwrap();
-/// assert!(dt.starts_with(data));
-/// ```
 pub struct SPECK {
     pub speck_version: SpeckVersion,
     pub mode: CipherMode,

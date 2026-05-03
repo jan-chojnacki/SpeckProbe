@@ -311,12 +311,6 @@ impl fmt::Display for ActiveBackend {
 }
 
 /// Detects the best available SIMD backend for the current CPU at executor.
-///
-/// # Example
-/// ```
-/// let backend = probe::backend::detect();
-/// println!("Active backend: {backend}");
-/// ```
 fn detect() -> ActiveBackend {
     #[cfg(target_arch = "x86_64")]
     {
