@@ -3,6 +3,9 @@ pub mod dispatch;
 mod error;
 mod orchestrator;
 pub mod runtime;
+
+#[cfg(test)]
+mod tests;
 pub mod word;
 
 pub use error::DispatchError;
