@@ -1,9 +1,9 @@
 use crate::cli::display::{display_banner, display_info, display_results};
 use crate::cli::progress::ProgressUi;
 use crate::probe::ProbeError;
-use crate::runtime::Runtime;
-use crate::runtime::api::{CipherConfig, RuntimeConfig, SearchSpace};
 use crate::search::SearchConfig;
+use crate::search::executor::Runtime;
+use crate::search::executor::{CipherConfig, RuntimeConfig, SearchSpace};
 use crate::store::load_config;
 use std::path::PathBuf;
 
@@ -35,7 +35,7 @@ pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ProbeError> {
     Ok(())
 }
 
-/// Converts a [`SearchConfig`] into the runtime API structs needed to start a search.
+/// Converts a [`SearchConfig`] into the executor API structs needed to start a search.
 fn into_runtime_configs(config: SearchConfig) -> (CipherConfig, RuntimeConfig, SearchSpace) {
     let cipher_config = CipherConfig {
         cipher_mode: config.cipher_mode.into(),

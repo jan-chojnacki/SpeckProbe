@@ -1,5 +1,5 @@
 use crate::cli::progress::scale::ProgressScale;
-use crate::runtime::TaskDone;
+use crate::search::executor::TaskDone;
 use crossbeam::channel::Receiver;
 use human_format::Formatter;
 use indicatif::{ProgressBar, ProgressStyle};

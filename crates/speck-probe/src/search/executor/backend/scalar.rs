@@ -1,4 +1,4 @@
-use crate::runtime::backend::macros::define_backend_dispatch;
+use crate::search::executor::backend::macros::define_backend_dispatch;
 
 define_backend_dispatch! {
     simd = scalar_,

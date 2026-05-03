@@ -1,4 +1,4 @@
-use crate::runtime::api::request::CipherMode;
+use crate::search::executor::CipherMode;
 use speck::SpeckVersion;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]

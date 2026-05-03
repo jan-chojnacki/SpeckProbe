@@ -3,8 +3,8 @@ use crate::cli::display::{display_banner, display_benchmark_info};
 use crate::cli::progress::ui::build_benchmark_progress_bar;
 use crate::probe::ProbeError;
 use crate::probe::config::SpeckVersion;
-use crate::runtime::Runtime;
-use crate::runtime::api::{
+use crate::search::executor::Runtime;
+use crate::search::executor::{
     BackendHint, CipherConfig, CipherFunction, CipherMode, RuntimeConfig, SearchSpace,
 };
 use crate::store::{load_config, save_benchmark_records};
@@ -85,7 +85,7 @@ fn targets_from_config(config: &BenchmarkConfig) -> Vec<BenchmarkTarget> {
     targets
 }
 
-/// Builds the runtime configuration structs for a single benchmark target and key-space bit width.
+/// Builds the executor configuration structs for a single benchmark target and key-space bit width.
 fn into_runtime_configs(
     target: &BenchmarkTarget,
     bits: usize,

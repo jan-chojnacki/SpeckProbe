@@ -1,5 +1,7 @@
 use crate::benchmark::BenchmarkConfig;
-use crate::runtime::api::{BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace};
+use crate::search::executor::{
+    BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace,
+};
 use colored::Colorize;
 use console::{Alignment, pad_str};
 use std::fmt;
@@ -278,7 +280,7 @@ fn terminal_width() -> usize {
         .unwrap_or(80)
 }
 
-/// The SIMD backend that will be selected at runtime.
+/// The SIMD backend that will be selected at executor.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ActiveBackend {
     #[cfg(target_arch = "x86_64")]
@@ -308,7 +310,7 @@ impl fmt::Display for ActiveBackend {
     }
 }
 
-/// Detects the best available SIMD backend for the current CPU at runtime.
+/// Detects the best available SIMD backend for the current CPU at executor.
 ///
 /// # Example
 /// ```

@@ -1,8 +1,19 @@
-use crate::runtime::TaskDone;
+pub mod backend;
+pub mod dispatch;
+mod error;
+mod orchestrator;
+pub mod runtime;
+pub mod word;
+
+pub use error::DispatchError;
+pub use runtime::Runtime;
+
 use clap::ValueEnum;
 use crossbeam::channel::Sender;
 use serde::{Deserialize, Serialize};
 use speck::SpeckVersion;
+
+pub const CAP: usize = 256;
 
 pub type DispatchOutput = (Vec<Vec<u8>>, Option<Vec<u8>>);
 
@@ -57,7 +68,7 @@ pub enum CipherMode {
     Cbc,
 }
 
-/// Hint for selecting a SIMD backend; `Auto` picks the best available at runtime.
+/// Hint for selecting a SIMD backend; `Auto` picks the best available at executor.
 #[derive(Debug, Clone, Copy, Eq, PartialEq, strum::Display, ValueEnum, Serialize, Deserialize)]
 pub enum BackendHint {
     Auto,
@@ -71,3 +82,6 @@ pub enum BackendHint {
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     Neon,
 }
+
+#[derive(Debug)]
+pub struct TaskDone {}

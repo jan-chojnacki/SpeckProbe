@@ -3,7 +3,7 @@ use super::serde::deserialize_u64_pairs;
 use super::serde::serialize_as_hex;
 use super::serde::serialize_u64_pairs;
 use crate::probe::config::enums::SpeckVersion;
-use crate::runtime::api::{BackendHint, CipherFunction, CipherMode};
+use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
 use serde::{Deserialize, Serialize};
 
 /// Configuration for a key-search operation.

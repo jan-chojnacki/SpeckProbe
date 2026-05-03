@@ -1,5 +1,5 @@
-use crate::runtime::TaskDone;
-use crate::runtime::domain::word::{EngineWord, ValidatorWord};
+use crate::search::executor::TaskDone;
+use crate::search::executor::word::{EngineWord, ValidatorWord};
 use crossbeam::channel::{Receiver, Sender, bounded};
 use engine::domain::key::Key;
 use engine::domain::task::Task;

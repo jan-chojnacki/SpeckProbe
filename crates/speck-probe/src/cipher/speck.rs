@@ -1,6 +1,6 @@
 use crate::cipher::error::SPECKError;
 use crate::cipher::error::SPECKError::{InvalidIvLength, InvalidKeyLength, IvMissing};
-use crate::runtime::api::CipherMode;
+use crate::search::executor::CipherMode;
 use speck::SpeckVersion;
 
 /// SPECK block cipher wrapper supporting ECB and CBC operation modes.

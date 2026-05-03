@@ -1,19 +1,10 @@
-use crate::runtime::api::{
-    CipherConfig, DispatchError, DispatchOutput, InternalConfig, RuntimeConfig, RuntimeRequest,
-    SearchSpace,
+use crate::search::executor::dispatch::dispatch;
+use crate::search::executor::error::DispatchError;
+use crate::search::executor::{
+    CAP, CipherConfig, DispatchOutput, InternalConfig, RuntimeConfig, RuntimeRequest, SearchSpace,
+    TaskDone,
 };
-use crate::runtime::backend::dispatch::dispatch;
 use crossbeam::channel::{Receiver, Sender, bounded};
-
-pub mod api;
-pub mod backend;
-pub mod domain;
-pub mod orchestrator;
-
-pub const CAP: usize = 256;
-
-#[derive(Debug)]
-pub struct TaskDone {}
 
 pub struct Runtime {
     tx: Option<Sender<TaskDone>>,

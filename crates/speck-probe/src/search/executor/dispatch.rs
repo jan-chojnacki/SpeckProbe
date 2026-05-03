@@ -1,14 +1,15 @@
-use crate::runtime::api::{
-    BackendHint, CipherFunction, CipherMode, DispatchError, DispatchOutput, RuntimeRequest,
-};
-use crate::runtime::backend::scalar;
+use crate::search::executor::backend::scalar;
 use speck::SpeckVersion;
 
 #[cfg(target_arch = "x86_64")]
-use crate::runtime::backend::x86_64;
+use crate::search::executor::backend::x86_64;
 
 #[cfg(target_arch = "aarch64")]
 use crate::backend::aarch64;
+use crate::search::executor::error::DispatchError;
+use crate::search::executor::{
+    BackendHint, CipherFunction, CipherMode, DispatchOutput, RuntimeRequest,
+};
 
 pub fn dispatch(runtime_request: RuntimeRequest) -> Result<DispatchOutput, DispatchError> {
     let suffix: usize = runtime_request.runtime_config.suffix_bytes_size;

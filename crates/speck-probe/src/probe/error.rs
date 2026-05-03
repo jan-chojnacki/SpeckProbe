@@ -5,9 +5,9 @@ pub enum ProbeError {
     /// A file-system or serialization error from the store layer.
     #[error(transparent)]
     Store(#[from] StoreError),
-    /// The runtime dispatch failed (e.g. unsupported backend or bad config).
+    /// The executor dispatch failed (e.g. unsupported backend or bad config).
     #[error("{0:?}")]
-    Dispatch(crate::runtime::api::DispatchError),
+    Dispatch(crate::search::executor::DispatchError),
     /// The cipher rejected the provided key or IV.
     #[error(transparent)]
     Cipher(#[from] crate::cipher::error::SPECKError),
@@ -16,8 +16,8 @@ pub enum ProbeError {
     FileAlreadyExists(std::path::PathBuf),
 }
 
-impl From<crate::runtime::api::DispatchError> for ProbeError {
-    fn from(e: crate::runtime::api::DispatchError) -> Self {
+impl From<crate::search::executor::DispatchError> for ProbeError {
+    fn from(e: crate::search::executor::DispatchError) -> Self {
         ProbeError::Dispatch(e)
     }
 }

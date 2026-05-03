@@ -1,7 +1,7 @@
 use crate::cipher::speck::SPECK;
 use crate::probe::ProbeError;
 use crate::probe::config::enums::SpeckVersion;
-use crate::runtime::api::CipherMode;
+use crate::search::executor::CipherMode;
 use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
 
