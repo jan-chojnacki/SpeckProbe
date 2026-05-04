@@ -4,6 +4,8 @@ pub(crate) use converter::avx2_u16x2_block_to_vec;
 pub(crate) use converter::avx2_u32x2_block_to_vec;
 pub(crate) use converter::avx2_u64x2_block_to_vec;
 mod key;
+pub mod search;
+
 pub(crate) use key::AVX2Key;
 
 use crate::search::executor::backend::macros::define_backend_dispatch;

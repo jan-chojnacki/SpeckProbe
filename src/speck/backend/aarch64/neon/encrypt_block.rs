@@ -1,6 +1,8 @@
 use super::neon_encrypt_round_inline;
 use super::neon_expand_key_inline;
 use super::neon_set;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 
 macro_rules! impl_encrypt_block_neon {
@@ -45,7 +47,7 @@ macro_rules! impl_encrypt_block_neon_inflight {
         #[cfg(all(target_arch = "aarch64"))]
         #[target_feature(enable = "neon")]
         pub fn $fn_name(ct: [$vec_type; 2], key: [$vec_type; $key_words]) -> [$vec_type; 2] {
-            let mut l = $crate::key_words_inline!(key, $key_words);
+            let mut l = key_words_inline!(key, $key_words);
             let mut k = key[$key_words - 1];
 
             let mut x = ct[0];
@@ -53,7 +55,7 @@ macro_rules! impl_encrypt_block_neon_inflight {
 
             seq_macro::seq!(I in 0..$rounds {
                 neon_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);
-                neon_encrypt_round_inline!(l[$crate::key_idx!($key_words, I)],
+                neon_encrypt_round_inline!(l[key_idx!($key_words, I)],
                     k, neon_set!($word, I), $word, $alpha, $beta);
             });
             neon_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);

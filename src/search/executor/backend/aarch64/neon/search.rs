@@ -1,4 +1,4 @@
-use super::neon::comparator::{
+use crate::search::executor::backend::aarch64::neon::comparator::{
     neon_block_compare_u16, neon_block_compare_u32, neon_block_compare_u64,
 };
 use crate::search::executor::backend::macros::define_search;

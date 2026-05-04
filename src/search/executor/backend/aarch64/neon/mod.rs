@@ -1,10 +1,12 @@
-pub mod comparator;
-pub mod converter;
-pub mod key;
+pub(crate) mod comparator;
+mod converter;
+pub(crate) use converter::neon_u16x2_block_to_vec;
+pub(crate) use converter::neon_u32x2_block_to_vec;
+pub(crate) use converter::neon_u64x2_block_to_vec;
+mod key;
+pub(crate) mod search;
+
 use crate::search::executor::backend::macros::define_backend_dispatch;
-use engine::aarch64::neon::converter::{
-    neon_u16x2_block_to_vec, neon_u32x2_block_to_vec, neon_u64x2_block_to_vec,
-};
 pub(crate) use key::NEONKey;
 use std::arch::aarch64::{uint16x8_t, uint32x4_t, uint64x2_t};
 

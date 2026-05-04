@@ -1,2 +1,1 @@
-pub mod neon;
-pub(crate) mod search;
+pub(crate) mod neon;
