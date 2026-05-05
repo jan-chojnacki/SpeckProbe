@@ -12,7 +12,7 @@ macro_rules! search_tests {
         converter: $conv:path,
         word:      $word:ty,
     ) => {
-        #[cfg(all(test, target_arch = "x86_64"))]
+        #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
         mod $mod_name {
             const RANGE: u64 = 1000;
 
@@ -25,9 +25,6 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
-                if !is_x86_feature_detected!("sse2") {
-                    return;
-                }
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
@@ -55,9 +52,6 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
-                if !is_x86_feature_detected!("sse2") {
-                    return;
-                }
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
@@ -85,9 +79,6 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
-                if !is_x86_feature_detected!("sse2") {
-                    return;
-                }
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);

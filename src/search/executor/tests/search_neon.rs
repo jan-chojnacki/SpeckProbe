@@ -12,7 +12,7 @@ macro_rules! search_tests {
         converter: $conv:path,
         word:      $word:ty,
     ) => {
-        #[cfg(all(test, target_arch = "aarch64"))]
+        #[cfg(all(test, target_arch = "aarch64", target_feature = "neon"))]
         mod $mod_name {
             const RANGE: u64 = 1000;
 
@@ -25,9 +25,6 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
-                if !std::arch::is_aarch64_feature_detected!("neon") {
-                    return;
-                }
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
@@ -55,9 +52,6 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
-                if !std::arch::is_aarch64_feature_detected!("neon") {
-                    return;
-                }
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
@@ -85,9 +79,6 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
-                if !std::arch::is_aarch64_feature_detected!("neon") {
-                    return;
-                }
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);

@@ -1,3 +1,8 @@
+mod dispatch_avx2;
+mod dispatch_avx512;
+mod dispatch_neon;
+mod dispatch_scalar;
+mod dispatch_sse2;
 mod search_avx2;
 mod search_avx512;
 mod search_neon;
