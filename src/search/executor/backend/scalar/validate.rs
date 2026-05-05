@@ -41,6 +41,44 @@ macro_rules! define_validate {
 
                 true
             }
+
+            #[inline(always)]
+            pub fn [<cbc_validate_encrypt_ $name>]<const PREFIX: usize>(
+                pt: &[[$vector; 2]],
+                expected: &[[$vector; 2]],
+                key: &Key<$bytes, PREFIX>,
+            ) -> bool {
+                let mut prev: [$vector; 2] = [Default::default(), Default::default()];
+                for (p, e) in pt.iter().zip(expected) {
+                    let result = $crate::speck::[<scalar_encrypt_block_ $name>](
+                        [p[0] ^ prev[0], p[1] ^ prev[1]],
+                        key.$key_conversion(),
+                    );
+                    if result[0] != e[0] || result[1] != e[1] {
+                        return false;
+                    }
+                    prev = result;
+                }
+                true
+            }
+
+            #[inline(always)]
+            pub fn [<cbc_validate_decrypt_ $name>]<const PREFIX: usize>(
+                ct: &[[$vector; 2]],
+                expected: &[[$vector; 2]],
+                key: &Key<$bytes, PREFIX>,
+            ) -> bool {
+                let mut prev: [$vector; 2] = [Default::default(), Default::default()];
+                for (c, e) in ct.iter().zip(expected) {
+                    let result = $crate::speck::[<scalar_decrypt_block_ $name>](*c, key.$key_conversion());
+                    let plain = [result[0] ^ prev[0], result[1] ^ prev[1]];
+                    if plain[0] != e[0] || plain[1] != e[1] {
+                        return false;
+                    }
+                    prev = *c;
+                }
+                true
+            }
         }
     };
 }
@@ -239,5 +277,74 @@ mod tests {
         let key: Key<32, 24> = Key::new_from_bytes(&key_bytes);
         assert!(ecb_validate_encrypt_128_256(&plain, &cipher, &key));
         assert!(ecb_validate_decrypt_128_256(&cipher, &plain, &key));
+    }
+
+    #[test]
+    fn cbc_validate_32_64_two_blocks() {
+        let key_bytes = [0x18u8, 0x19, 0x10, 0x11, 0x08, 0x09, 0x00, 0x01];
+        let key: Key<8, 0> = Key::new_from_bytes(&key_bytes);
+
+        let iv = [0x1234u16, 0x5678u16];
+        let pt = [[0x6574u16, 0x694c], [0xdead, 0xbeef]];
+
+        let pt_pre = [[pt[0][0] ^ iv[0], pt[0][1] ^ iv[1]], pt[1]];
+
+        let kw = key.as_u16x4_le();
+        let c1 = crate::speck::scalar_encrypt_block_32_64(pt_pre[0], kw);
+        let c2 = crate::speck::scalar_encrypt_block_32_64([pt[1][0] ^ c1[0], pt[1][1] ^ c1[1]], kw);
+        let cipher = [c1, c2];
+
+        assert!(cbc_validate_encrypt_32_64(&pt_pre, &cipher, &key));
+        assert!(!cbc_validate_encrypt_32_64(
+            &pt_pre,
+            &[[0, 0], [0, 0]],
+            &key
+        ));
+
+        let expected_dec = [pt_pre[0], pt[1]];
+        assert!(cbc_validate_decrypt_32_64(&cipher, &expected_dec, &key));
+        assert!(!cbc_validate_decrypt_32_64(
+            &cipher,
+            &[[0, 0], [0, 0]],
+            &key
+        ));
+    }
+
+    #[test]
+    fn cbc_validate_128_128_two_blocks() {
+        let key_bytes = [
+            0x08u8, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
+            0x06, 0x07,
+        ];
+        let key: Key<16, 8> = Key::new_from_bytes(&key_bytes);
+
+        let iv = [0x0102030405060708u64, 0x090a0b0c0d0e0f10u64];
+        let pt = [
+            [0x6c61766975716520u64, 0x7469206564616d20],
+            [0xdeadbeefcafebabe, 0x0102030405060708],
+        ];
+
+        let pt_pre = [[pt[0][0] ^ iv[0], pt[0][1] ^ iv[1]], pt[1]];
+
+        let kw = key.as_u64x2_le();
+        let c1 = crate::speck::scalar_encrypt_block_128_128(pt_pre[0], kw);
+        let c2 =
+            crate::speck::scalar_encrypt_block_128_128([pt[1][0] ^ c1[0], pt[1][1] ^ c1[1]], kw);
+        let cipher = [c1, c2];
+
+        assert!(cbc_validate_encrypt_128_128(&pt_pre, &cipher, &key));
+        assert!(!cbc_validate_encrypt_128_128(
+            &pt_pre,
+            &[[0, 0], [0, 0]],
+            &key
+        ));
+
+        let expected_dec = [pt_pre[0], pt[1]];
+        assert!(cbc_validate_decrypt_128_128(&cipher, &expected_dec, &key));
+        assert!(!cbc_validate_decrypt_128_128(
+            &cipher,
+            &[[0, 0], [0, 0]],
+            &key
+        ));
     }
 }

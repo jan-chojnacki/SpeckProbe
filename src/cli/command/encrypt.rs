@@ -5,7 +5,8 @@ use crate::speck::SpeckVersion;
 use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
 
-/// Encrypts `data` and prints both the resulting plaintext and ciphertext as base64.
+/// Encrypts `data` and prints plaintext, ciphertext, and (for CBC) IV as base64.
+/// All values are encoded in the same format accepted by the search config.
 pub fn handle_encrypt(
     speck_version: SpeckVersion,
     cipher_mode: CipherMode,
@@ -13,19 +14,6 @@ pub fn handle_encrypt(
     iv: Option<Vec<u8>>,
     data: String,
 ) -> Result<(), ProbeError> {
-    let (plaintext, ciphertext) = execute(speck_version, cipher_mode, key, iv, data)?;
-    println!("plaintext:  {}", plaintext);
-    println!("ciphertext: {}", ciphertext);
-    Ok(())
-}
-
-fn execute(
-    speck_version: SpeckVersion,
-    cipher_mode: CipherMode,
-    key: Vec<u8>,
-    iv: Option<Vec<u8>>,
-    data: String,
-) -> Result<(String, String), ProbeError> {
     let speck = SPECK::new(
         speck_version.into(),
         cipher_mode.into(),
@@ -37,10 +25,12 @@ fn execute(
     let plaintext = speck.decrypt(&ciphertext)?;
 
     let version: crate::speck::SpeckVersion = speck_version.into();
-    Ok((
-        to_base64(&plaintext, version),
-        to_base64(&ciphertext, version),
-    ))
+    println!("plaintext:  {}", to_base64(&plaintext, version));
+    println!("ciphertext: {}", to_base64(&ciphertext, version));
+    if cipher_mode == CipherMode::Cbc {
+        println!("iv:         {}", to_base64(&speck.iv, version));
+    }
+    Ok(())
 }
 
 fn to_base64(data: &[u8], version: crate::speck::SpeckVersion) -> String {

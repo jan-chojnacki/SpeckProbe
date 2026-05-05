@@ -14,4 +14,5 @@ pub enum DispatchError {
         mode: CipherMode,
         suffix: usize,
     },
+    MissingIv,
 }

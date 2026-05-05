@@ -1,6 +1,8 @@
 use super::serde::deserialize_from_hex;
+use super::serde::deserialize_u64_pair_opt;
 use super::serde::deserialize_u64_pairs;
 use super::serde::serialize_as_hex;
+use super::serde::serialize_u64_pair_opt;
 use super::serde::serialize_u64_pairs;
 use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
 use crate::speck::SpeckVersion;
@@ -40,6 +42,14 @@ pub struct SearchConfig {
         deserialize_with = "deserialize_u64_pairs"
     )]
     pub expected: Vec<[u64; 2]>,
+    /// Initialization vector for CBC mode; omit for ECB.
+    #[serde(
+        serialize_with = "serialize_u64_pair_opt",
+        deserialize_with = "deserialize_u64_pair_opt",
+        skip_serializing_if = "Option::is_none",
+        default
+    )]
+    pub iv: Option<[u64; 2]>,
 }
 
 pub fn sample() -> SearchConfig {
@@ -54,5 +64,6 @@ pub fn sample() -> SearchConfig {
         end: vec![255, 15, 0, 0, 0],
         data: vec![[0, 0], [1, 1]],
         expected: vec![[0, 0], [1, 1]],
+        iv: None,
     }
 }

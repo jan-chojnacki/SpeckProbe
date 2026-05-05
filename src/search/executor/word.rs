@@ -26,7 +26,9 @@ impl EngineWord for uint32x4_t {}
 #[cfg(target_arch = "aarch64")]
 impl EngineWord for uint64x2_t {}
 
-pub trait ValidatorWord: Copy + Clone + Send + Sync + PartialEq + 'static {
+pub trait ValidatorWord:
+    Copy + Clone + Send + Sync + PartialEq + std::ops::BitXor<Output = Self> + 'static
+{
     fn from_u64(v: u64) -> Self;
 }
 impl ValidatorWord for u16 {

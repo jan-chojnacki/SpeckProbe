@@ -16,35 +16,58 @@ macro_rules! define_backend_dispatch {
                     version: $crate::speck::SpeckVersion,
                     suffix: usize,
                     function: $crate::search::executor::CipherFunction,
+                    mode: $crate::search::executor::CipherMode,
                 ) -> $crate::search::executor::DispatchOutput {
                     use $crate::search::executor::backend::runner::run_orchestrator;
-                    match (version, suffix, function) {
+                    use $crate::search::executor::CipherMode;
+                    match (version, suffix, function, mode) {
                         $(
                             #(
-                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::Encrypt) =>
+                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::Encrypt, CipherMode::Ecb) =>
                                     run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
                                         request,
                                         |task, out| $crate::search::executor::backend::[<$simd_prefix search_encrypt_ $version>](task, out),
                                         $crate::search::executor::backend::[<ecb_validate_encrypt_ $version>],
                                         |__block| ($conv)(__block),
                                     ),
-                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::Decrypt) =>
+                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::Decrypt, CipherMode::Ecb) =>
                                     run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
                                         request,
                                         |task, out| $crate::search::executor::backend::[<$simd_prefix search_decrypt_ $version>](task, out),
                                         $crate::search::executor::backend::[<ecb_validate_encrypt_ $version>],
                                         |__block| ($conv)(__block),
                                     ),
-                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::EncryptInflight) =>
+                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::EncryptInflight, CipherMode::Ecb) =>
                                     run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
                                         request,
                                         |task, out| $crate::search::executor::backend::[<$simd_prefix search_encrypt_inflight_ $version>](task, out),
                                         $crate::search::executor::backend::[<ecb_validate_encrypt_ $version>],
                                         |__block| ($conv)(__block),
                                     ),
+                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::Encrypt, CipherMode::Cbc) =>
+                                    run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
+                                        request,
+                                        |task, out| $crate::search::executor::backend::[<$simd_prefix search_encrypt_ $version>](task, out),
+                                        $crate::search::executor::backend::[<cbc_validate_encrypt_ $version>],
+                                        |__block| ($conv)(__block),
+                                    ),
+                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::Decrypt, CipherMode::Cbc) =>
+                                    run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
+                                        request,
+                                        |task, out| $crate::search::executor::backend::[<$simd_prefix search_decrypt_ $version>](task, out),
+                                        $crate::search::executor::backend::[<cbc_validate_decrypt_ $version>],
+                                        |__block| ($conv)(__block),
+                                    ),
+                                ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::EncryptInflight, CipherMode::Cbc) =>
+                                    run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
+                                        request,
+                                        |task, out| $crate::search::executor::backend::[<$simd_prefix search_encrypt_inflight_ $version>](task, out),
+                                        $crate::search::executor::backend::[<cbc_validate_encrypt_ $version>],
+                                        |__block| ($conv)(__block),
+                                    ),
                             )*
                         )+
-                        _ => unreachable!("validate suffix/version/function before dispatch"),
+                        _ => unreachable!("validate suffix/version/function/mode before dispatch"),
                     }
                 }
             }

@@ -60,6 +60,7 @@ pub struct SearchSpace {
     pub end: Vec<u8>,
     pub data: Vec<[u64; 2]>,
     pub expected: Vec<[u64; 2]>,
+    pub iv: Option<[u64; 2]>,
 }
 
 /// Block cipher mode of operation.

@@ -52,6 +52,7 @@ fn into_runtime_configs(config: SearchConfig) -> (CipherConfig, RuntimeConfig, S
         end: config.end,
         data: config.data,
         expected: config.expected,
+        iv: config.iv,
     };
     (cipher_config, runtime_config, search_space)
 }

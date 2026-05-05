@@ -61,3 +61,45 @@ where
         .map(|b| u8::from_str_radix(b, 16).map_err(serde::de::Error::custom))
         .collect()
 }
+
+/// Serializes an optional `[u64; 2]` pair as a standard base64 string of little-endian bytes.
+/// Uses the same 16-byte encoding as `serialize_u64_pairs` (one element).
+pub fn serialize_u64_pair_opt<S>(data: &Option<[u64; 2]>, s: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    match data {
+        None => s.serialize_none(),
+        Some([a, b]) => {
+            let bytes: [u8; 16] = {
+                let mut buf = [0u8; 16];
+                buf[..8].copy_from_slice(&a.to_le_bytes());
+                buf[8..].copy_from_slice(&b.to_le_bytes());
+                buf
+            };
+            s.serialize_str(&STANDARD.encode(bytes))
+        }
+    }
+}
+
+/// Deserializes a standard base64 string (16 bytes little-endian) into `Option<[u64; 2]>`.
+pub fn deserialize_u64_pair_opt<'de, D>(d: D) -> Result<Option<[u64; 2]>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let opt = Option::<String>::deserialize(d)?;
+    match opt {
+        None => Ok(None),
+        Some(s) => {
+            let bytes = STANDARD.decode(&s).map_err(serde::de::Error::custom)?;
+            if bytes.len() != 16 {
+                return Err(serde::de::Error::custom(
+                    "IV must be exactly 16 bytes (two little-endian u64 words)",
+                ));
+            }
+            let a = u64::from_le_bytes(bytes[0..8].try_into().unwrap());
+            let b = u64::from_le_bytes(bytes[8..16].try_into().unwrap());
+            Ok(Some([a, b]))
+        }
+    }
+}
