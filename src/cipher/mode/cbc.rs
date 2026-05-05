@@ -86,3 +86,71 @@ impl SPECK {
         output
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::cipher::error::SPECKError;
+    use crate::cipher::speck::SPECK;
+    use crate::search::executor::CipherMode;
+    use crate::speck::SpeckVersion;
+    use rstest::rstest;
+
+    fn make_cbc(version: SpeckVersion, key: &[u8], iv: &[u8]) -> SPECK {
+        SPECK::new(version, CipherMode::Cbc, key, Some(iv)).unwrap()
+    }
+
+    #[rstest]
+    #[case(SpeckVersion::Speck32_64,   vec![0x18u8,0x19,0x10,0x11,0x08,0x09,0x00,0x01],                                                                                                                         vec![0u8;4])]
+    #[case(SpeckVersion::Speck48_72,   vec![0x10u8,0x11,0x12,0x08,0x09,0x0a,0x00,0x01,0x02],                                                                                                                    vec![0u8;6])]
+    #[case(SpeckVersion::Speck48_96,   vec![0x18u8,0x19,0x1a,0x10,0x11,0x12,0x08,0x09,0x0a,0x00,0x01,0x02],                                                                                                     vec![0u8;6])]
+    #[case(SpeckVersion::Speck64_96,   vec![0x10u8,0x11,0x12,0x13,0x08,0x09,0x0a,0x0b,0x00,0x01,0x02,0x03],                                                                                                     vec![0u8;8])]
+    #[case(SpeckVersion::Speck64_128,  vec![0x18u8,0x19,0x1a,0x1b,0x10,0x11,0x12,0x13,0x08,0x09,0x0a,0x0b,0x00,0x01,0x02,0x03],                                                                                 vec![0u8;8])]
+    #[case(SpeckVersion::Speck96_96,   vec![0x08u8,0x09,0x0a,0x0b,0x0c,0x0d,0x00,0x01,0x02,0x03,0x04,0x05],                                                                                                     vec![0u8;12])]
+    #[case(SpeckVersion::Speck96_144,  vec![0x10u8,0x11,0x12,0x13,0x14,0x15,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x00,0x01,0x02,0x03,0x04,0x05],                                                                       vec![0u8;12])]
+    #[case(SpeckVersion::Speck128_128, vec![0x08u8,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07],                                                                                 vec![0u8;16])]
+    #[case(SpeckVersion::Speck128_192, vec![0x10u8,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07],                                         vec![0u8;16])]
+    #[case(SpeckVersion::Speck128_256, vec![0x18u8,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07], vec![0u8;16])]
+    fn roundtrip(#[case] version: SpeckVersion, #[case] key: Vec<u8>, #[case] iv: Vec<u8>) {
+        let speck = make_cbc(version, &key, &iv);
+        let pt = b"hello world";
+        let ct = speck.encrypt(pt).unwrap();
+        let recovered = speck.decrypt(&ct).unwrap();
+        assert_eq!(recovered, speck.add_pkcs7_padding(pt));
+    }
+
+    #[test]
+    fn different_iv_produces_different_ciphertext() {
+        let key = [0u8; 8];
+        let pt = b"hello";
+        let ct1 = make_cbc(SpeckVersion::Speck32_64, &key, &[0u8; 4])
+            .encrypt(pt)
+            .unwrap();
+        let ct2 = make_cbc(SpeckVersion::Speck32_64, &key, &[1u8; 4])
+            .encrypt(pt)
+            .unwrap();
+        assert_ne!(ct1, ct2);
+    }
+
+    #[test]
+    fn identical_plaintext_blocks_produce_different_ciphertext_blocks() {
+        let pt = [0x42u8; 8];
+        let ct = make_cbc(SpeckVersion::Speck32_64, &[0u8; 8], &[0u8; 4])
+            .encrypt(&pt)
+            .unwrap();
+        assert_ne!(&ct[..4], &ct[4..8]);
+    }
+
+    #[test]
+    fn decrypt_unaligned_length_returns_error() {
+        let err = make_cbc(SpeckVersion::Speck32_64, &[0u8; 8], &[0u8; 4])
+            .decrypt(&[0u8; 3])
+            .unwrap_err();
+        assert_eq!(
+            err,
+            SPECKError::InvalidDataLength {
+                expected_multiple: 4,
+                got: 3
+            }
+        );
+    }
+}
