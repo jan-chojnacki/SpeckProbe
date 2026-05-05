@@ -2,6 +2,7 @@ use crate::benchmark::{BenchmarkConfig, BenchmarkRecord};
 use crate::cli::display::{display_banner, display_benchmark_info};
 use crate::cli::progress::ui::build_benchmark_progress_bar;
 use crate::probe::ProbeError;
+use crate::search::executor::CipherMode::Cbc;
 use crate::search::executor::Runtime;
 use crate::search::executor::{
     BackendHint, CipherConfig, CipherFunction, CipherMode, RuntimeConfig, SearchSpace,
@@ -123,7 +124,13 @@ fn into_runtime_configs(
         end,
         data: vec![[0, 0], [1, 1]],
         expected: vec![[0, 0], [1, 1]],
-        iv: None,
+        iv: {
+            if target.cipher_mode == Cbc {
+                Some([1, 2])
+            } else {
+                None
+            }
+        },
     };
 
     (cipher_config, runtime_config, search_space)
