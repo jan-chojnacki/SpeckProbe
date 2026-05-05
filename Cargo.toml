@@ -37,6 +37,7 @@ bytemuck = { version = "1", features = ["derive"] }
 criterion = { version = "0.8", features = ["csv_output"] }
 rstest = "0.26"
 bytemuck = { version = "1", features = ["avx512_simd", "aarch64_simd"] }
+serde_json = "1"
 
 [[bench]]
 name = "speck_scalar_benches"
