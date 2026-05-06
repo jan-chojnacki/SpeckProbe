@@ -1,2 +1,3 @@
 [build]
-rustflags = ["-C", "target-cpu=native", "-C", "force-frame-pointers=on", "-C", "strip=none"]
+#rustflags = ["-C", "target-cpu=native", "-C", "force-frame-pointers=on", "-C", "strip=none"]
+rustflags = ["-C", "target-cpu=native"]
