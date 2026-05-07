@@ -515,8 +515,8 @@ impl<const PREFIX: usize> NEONKey<2, 32, PREFIX> {
 #[cfg(all(test, target_arch = "aarch64"))]
 mod tests {
     use super::*;
+    use crate::speck::SpeckVersion;
     use rstest::rstest;
-    use speck::SpeckVersion;
 
     #[rstest]
     #[case([], 0x0100_0908_1110_1918u64, [[0x1918u16; 8], [0x1110u16; 8], [0x0908u16; 8], [0x0100u16; 8]])]

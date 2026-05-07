@@ -1,7 +1,7 @@
 use super::Key;
 use super::SimdKey;
 #[cfg(target_arch = "aarch64")]
-use crate::backend::aarch64::neon::key::NEONKey;
+use crate::search::executor::backend::aarch64::neon::NEONKey;
 #[cfg(target_arch = "x86_64")]
 use crate::search::executor::backend::x86_64::avx2::AVX2Key;
 #[cfg(target_arch = "x86_64")]

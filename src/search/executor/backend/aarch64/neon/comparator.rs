@@ -84,11 +84,11 @@ pub fn neon_block_compare_u64<const BYTES: usize, const PREFIX: usize>(
 #[cfg(all(test, target_arch = "aarch64"))]
 mod tests {
     use super::*;
-    use crate::aarch64::neon::converter::{
+    use crate::search::executor::backend::aarch64::neon::{
         neon_u16x2_block_to_vec, neon_u32x2_block_to_vec, neon_u64x2_block_to_vec,
     };
+    use crate::speck::SpeckVersion;
     use rstest::rstest;
-    use speck::SpeckVersion;
 
     const KEY_U16: &[u8; 8] = &[0x18, 0x19, 0x10, 0x11, 0x08, 0x09, 0x00, 0x01];
     const V_U16: u64 = 0x0100_0908_1110_1918;
