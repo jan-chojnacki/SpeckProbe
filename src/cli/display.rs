@@ -299,6 +299,38 @@ pub fn display_benchmark_info(config: &BenchmarkConfig, output_path: &Path, tota
     );
 }
 
+pub fn print_error(err: &dyn std::error::Error) {
+    let width = terminal_width();
+    eprintln!(
+        "{}",
+        fill(
+            &format!("{} {}", " ✗ error:".red().bold(), err),
+            Options::new(width)
+                .initial_indent("")
+                .subsequent_indent("          "),
+        )
+    );
+
+    let mut current = err.source();
+    let mut parent_msg = err.to_string();
+    while let Some(cause) = current {
+        let cause_msg = cause.to_string();
+        if !parent_msg.contains(&cause_msg) {
+            eprintln!(
+                "{}",
+                fill(
+                    &format!("{} {}", "   caused by:".red().dimmed(), cause_msg),
+                    Options::new(width)
+                        .initial_indent("")
+                        .subsequent_indent("              "),
+                )
+            );
+        }
+        parent_msg = cause_msg;
+        current = cause.source();
+    }
+}
+
 fn terminal_width() -> usize {
     terminal_size()
         .map(|(Width(w), _)| w as usize)

@@ -1,9 +1,17 @@
 use clap::Parser;
 use speck_probe::cli::{
-    Args, Commands, SampleCommand, benchmark, encrypt, extract_criterion, sample, search,
+    self, Args, Commands, SampleCommand, benchmark, encrypt, extract_criterion, sample, search,
 };
+use speck_probe::error::ProbeError;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() {
+    if let Err(e) = run() {
+        cli::print_error(&e);
+        std::process::exit(1);
+    }
+}
+
+fn run() -> Result<(), ProbeError> {
     let args = Args::parse();
 
     match args.command {

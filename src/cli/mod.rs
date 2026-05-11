@@ -23,3 +23,4 @@ pub use command::search;
 pub use args::Args;
 pub use args::Commands;
 pub use args::SampleCommand;
+pub use display::print_error;
