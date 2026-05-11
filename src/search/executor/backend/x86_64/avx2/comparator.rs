@@ -21,7 +21,7 @@ pub fn avx2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
     let lanes_lo = m_lo & (m_lo >> 1);
     let lanes_hi = m_hi & (m_hi >> 1);
 
-    let lane_bits_lo = ((lanes_lo >> 0) & 0x1)
+    let lane_bits_lo = (lanes_lo & 0x1)
         | ((lanes_lo >> 1) & 0x2)
         | ((lanes_lo >> 2) & 0x4)
         | ((lanes_lo >> 3) & 0x8)
@@ -37,7 +37,7 @@ pub fn avx2_block_compare_u16<const BYTES: usize, const PREFIX: usize>(
         | ((lanes_lo >> 13) & 0x2000)
         | ((lanes_lo >> 14) & 0x4000)
         | ((lanes_lo >> 15) & 0x8000);
-    let lane_bits_hi = ((lanes_hi >> 0) & 0x1)
+    let lane_bits_hi = (lanes_hi & 0x1)
         | ((lanes_hi >> 1) & 0x2)
         | ((lanes_hi >> 2) & 0x4)
         | ((lanes_hi >> 3) & 0x8)
@@ -83,7 +83,7 @@ pub fn avx2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
     let lanes_lo = m_lo & (m_lo >> 1) & (m_lo >> 2) & (m_lo >> 3);
     let lanes_hi = m_hi & (m_hi >> 1) & (m_hi >> 2) & (m_hi >> 3);
 
-    let lane_bits_lo = ((lanes_lo >> 0) & 0x1)
+    let lane_bits_lo = (lanes_lo & 0x1)
         | ((lanes_lo >> 3) & 0x2)
         | ((lanes_lo >> 6) & 0x4)
         | ((lanes_lo >> 9) & 0x8)
@@ -91,7 +91,7 @@ pub fn avx2_block_compare_u32<const BYTES: usize, const PREFIX: usize>(
         | ((lanes_lo >> 15) & 0x20)
         | ((lanes_lo >> 18) & 0x40)
         | ((lanes_lo >> 21) & 0x80);
-    let lane_bits_hi = ((lanes_hi >> 0) & 0x1)
+    let lane_bits_hi = (lanes_hi & 0x1)
         | ((lanes_hi >> 3) & 0x2)
         | ((lanes_hi >> 6) & 0x4)
         | ((lanes_hi >> 9) & 0x8)

@@ -14,17 +14,12 @@ pub fn handle_encrypt(
     iv: Option<Vec<u8>>,
     data: String,
 ) -> Result<(), ProbeError> {
-    let speck = SPECK::new(
-        speck_version.into(),
-        cipher_mode.into(),
-        &key,
-        iv.as_deref(),
-    )?;
+    let speck = SPECK::new(speck_version, cipher_mode, &key, iv.as_deref())?;
 
     let ciphertext = speck.encrypt(data.as_bytes())?;
     let plaintext = speck.decrypt(&ciphertext)?;
 
-    let version: crate::speck::SpeckVersion = speck_version.into();
+    let version: SpeckVersion = speck_version;
     println!("plaintext:  {}", to_base64(&plaintext, version));
     println!("ciphertext: {}", to_base64(&ciphertext, version));
     if cipher_mode == CipherMode::Cbc {

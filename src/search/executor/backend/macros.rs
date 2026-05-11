@@ -321,7 +321,7 @@ macro_rules! impl_x86_simd_key {
                 &self.bytes
             }
 
-            pub fn to_vec(&self) -> [Vec<u8>; LANES] {
+            pub fn to_vec(self) -> [Vec<u8>; LANES] {
                 self.as_bytes().map(|b| b.to_vec())
             }
         }

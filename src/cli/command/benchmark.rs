@@ -94,7 +94,7 @@ fn into_runtime_configs(
     debug_assert!(bits > 8);
     debug_assert!(bits < 64);
 
-    let speck_version: crate::speck::SpeckVersion = target.speck_version.into();
+    let speck_version: SpeckVersion = target.speck_version;
 
     let start_key = 0u64;
     let mut start: Vec<u8> = start_key.to_le_bytes().to_vec();
@@ -110,14 +110,14 @@ fn into_runtime_configs(
     }
 
     let cipher_config = CipherConfig {
-        cipher_mode: target.cipher_mode.into(),
+        cipher_mode: target.cipher_mode,
         speck_version,
-        cipher_function: target.cipher_function.into(),
+        cipher_function: target.cipher_function,
     };
     let runtime_config = RuntimeConfig {
         suffix_bytes_size: target.suffix_bytes,
         num_threads: num_cpus::get(),
-        backend_hint: target.backend_hint.into(),
+        backend_hint: target.backend_hint,
     };
     let search_space = SearchSpace {
         start,

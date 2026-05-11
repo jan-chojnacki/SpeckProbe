@@ -38,14 +38,14 @@ pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ProbeError> {
 /// Converts a [`SearchConfig`] into the executor API structs needed to start a search.
 fn into_runtime_configs(config: SearchConfig) -> (CipherConfig, RuntimeConfig, SearchSpace) {
     let cipher_config = CipherConfig {
-        cipher_mode: config.cipher_mode.into(),
-        speck_version: config.speck_version.into(),
-        cipher_function: config.cipher_function.into(),
+        cipher_mode: config.cipher_mode,
+        speck_version: config.speck_version,
+        cipher_function: config.cipher_function,
     };
     let runtime_config = RuntimeConfig {
         suffix_bytes_size: config.suffix_bytes_size,
         num_threads: config.num_threads,
-        backend_hint: config.backend_hint.into(),
+        backend_hint: config.backend_hint,
     };
     let search_space = SearchSpace {
         start: config.start,
