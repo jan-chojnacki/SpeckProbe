@@ -11,6 +11,17 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 use std::thread::JoinHandle;
 
+pub struct ValidationPairs<VW: ValidatorWord> {
+    pub data: Vec<[VW; 2]>,
+    pub expected: Vec<[VW; 2]>,
+}
+
+pub struct OrchestratorConfig {
+    pub num_threads: usize,
+    pub cap: usize,
+    pub cli_tx: Option<Sender<TaskDone>>,
+}
+
 pub struct Orchestrator<
     FS,
     FV,
@@ -43,43 +54,40 @@ where
     pub fn new(
         start: [u8; PREFIX],
         end: [u8; PREFIX],
-        data: &[[VW; 2]],
-        expected: &[[VW; 2]],
-        num_threads: usize,
-        cap: usize,
-        cli_tx: Option<Sender<TaskDone>>,
+        pairs: ValidationPairs<VW>,
+        config: OrchestratorConfig,
         function: FS,
         validator: FV,
         convert: impl Fn([VW; 2]) -> [EW; 2],
     ) -> Self {
-        assert!(!data.is_empty());
-        assert_eq!(data.len(), expected.len());
+        assert!(!pairs.data.is_empty());
+        assert_eq!(pairs.data.len(), pairs.expected.len());
 
         let pool = ThreadPoolBuilder::new()
-            .num_threads(num_threads)
+            .num_threads(config.num_threads)
             .thread_name(|i| format!("search-thread-{i}"))
             .build()
             .unwrap();
 
-        let (tx, rx) = bounded::<Vec<Key<BYTES, PREFIX>>>(cap);
+        let (tx, rx) = bounded::<Vec<Key<BYTES, PREFIX>>>(config.cap);
         let stop = Arc::new(AtomicBool::new(false));
 
         let task_producer = TaskProducer::<EW, BYTES, PREFIX>::new(
             start,
             end,
-            convert(data[0]),
-            convert(expected[0]),
+            convert(pairs.data[0]),
+            convert(pairs.expected[0]),
         );
 
         Self {
             task_producer: Some(task_producer),
             pool,
-            cli_tx,
+            cli_tx: config.cli_tx,
             tx: Some(tx),
             rx,
             stop,
-            data: data.to_vec(),
-            expected: expected.to_vec(),
+            data: pairs.data,
+            expected: pairs.expected,
             function,
             validator,
         }

@@ -1,6 +1,6 @@
 use crate::search::domain::key::Key;
 use crate::search::domain::task::Task;
-use crate::search::executor::orchestrator::Orchestrator;
+use crate::search::executor::orchestrator::{Orchestrator, OrchestratorConfig, ValidationPairs};
 use crate::search::executor::word::{EngineWord, ValidatorWord};
 use crate::search::executor::{CAP, CipherFunction, CipherMode, DispatchOutput, RuntimeRequest};
 
@@ -56,11 +56,12 @@ where
     let mut runtime = Orchestrator::<FS, FV, EW, VW, BYTES, PREFIX>::new(
         start,
         end,
-        &data,
-        &expected,
-        request.runtime_config.num_threads,
-        CAP,
-        request.internal_config.cli_tx,
+        ValidationPairs { data, expected },
+        OrchestratorConfig {
+            num_threads: request.runtime_config.num_threads,
+            cap: CAP,
+            cli_tx: request.internal_config.cli_tx,
+        },
         search_fn,
         validate_fn,
         convert_fn,
