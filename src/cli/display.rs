@@ -1,5 +1,4 @@
 use crate::benchmark::BenchmarkConfig;
-use crate::search::executor::CipherMode::Cbc;
 use crate::search::executor::{
     BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace,
 };
@@ -145,9 +144,9 @@ pub fn display_results(results: DispatchOutput, spurious: bool) {
 }
 
 pub fn display_info(
-    cipher_config: CipherConfig,
-    runtime_config: RuntimeConfig,
-    search_space: SearchSpace,
+    cipher_config: &CipherConfig,
+    runtime_config: &RuntimeConfig,
+    search_space: &SearchSpace,
 ) {
     let cipher_mode = cipher_config.cipher_mode.to_string();
     let operation = cipher_config.cipher_function.to_string();
@@ -159,12 +158,12 @@ pub fn display_info(
     let backend_detected = format!("({})", detect());
 
     let start = format_key_hex(&prepend_bytes(
-        search_space.start,
+        search_space.start.clone(),
         runtime_config.suffix_bytes_size,
         0,
     ));
     let end = format_key_hex(&prepend_bytes(
-        search_space.end,
+        search_space.end.clone(),
         runtime_config.suffix_bytes_size,
         u8::MAX,
     ));
@@ -225,13 +224,8 @@ pub fn display_info(
     println!("{}", bullet().label("Start").value(&start).render(width));
     println!("{}", bullet().label("End").value(&end).render(width));
 
-    if cipher_config.cipher_mode == Cbc {
-        let iv_bytes: Vec<u8> = search_space
-            .iv
-            .unwrap()
-            .iter()
-            .flat_map(|x| x.to_le_bytes())
-            .collect();
+    if let Some(iv) = search_space.iv {
+        let iv_bytes: Vec<u8> = iv.iter().flat_map(|x| x.to_le_bytes()).collect();
         let iv = format_key_hex(&iv_bytes);
         println!("{}", bullet().label("IV").value(&iv).render(width));
     }

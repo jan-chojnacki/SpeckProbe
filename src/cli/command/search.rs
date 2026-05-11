@@ -13,11 +13,7 @@ pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ProbeError> {
     let (cipher_config, runtime_config, search_space) = into_runtime_configs(config);
 
     display_banner();
-    display_info(
-        cipher_config.clone(),
-        runtime_config.clone(),
-        search_space.clone(),
-    );
+    display_info(&cipher_config, &runtime_config, &search_space);
 
     let mut runtime = Runtime::new(cipher_config, runtime_config.clone(), search_space.clone());
     let rx = runtime.enable_progress();

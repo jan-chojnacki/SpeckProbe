@@ -8,7 +8,7 @@ pub struct BenchmarkRecord {
     pub bits_measured: usize,
     pub benchmark: &'static str,
     pub backend: BackendHint,
-    pub architecture: String,
+    pub architecture: &'static str,
     pub function: CipherFunction,
     pub version: SpeckVersion,
     pub suffix: usize,

@@ -27,7 +27,7 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
     display_benchmark_info(&config, &output_path, total_passes);
 
     let pb = build_benchmark_progress_bar(total_passes as u64);
-    let architecture = std::env::consts::ARCH.to_string();
+    let architecture = std::env::consts::ARCH;
     let mut records: Vec<BenchmarkRecord> = Vec::new();
 
     for t in targets {
@@ -37,7 +37,7 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
                 bits_measured: bits,
                 benchmark: "system",
                 backend: t.backend_hint,
-                architecture: architecture.clone(),
+                architecture,
                 function: t.cipher_function,
                 version: t.speck_version,
                 suffix: t.suffix_bytes,

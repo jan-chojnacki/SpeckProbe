@@ -116,9 +116,7 @@ where
             let mut global_results = Vec::<Key<BYTES, PREFIX>>::new();
 
             for hit in rx.into_iter().flatten() {
-                let ok = Self::validate(&validator, &data, &expected, &hit);
-
-                if ok {
+                if validator(&data, &expected, &hit) {
                     stop.store(true, Ordering::Relaxed);
                     return (global_results, Some(hit));
                 }
@@ -128,15 +126,6 @@ where
 
             (global_results, None)
         })
-    }
-
-    fn validate(
-        validator: &FV,
-        data: &[[VW; 2]],
-        expected: &[[VW; 2]],
-        hit: &Key<BYTES, PREFIX>,
-    ) -> bool {
-        validator(data, expected, hit)
     }
 
     fn run_pool(&mut self, tx: &Sender<Vec<Key<BYTES, PREFIX>>>, cli_tx: Option<Sender<TaskDone>>) {
