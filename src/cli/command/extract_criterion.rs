@@ -1,4 +1,4 @@
-use crate::probe::ProbeError;
+use crate::error::ProbeError;
 use crate::store;
 use std::path::{Path, PathBuf};
 

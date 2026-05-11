@@ -1,5 +1,5 @@
 use crate::cipher::speck::SPECK;
-use crate::probe::ProbeError;
+use crate::error::ProbeError;
 use crate::search::executor::CipherMode;
 use crate::speck::SpeckVersion;
 use base64::Engine;

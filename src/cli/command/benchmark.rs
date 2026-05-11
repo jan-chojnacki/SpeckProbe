@@ -1,7 +1,7 @@
 use crate::benchmark::{BenchmarkConfig, BenchmarkRecord};
 use crate::cli::display::{display_banner, display_benchmark_info};
 use crate::cli::progress::ui::build_benchmark_progress_bar;
-use crate::probe::ProbeError;
+use crate::error::ProbeError;
 use crate::search::executor::CipherMode::Cbc;
 use crate::search::executor::Runtime;
 use crate::search::executor::{

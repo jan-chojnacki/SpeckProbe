@@ -1,6 +1,6 @@
 use crate::cli::display::{display_banner, display_info, display_results};
 use crate::cli::progress::ProgressUi;
-use crate::probe::ProbeError;
+use crate::error::ProbeError;
 use crate::search::SearchConfig;
 use crate::search::executor::Runtime;
 use crate::search::executor::{CipherConfig, RuntimeConfig, SearchSpace};

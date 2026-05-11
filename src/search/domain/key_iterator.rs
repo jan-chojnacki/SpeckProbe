@@ -9,15 +9,6 @@ use crate::search::executor::backend::x86_64::avx512::AVX512Key;
 #[cfg(target_arch = "x86_64")]
 use crate::search::executor::backend::x86_64::sse2::SSE2Key;
 use crate::speck::SpeckVersion;
-use thiserror::Error;
-
-#[derive(Debug, Clone, Error, Eq, PartialEq)]
-pub enum KeyIteratorError {
-    #[error("expected {expected} bytes, got {got}")]
-    InvalidPrefixLength { expected: usize, got: usize },
-    #[error("start ({start}) + count ({count}) overflows end value")]
-    InvalidKeyCount { start: u64, count: u64 },
-}
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct KeyIterator<const BYTES: usize, const PREFIX: usize> {

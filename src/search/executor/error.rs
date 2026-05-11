@@ -1,18 +1,7 @@
-use crate::search::executor::CipherMode;
-use crate::speck::SpeckVersion;
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, thiserror::Error)]
 pub enum DispatchError {
-    UnsupportedSuffix {
-        suffix: usize,
-    },
-    UnsupportedMode {
-        mode: CipherMode,
-    },
-    UnsupportedCombination {
-        version: SpeckVersion,
-        mode: CipherMode,
-        suffix: usize,
-    },
+    #[error("unsupported suffix size: {suffix}")]
+    UnsupportedSuffix { suffix: usize },
+    #[error("missing IV")]
     MissingIv,
 }

@@ -6,18 +6,12 @@ pub enum ProbeError {
     #[error(transparent)]
     Store(#[from] StoreError),
     /// The executor dispatch failed (e.g. unsupported backend or bad config).
-    #[error("{0:?}")]
-    Dispatch(crate::search::executor::DispatchError),
+    #[error(transparent)]
+    Dispatch(#[from] crate::search::executor::DispatchError),
     /// The cipher rejected the provided key or IV.
     #[error(transparent)]
     Cipher(#[from] crate::cipher::error::SPECKError),
     /// The output file already exists and `--force` was not supplied.
     #[error("file already exists: {0:?}, use -f/--force to overwrite")]
     FileAlreadyExists(std::path::PathBuf),
-}
-
-impl From<crate::search::executor::DispatchError> for ProbeError {
-    fn from(e: crate::search::executor::DispatchError) -> Self {
-        ProbeError::Dispatch(e)
-    }
 }
