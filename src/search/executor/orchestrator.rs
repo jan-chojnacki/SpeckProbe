@@ -57,7 +57,7 @@ where
 
         let pool = ThreadPoolBuilder::new()
             .num_threads(num_threads)
-            .thread_name(|i| format!("my-pool-{i}"))
+            .thread_name(|i| format!("search-thread-{i}"))
             .build()
             .unwrap();
 
