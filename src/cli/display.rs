@@ -1,4 +1,5 @@
 use crate::benchmark::BenchmarkConfig;
+use crate::search::executor::CipherMode::Cbc;
 use crate::search::executor::{
     BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace,
 };
@@ -149,7 +150,9 @@ pub fn display_info(
     search_space: SearchSpace,
 ) {
     let cipher_mode = cipher_config.cipher_mode.to_string();
+    let operation = cipher_config.cipher_function.to_string();
     let speck_version = cipher_config.speck_version.to_string();
+    let suffix_bytes = runtime_config.suffix_bytes_size.to_string();
     let num_threads = runtime_config.num_threads.to_string();
     let num_threads_add = format!("({}/{})", num_threads, num_cpus::get());
     let backend_hint = runtime_config.backend_hint.to_string();
@@ -178,9 +181,20 @@ pub fn display_info(
     );
     println!(
         "{}",
+        bullet().label("Operation").value(&operation).render(width)
+    );
+    println!(
+        "{}",
         bullet()
             .label("Speck version")
             .value(&speck_version)
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Suffix bytes")
+            .value(&suffix_bytes)
             .render(width)
     );
     println!(
@@ -210,6 +224,17 @@ pub fn display_info(
     }
     println!("{}", bullet().label("Start").value(&start).render(width));
     println!("{}", bullet().label("End").value(&end).render(width));
+
+    if cipher_config.cipher_mode == Cbc {
+        let iv_bytes: Vec<u8> = search_space
+            .iv
+            .unwrap()
+            .iter()
+            .flat_map(|x| x.to_le_bytes())
+            .collect();
+        let iv = format_key_hex(&iv_bytes);
+        println!("{}", bullet().label("IV").value(&iv).render(width));
+    }
 }
 
 pub fn display_benchmark_info(config: &BenchmarkConfig, output_path: &Path, total_passes: usize) {
