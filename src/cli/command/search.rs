@@ -7,7 +7,6 @@ use crate::search::executor::{CipherConfig, RuntimeConfig, SearchSpace};
 use crate::store::load_config;
 use std::path::PathBuf;
 
-/// Loads a search config, runs the key search, and prints results.
 pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ProbeError> {
     let config = load_config::<SearchConfig>(&path)?;
     let (cipher_config, runtime_config, search_space) = into_runtime_configs(config);
@@ -31,7 +30,6 @@ pub fn execute(path: PathBuf, spurious: bool) -> Result<(), ProbeError> {
     Ok(())
 }
 
-/// Converts a [`SearchConfig`] into the executor API structs needed to start a search.
 fn into_runtime_configs(config: SearchConfig) -> (CipherConfig, RuntimeConfig, SearchSpace) {
     let cipher_config = CipherConfig {
         cipher_mode: config.cipher_mode,

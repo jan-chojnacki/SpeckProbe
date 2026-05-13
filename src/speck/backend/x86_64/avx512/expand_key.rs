@@ -1,12 +1,12 @@
 macro_rules! avx512_expand_key_inline {
     ($round_keys:expr, $key:expr, $word:tt, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {
-        let mut l = $crate::speck::key_words_inline!($key, $key_words);
+        let mut l = key_words_inline!($key, $key_words);
         let mut k = $key[$key_words - 1];
 
         seq_macro::seq!(I in 0..$rounds {
             $round_keys[I] = k;
-            $crate::speck::backend::x86_64::avx512::avx512_encrypt_round_inline!(l[$crate::speck::key_idx!($key_words, I)],
-                    k, $crate::speck::backend::x86_64::avx512::avx512_set!($word, I), $word, $alpha, $beta);
+            avx512_encrypt_round_inline!(l[key_idx!($key_words, I)],
+                    k, avx512_set!($word, I), $word, $alpha, $beta);
         });
 
         $round_keys[$rounds] = k;

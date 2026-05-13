@@ -1,5 +1,14 @@
+use super::avx2_add;
 use super::avx2_decrypt_round_inline;
+use super::avx2_encrypt_round_inline;
 use super::avx2_expand_key_inline;
+use super::avx2_rol;
+use super::avx2_ror;
+use super::avx2_set;
+use super::avx2_sub;
+use super::avx2_xor;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::x86_64::__m256i;
 
 macro_rules! impl_decrypt_block_avx2 {

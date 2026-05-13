@@ -5,8 +5,6 @@ use crate::speck::SpeckVersion;
 use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
 
-/// Encrypts `data` and prints plaintext, ciphertext, and (for CBC) IV as base64.
-/// All values are encoded in the same format accepted by the search config.
 pub fn handle_encrypt(
     speck_version: SpeckVersion,
     cipher_mode: CipherMode,
@@ -28,7 +26,7 @@ pub fn handle_encrypt(
     Ok(())
 }
 
-fn to_base64(data: &[u8], version: crate::speck::SpeckVersion) -> String {
+fn to_base64(data: &[u8], version: SpeckVersion) -> String {
     let bytes: Vec<u8> = data
         .chunks(version.word_size_bytes())
         .flat_map(|chunk| {

@@ -1,11 +1,11 @@
 macro_rules! avx512_encrypt_round_inline {
     ($x:expr, $y:expr, $k:expr, $word:tt, $alpha:expr, $beta:expr) => {
-        $x = $crate::speck::backend::x86_64::avx512::avx512_ror!($word, $x, $alpha);
-        $x = $crate::speck::backend::x86_64::avx512::avx512_add!($word, $x, $y);
-        $x = $crate::speck::backend::x86_64::avx512::avx512_xor!($word, $x, $k);
+        $x = avx512_ror!($word, $x, $alpha);
+        $x = avx512_add!($word, $x, $y);
+        $x = avx512_xor!($word, $x, $k);
 
-        $y = $crate::speck::backend::x86_64::avx512::avx512_rol!($word, $y, $beta);
-        $y = $crate::speck::backend::x86_64::avx512::avx512_xor!($word, $y, $x);
+        $y = avx512_rol!($word, $y, $beta);
+        $y = avx512_xor!($word, $y, $x);
     };
 }
 

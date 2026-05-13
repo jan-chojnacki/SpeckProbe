@@ -11,17 +11,12 @@ use std::thread;
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
 
-/// Drives a terminal progress bar from a stream of completed task notifications.
 pub struct ProgressUi {
     reader: JoinHandle<()>,
     renderer: JoinHandle<()>,
 }
 
 impl ProgressUi {
-    /// Spawns reader and renderer threads and returns a handle to both.
-    ///
-    /// `suffix` is the number of suffix bytes appended to each key; it is used
-    /// to convert task completions into an equivalent key count for the rate display.
     pub fn start(rx: Receiver<TaskDone>, start: &[u8], end: &[u8], suffix: usize) -> Self {
         let (scale, pb_len) = ProgressScale::from_range(start, end);
         let pb = build_progress_bar(pb_len);
@@ -29,7 +24,6 @@ impl ProgressUi {
         let delta = Arc::new(AtomicU64::new(0));
         let done = Arc::new(AtomicBool::new(false));
 
-        // Each completed task covers 2^(suffix*8) keys.
         let tasks_per_iter = u64::MAX >> (64 - suffix * 8);
 
         let reader = spawn_reader(rx, Arc::clone(&delta), Arc::clone(&done));
@@ -38,7 +32,6 @@ impl ProgressUi {
         Self { reader, renderer }
     }
 
-    /// Waits for both threads to finish.
     pub fn join(self) {
         self.reader.join().unwrap();
         self.renderer.join().unwrap();
@@ -120,12 +113,10 @@ fn build_progress_bar_inner(len: u64, bar_width: usize, show_msg: bool) -> Progr
     pb
 }
 
-/// Builds a progress bar with a key-rate message, used for search operations.
 pub fn build_progress_bar(len: u64) -> ProgressBar {
     build_progress_bar_inner(len, 36, true)
 }
 
-/// Builds a compact progress bar without a rate message, used for benchmark passes.
 pub fn build_benchmark_progress_bar(len: u64) -> ProgressBar {
     build_progress_bar_inner(len, 51, false)
 }

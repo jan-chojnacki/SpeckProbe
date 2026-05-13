@@ -65,7 +65,6 @@ impl Line {
     }
 }
 
-/// Formats a byte slice as space-separated lowercase hex pairs (e.g. `"0a 1b 2c"`).
 fn format_key_hex(bytes: &[u8]) -> String {
     bytes
         .iter()
@@ -74,12 +73,10 @@ fn format_key_hex(bytes: &[u8]) -> String {
         .join(" ")
 }
 
-/// Joins an iterator of `Display` items with `", "`.
 fn join_display<T: fmt::Display>(items: impl Iterator<Item = T>) -> String {
     items.map(|v| v.to_string()).collect::<Vec<_>>().join(", ")
 }
 
-/// Prepends `count` copies of `fill` in front of `key`.
 fn prepend_bytes(key: Vec<u8>, count: usize, fill: u8) -> Vec<u8> {
     let mut result = vec![fill; count];
     result.extend(key);
@@ -331,7 +328,6 @@ fn terminal_width() -> usize {
         .unwrap_or(80)
 }
 
-/// The SIMD backend that will be selected at executor.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum ActiveBackend {
     #[cfg(target_arch = "x86_64")]
@@ -361,7 +357,6 @@ impl fmt::Display for ActiveBackend {
     }
 }
 
-/// Detects the best available SIMD backend for the current CPU at executor.
 fn detect() -> ActiveBackend {
     #[cfg(target_arch = "x86_64")]
     {

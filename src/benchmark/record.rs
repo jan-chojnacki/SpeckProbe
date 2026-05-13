@@ -2,7 +2,6 @@ use crate::search::executor::{BackendHint, CipherFunction};
 use crate::speck::SpeckVersion;
 use serde::Serialize;
 
-/// A single timing measurement produced by one benchmark pass.
 #[derive(Debug, Serialize)]
 pub struct BenchmarkRecord {
     pub bits_measured: usize,

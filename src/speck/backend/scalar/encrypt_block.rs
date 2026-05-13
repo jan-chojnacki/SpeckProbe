@@ -66,7 +66,6 @@ impl_adapter!(
     3
 );
 
-//runda - 1
 macro_rules! impl_encrypt_block_inflight {
     ($fn_name:ident, $word:ty, $key_words:tt, $alpha:literal, $beta:literal, $rounds:expr) => {
         #[inline(always)]

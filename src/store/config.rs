@@ -4,7 +4,6 @@ use serde::de::DeserializeOwned;
 use std::fs;
 use std::path::Path;
 
-/// Deserializes a TOML file at `path` into `Config`.
 pub fn load_config<Config>(path: &Path) -> Result<Config, StoreError>
 where
     Config: DeserializeOwned,
@@ -14,7 +13,6 @@ where
     Ok(config)
 }
 
-/// Serializes `config` as pretty TOML and writes it to `path`.
 pub fn save_config<Config>(config: &Config, path: &Path) -> Result<(), StoreError>
 where
     Config: Serialize,

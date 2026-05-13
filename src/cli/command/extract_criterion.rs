@@ -2,7 +2,6 @@ use crate::error::ProbeError;
 use crate::store;
 use std::path::{Path, PathBuf};
 
-/// Collects Criterion CSV results and merges them into a single output CSV.
 pub fn handle_extract(
     criterion_path: PathBuf,
     output_path: PathBuf,

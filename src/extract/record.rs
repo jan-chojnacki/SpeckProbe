@@ -1,7 +1,6 @@
 use super::RawRecord;
 use serde::Serialize;
 
-/// A Criterion benchmark result enriched with architecture and structured fields.
 #[derive(Debug, Serialize)]
 pub struct CriterionRecord {
     pub row_index: usize,
@@ -26,7 +25,6 @@ fn split_once_or_default(value: &str) -> (String, String) {
 }
 
 impl CriterionRecord {
-    /// Constructs a `CriterionRecord` by parsing group and value fields of `raw`.
     pub(crate) fn from_raw(row_index: usize, raw: RawRecord, architecture: &str) -> Self {
         let (benchmark, backend) = split_once_or_default(&raw.group);
         let (version, suffix) = split_once_or_default(&raw.value);

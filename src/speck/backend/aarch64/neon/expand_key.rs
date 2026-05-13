@@ -5,8 +5,8 @@ macro_rules! neon_expand_key_inline {
 
         seq_macro::seq!(I in 0..$rounds {
             $round_keys[I] = k;
-            $crate::speck::backend::aarch64::neon::neon_encrypt_round_inline!(l[$crate::speck::key_idx!($key_words, I)],
-                    k, $crate::speck::backend::aarch64::neon::neon_set!($word, I), $word, $alpha, $beta);
+            neon_encrypt_round_inline!(l[$crate::speck::key_idx!($key_words, I)],
+                    k, neon_set!($word, I), $word, $alpha, $beta);
         });
 
         $round_keys[$rounds] = k;

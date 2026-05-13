@@ -2,16 +2,13 @@ use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
 use crate::speck::SpeckVersion;
 use serde::{Deserialize, Serialize};
 
-/// Configuration for a full benchmark run covering all listed parameter combinations.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BenchmarkConfig {
-    /// Key-space width in bits measured per pass.
     pub bits: usize,
     pub cipher_modes: Vec<CipherMode>,
     pub speck_versions: Vec<SpeckVersion>,
     pub cipher_functions: Vec<CipherFunction>,
     pub backend_hints: Vec<BackendHint>,
-    /// Suffix byte counts that are swept per pass to vary the work per iteration.
     pub suffix_bytes_values: Vec<usize>,
 }
 

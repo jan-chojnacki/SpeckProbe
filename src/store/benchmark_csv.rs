@@ -3,7 +3,6 @@ use crate::benchmark::BenchmarkRecord;
 use crate::store::StoreError;
 use std::path::Path;
 
-/// Appends `records` to the CSV at `path`, writing a header row only when the file is empty.
 pub fn save_benchmark_records(records: &[BenchmarkRecord], path: &Path) -> Result<(), StoreError> {
     ensure_parent_dir(path)?;
     let write_headers = !file_has_data(path)?;

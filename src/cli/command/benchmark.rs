@@ -13,7 +13,6 @@ use std::hint::black_box;
 use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
-/// Loads a benchmark config, runs all passes, and writes results to a CSV file.
 pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeError> {
     let config = load_config::<BenchmarkConfig>(&config_path)?;
     let targets = targets_from_config(&config);
@@ -54,7 +53,6 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
     Ok(())
 }
 
-/// A single benchmark target derived from one combination of benchmark config fields.
 struct BenchmarkTarget {
     pub cipher_mode: CipherMode,
     pub speck_version: SpeckVersion,
@@ -63,7 +61,6 @@ struct BenchmarkTarget {
     pub suffix_bytes: usize,
 }
 
-/// Expands a `BenchmarkConfig` into every combination of its fields as individual targets.
 fn targets_from_config(config: &BenchmarkConfig) -> Vec<BenchmarkTarget> {
     let mut targets = Vec::new();
     for &version in &config.speck_versions {
@@ -86,7 +83,6 @@ fn targets_from_config(config: &BenchmarkConfig) -> Vec<BenchmarkTarget> {
     targets
 }
 
-/// Builds the executor configuration structs for a single benchmark target and key-space bit width.
 fn into_runtime_configs(
     target: &BenchmarkTarget,
     bits: usize,
@@ -136,7 +132,6 @@ fn into_runtime_configs(
     (cipher_config, runtime_config, search_space)
 }
 
-/// Runs one timed benchmark pass for `target` at the given key-space `bits` width.
 fn run_pass(target: &BenchmarkTarget, bits: usize) -> Result<Duration, ProbeError> {
     let (cipher_config, runtime_config, search_space) = into_runtime_configs(target, bits);
     let mut runtime = Runtime::new(

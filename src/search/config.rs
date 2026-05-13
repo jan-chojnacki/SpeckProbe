@@ -8,41 +8,34 @@ use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
 use crate::speck::SpeckVersion;
 use serde::{Deserialize, Serialize};
 
-/// Configuration for a key-search operation.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SearchConfig {
     pub cipher_mode: CipherMode,
     pub speck_version: SpeckVersion,
     pub cipher_function: CipherFunction,
-    /// Number of low-order suffix bytes appended to every candidate key before testing.
     pub suffix_bytes_size: usize,
     pub num_threads: usize,
     pub backend_hint: BackendHint,
-    /// Inclusive lower bound of the key search range, serialized as space-separated hex.
     #[serde(
         serialize_with = "serialize_as_hex",
         deserialize_with = "deserialize_from_hex"
     )]
     pub start: Vec<u8>,
-    /// Inclusive upper bound of the key search range, serialized as space-separated hex.
     #[serde(
         serialize_with = "serialize_as_hex",
         deserialize_with = "deserialize_from_hex"
     )]
     pub end: Vec<u8>,
-    /// Known plaintext/ciphertext pairs used to verify candidate keys.
     #[serde(
         serialize_with = "serialize_u64_pairs",
         deserialize_with = "deserialize_u64_pairs"
     )]
     pub data: Vec<[u64; 2]>,
-    /// Expected output pairs that a correct key must produce.
     #[serde(
         serialize_with = "serialize_u64_pairs",
         deserialize_with = "deserialize_u64_pairs"
     )]
     pub expected: Vec<[u64; 2]>,
-    /// Initialization vector for CBC mode; omit for ECB.
     #[serde(
         serialize_with = "serialize_u64_pair_opt",
         deserialize_with = "deserialize_u64_pair_opt",

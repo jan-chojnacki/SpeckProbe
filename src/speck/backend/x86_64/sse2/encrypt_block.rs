@@ -1,6 +1,12 @@
+use super::sse2_add;
 use super::sse2_encrypt_round_inline;
 use super::sse2_expand_key_inline;
+use super::sse2_rol;
+use super::sse2_ror;
 use super::sse2_set;
+use super::sse2_xor;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::x86_64::__m128i;
 
 macro_rules! impl_encrypt_block_sse2 {
@@ -45,7 +51,7 @@ macro_rules! impl_encrypt_block_sse2_inflight {
         #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "sse2")]
         pub fn $fn_name(ct: [__m128i; 2], key: [__m128i; $key_words]) -> [__m128i; 2] {
-            let mut l = $crate::speck::key_words_inline!(key, $key_words);
+            let mut l = key_words_inline!(key, $key_words);
             let mut k = key[$key_words - 1];
 
             let mut x = ct[0];
@@ -53,7 +59,7 @@ macro_rules! impl_encrypt_block_sse2_inflight {
 
             seq_macro::seq!(I in 0..$rounds {
                 sse2_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);
-                sse2_encrypt_round_inline!(l[$crate::speck::key_idx!($key_words, I)],
+                sse2_encrypt_round_inline!(l[key_idx!($key_words, I)],
                     k, sse2_set!($word, I), $word, $alpha, $beta);
             });
             sse2_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);

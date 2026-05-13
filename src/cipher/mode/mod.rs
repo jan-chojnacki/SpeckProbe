@@ -5,9 +5,6 @@ use crate::cipher::error::SPECKError;
 use crate::cipher::speck::SPECK;
 use crate::speck::SpeckVersion;
 
-/// Dispatches a generic cipher method call to the correct const-generic instantiation.
-///
-/// Usage: `speck_dispatch!(encrypt: self.method(data))` or `speck_dispatch!(decrypt: self.method(data))`.
 macro_rules! speck_dispatch {
     (encrypt: $self:ident . $method:ident ( $data:expr )) => {
         match $self.speck_version {

@@ -2,7 +2,6 @@ use base64::Engine;
 use base64::engine::general_purpose::STANDARD;
 use serde::Deserialize;
 
-/// Serializes `[u64; 2]` pairs as a standard base64 string of little-endian bytes.
 pub fn serialize_u64_pairs<S>(data: &[[u64; 2]], s: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
@@ -14,7 +13,6 @@ where
     s.serialize_str(&STANDARD.encode(&bytes))
 }
 
-/// Deserializes a standard base64 string into `[u64; 2]` pairs (little-endian, 16 bytes each).
 pub fn deserialize_u64_pairs<'de, D>(d: D) -> Result<Vec<[u64; 2]>, D::Error>
 where
     D: serde::Deserializer<'de>,
@@ -38,7 +36,6 @@ where
         .collect())
 }
 
-/// Serializes a byte slice as space-separated lowercase hex (e.g. `"0a 1b 2c"`).
 pub fn serialize_as_hex<S>(data: &[u8], s: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
@@ -51,7 +48,6 @@ where
     s.serialize_str(&hex)
 }
 
-/// Deserializes a space-separated hex string into a byte vector.
 pub fn deserialize_from_hex<'de, D>(d: D) -> Result<Vec<u8>, D::Error>
 where
     D: serde::Deserializer<'de>,
@@ -62,8 +58,6 @@ where
         .collect()
 }
 
-/// Serializes an optional `[u64; 2]` pair as a standard base64 string of little-endian bytes.
-/// Uses the same 16-byte encoding as `serialize_u64_pairs` (one element).
 pub fn serialize_u64_pair_opt<S>(data: &Option<[u64; 2]>, s: S) -> Result<S::Ok, S::Error>
 where
     S: serde::Serializer,
@@ -82,7 +76,6 @@ where
     }
 }
 
-/// Deserializes a standard base64 string (16 bytes little-endian) into `Option<[u64; 2]>`.
 pub fn deserialize_u64_pair_opt<'de, D>(d: D) -> Result<Option<[u64; 2]>, D::Error>
 where
     D: serde::Deserializer<'de>,

@@ -13,7 +13,6 @@ fn is_raw_result_file(entry: &DirEntry) -> bool {
     in_new_dir && is_raw_csv
 }
 
-/// Recursively walks `criterion_path` and collects all `new/raw.csv` result files.
 pub fn collect_criterion_files(criterion_path: &Path) -> Vec<PathBuf> {
     WalkDir::new(criterion_path)
         .into_iter()

@@ -1,6 +1,12 @@
+use super::avx512_add;
 use super::avx512_encrypt_round_inline;
 use super::avx512_expand_key_inline;
+use super::avx512_rol;
+use super::avx512_ror;
 use super::avx512_set;
+use super::avx512_xor;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::x86_64::__m512i;
 
 macro_rules! impl_encrypt_block_avx512 {
@@ -45,7 +51,7 @@ macro_rules! impl_encrypt_block_avx512_inflight {
         #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = $feature)]
         pub fn $fn_name(ct: [__m512i; 2], key: [__m512i; $key_words]) -> [__m512i; 2] {
-            let mut l = $crate::speck::key_words_inline!(key, $key_words);
+            let mut l = key_words_inline!(key, $key_words);
             let mut k = key[$key_words - 1];
 
             let mut x = ct[0];
@@ -53,7 +59,7 @@ macro_rules! impl_encrypt_block_avx512_inflight {
 
             seq_macro::seq!(I in 0..$rounds {
                 avx512_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);
-                avx512_encrypt_round_inline!(l[$crate::speck::key_idx!($key_words, I)],
+                avx512_encrypt_round_inline!(l[key_idx!($key_words, I)],
                     k, avx512_set!($word, I), $word, $alpha, $beta);
             });
             avx512_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);

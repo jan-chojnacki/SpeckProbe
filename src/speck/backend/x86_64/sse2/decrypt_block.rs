@@ -1,5 +1,14 @@
+use super::sse2_add;
 use super::sse2_decrypt_round_inline;
+use super::sse2_encrypt_round_inline;
 use super::sse2_expand_key_inline;
+use super::sse2_rol;
+use super::sse2_ror;
+use super::sse2_set;
+use super::sse2_sub;
+use super::sse2_xor;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::x86_64::__m128i;
 
 macro_rules! impl_decrypt_block_sse2 {

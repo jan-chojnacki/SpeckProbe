@@ -1,4 +1,3 @@
-/// Errors that can occur when reading or writing persistent data.
 #[derive(Debug, thiserror::Error)]
 pub enum StoreError {
     #[error(transparent)]

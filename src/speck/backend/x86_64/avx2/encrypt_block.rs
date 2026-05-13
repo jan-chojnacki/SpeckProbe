@@ -1,6 +1,12 @@
+use super::avx2_add;
 use super::avx2_encrypt_round_inline;
 use super::avx2_expand_key_inline;
+use super::avx2_rol;
+use super::avx2_ror;
 use super::avx2_set;
+use super::avx2_xor;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::x86_64::__m256i;
 
 macro_rules! impl_encrypt_block_avx2 {
@@ -45,7 +51,7 @@ macro_rules! impl_encrypt_block_avx2_inflight {
         #[cfg(target_arch = "x86_64")]
         #[target_feature(enable = "avx2")]
         pub fn $fn_name(ct: [__m256i; 2], key: [__m256i; $key_words]) -> [__m256i; 2] {
-            let mut l = $crate::speck::key_words_inline!(key, $key_words);
+            let mut l = key_words_inline!(key, $key_words);
             let mut k = key[$key_words - 1];
 
             let mut x = ct[0];
@@ -53,7 +59,7 @@ macro_rules! impl_encrypt_block_avx2_inflight {
 
             seq_macro::seq!(I in 0..$rounds {
                 avx2_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);
-                avx2_encrypt_round_inline!(l[$crate::speck::key_idx!($key_words, I)],
+                avx2_encrypt_round_inline!(l[key_idx!($key_words, I)],
                     k, avx2_set!($word, I), $word, $alpha, $beta);
             });
             avx2_encrypt_round_inline!(x, y, k, $word, $alpha, $beta);

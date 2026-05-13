@@ -1,5 +1,14 @@
+use super::avx512_add;
 use super::avx512_decrypt_round_inline;
+use super::avx512_encrypt_round_inline;
 use super::avx512_expand_key_inline;
+use super::avx512_rol;
+use super::avx512_ror;
+use super::avx512_set;
+use super::avx512_sub;
+use super::avx512_xor;
+use crate::speck::key_idx;
+use crate::speck::key_words_inline;
 use std::arch::x86_64::__m512i;
 
 macro_rules! impl_decrypt_block_avx512 {

@@ -63,16 +63,12 @@ pub struct SearchSpace {
     pub iv: Option<[u64; 2]>,
 }
 
-/// Block cipher mode of operation.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, strum::Display, ValueEnum, Serialize, Deserialize)]
 pub enum CipherMode {
-    /// Electronic Code Book
     Ecb,
-    /// Cipher Block Chaining
     Cbc,
 }
 
-/// Hint for selecting a SIMD backend; `Auto` picks the best available at executor.
 #[derive(Debug, Clone, Copy, Eq, PartialEq, strum::Display, ValueEnum, Serialize, Deserialize)]
 pub enum BackendHint {
     Auto,

@@ -3,7 +3,6 @@ use crate::speck::SpeckVersion;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
-/// Top-level CLI arguments parsed by clap.
 #[derive(Debug, Parser)]
 #[command(version, about, long_about = None)]
 pub struct Args {
@@ -11,14 +10,13 @@ pub struct Args {
     pub command: Commands,
 }
 
-/// Available subcommands.
 #[derive(Debug, Subcommand, Clone)]
 #[command(infer_subcommands = true)]
 pub enum Commands {
     Search {
         #[arg(default_value = "./config/search.toml")]
         config_path: PathBuf,
-        /// Print spurious (false-positive) keys in addition to the final result.
+
         #[arg(short, long)]
         spurious: bool,
     },
@@ -53,7 +51,6 @@ pub enum Commands {
     },
 }
 
-/// Subcommands for generating sample config files.
 #[derive(Debug, Subcommand, Clone)]
 #[command(infer_subcommands = true)]
 pub enum SampleCommand {
@@ -71,7 +68,6 @@ pub enum SampleCommand {
     },
 }
 
-/// A CLI argument that parses space-separated lowercase hex bytes (e.g. `"0a 1b 2c"`).
 #[derive(Clone, Debug)]
 pub struct HexBytes(pub Vec<u8>);
 

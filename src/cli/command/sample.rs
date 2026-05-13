@@ -4,24 +4,20 @@ use crate::store::StoreError;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-/// Writes a sample search config to `path`.
 pub fn handle_sample_search(path: PathBuf, force: bool) -> Result<(), ProbeError> {
     execute_search(path, force)
 }
 
-/// Writes a sample benchmark config to `path`.
 pub fn handle_sample_benchmark(path: PathBuf, force: bool) -> Result<(), ProbeError> {
     execute_benchmark(path, force)
 }
 
-/// Writes a sample search config to `path`.
 fn execute_search(path: PathBuf, force: bool) -> Result<(), ProbeError> {
     prepare_path(&path, force)?;
     store::save_config(&crate::search::sample(), &path)?;
     Ok(())
 }
 
-/// Writes a sample benchmark config to `path`.
 fn execute_benchmark(path: PathBuf, force: bool) -> Result<(), ProbeError> {
     prepare_path(&path, force)?;
     store::save_config(&crate::benchmark::sample(), &path)?;

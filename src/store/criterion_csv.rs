@@ -12,7 +12,6 @@ fn read_from_file(path: &Path, architecture: &str) -> Result<Vec<CriterionRecord
     Ok(records)
 }
 
-/// Reads and merges Criterion CSV files from `paths`, tagging each record with `architecture`.
 pub fn read_criterion_records(
     paths: &[PathBuf],
     architecture: &str,
@@ -24,7 +23,6 @@ pub fn read_criterion_records(
     Ok(all)
 }
 
-/// Writes `records` to the CSV at `path`. When `clear` is true the file is truncated first.
 pub fn save_criterion_records(
     records: &[CriterionRecord],
     path: &Path,
