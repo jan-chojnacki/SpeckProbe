@@ -1,0 +1,11 @@
+[Unit]
+Description=Performance tuning
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/tune.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

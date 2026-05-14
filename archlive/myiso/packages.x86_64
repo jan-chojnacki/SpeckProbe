@@ -1,21 +1,35 @@
-# base system
-base
-linux
-linux-firmware
-mkinitcpio
-mkinitcpio-archiso
-
 # bootloader
 syslinux
 efibootmgr
 edk2-shell
 amd-ucode
 
+# base system (explicit, replaces base metapackage)
+linux
+linux-firmware
+mkinitcpio
+mkinitcpio-archiso
+filesystem
+glibc
+gcc-libs
+systemd
+systemd-sysvcompat
+
 # core tools
-util-linux
-coreutils
 bash
+coreutils
+util-linux
 sudo
+findutils
+grep
+sed
+procps-ng
+shadow
+
+# compression (initramfs xz + squashfs zstd)
+gzip
+xz
+zstd
 
 # performance/diagnostic tools
 cpupower
@@ -23,7 +37,6 @@ tuned
 hwloc
 numactl
 msr-tools
-irqbalance
 
 # build tools for cargo deps
 gcc
@@ -32,3 +45,4 @@ pkgconf
 clang
 lld
 mold
+rust
