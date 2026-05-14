@@ -22,7 +22,6 @@ macro_rules! define_validate {
                         return false;
                     }
                 }
-
                 true
             }
 
@@ -38,7 +37,6 @@ macro_rules! define_validate {
                         return false;
                     }
                 }
-
                 true
             }
 
