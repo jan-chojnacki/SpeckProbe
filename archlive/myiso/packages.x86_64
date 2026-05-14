@@ -1,5 +1,4 @@
 # bootloader
-syslinux
 efibootmgr
 edk2-shell
 amd-ucode
@@ -33,7 +32,6 @@ zstd
 
 # performance/diagnostic tools
 cpupower
-tuned
 hwloc
 numactl
 msr-tools
@@ -46,3 +44,7 @@ clang
 lld
 mold
 rust
+
+# IPC
+dbus-broker
+dbus-broker-units

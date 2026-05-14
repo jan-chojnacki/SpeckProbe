@@ -1,6 +1,7 @@
 [Unit]
-Description=Performance tuning
-After=local-fs.target
+After=sysinit.target
+Before=getty.target
+DefaultDependencies=no
 
 [Service]
 Type=oneshot

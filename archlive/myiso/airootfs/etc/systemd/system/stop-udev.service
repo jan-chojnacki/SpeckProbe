@@ -1,0 +1,12 @@
+[Unit]
+Description=Stop udevd after boot (no hotplug needed on live)
+After=multi-user.target tune.service
+Requires=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl stop systemd-udevd.service systemd-udevd-kernel.socket systemd-udevd-control.socket
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
