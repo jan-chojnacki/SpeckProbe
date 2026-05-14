@@ -1,8 +1,6 @@
 use crate::search::domain::Key;
 use paste::paste;
 
-// TODO
-
 macro_rules! define_validate {
     (
     bytes = $bytes:literal,
