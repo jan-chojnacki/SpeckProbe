@@ -1,0 +1,34 @@
+# base system
+base
+linux
+linux-firmware
+mkinitcpio
+mkinitcpio-archiso
+
+# bootloader
+syslinux
+efibootmgr
+edk2-shell
+amd-ucode
+
+# core tools
+util-linux
+coreutils
+bash
+sudo
+
+# performance/diagnostic tools
+cpupower
+tuned
+hwloc
+numactl
+msr-tools
+irqbalance
+
+# build tools for cargo deps
+gcc
+make
+pkgconf
+clang
+lld
+mold

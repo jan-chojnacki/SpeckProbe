@@ -10,3 +10,5 @@ cfgn.toml
 bench.toml
 /output
 /config
+archlive/out
+archlive/work
