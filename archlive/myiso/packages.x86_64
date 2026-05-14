@@ -34,7 +34,6 @@ zstd
 cpupower
 hwloc
 numactl
-msr-tools
 
 # build tools for cargo deps
 gcc
