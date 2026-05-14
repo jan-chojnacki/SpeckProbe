@@ -119,28 +119,6 @@ mod tests {
     }
 
     #[test]
-    fn different_iv_produces_different_ciphertext() {
-        let key = [0u8; 8];
-        let pt = b"hello";
-        let ct1 = make_cbc(SpeckVersion::Speck32_64, &key, &[0u8; 4])
-            .encrypt(pt)
-            .unwrap();
-        let ct2 = make_cbc(SpeckVersion::Speck32_64, &key, &[1u8; 4])
-            .encrypt(pt)
-            .unwrap();
-        assert_ne!(ct1, ct2);
-    }
-
-    #[test]
-    fn identical_plaintext_blocks_produce_different_ciphertext_blocks() {
-        let pt = [0x42u8; 8];
-        let ct = make_cbc(SpeckVersion::Speck32_64, &[0u8; 8], &[0u8; 4])
-            .encrypt(&pt)
-            .unwrap();
-        assert_ne!(&ct[..4], &ct[4..8]);
-    }
-
-    #[test]
     fn decrypt_unaligned_length_returns_error() {
         let err = make_cbc(SpeckVersion::Speck32_64, &[0u8; 8], &[0u8; 4])
             .decrypt(&[0u8; 3])

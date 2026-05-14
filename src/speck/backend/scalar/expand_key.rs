@@ -4,7 +4,7 @@ macro_rules! expand_key_inline {
         let mut k = $key[$key_words - 1];
 
 
-        seq!(I in 0..$rounds {
+        seq_macro::seq!(I in 0..$rounds {
             $round_keys[I] = k;
             encrypt_round_inline!(l[key_idx!($key_words, I)],
                 k, <$word as From<u8>>::from(I as u8), $alpha, $beta);

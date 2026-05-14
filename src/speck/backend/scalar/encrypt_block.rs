@@ -4,7 +4,6 @@ use crate::speck::backend::{U24, U48};
 use crate::speck::impl_adapter;
 use crate::speck::key_idx;
 use crate::speck::key_words_inline;
-use seq_macro::seq;
 use std::ops::BitXor;
 
 macro_rules! impl_encrypt_block {
@@ -17,7 +16,7 @@ macro_rules! impl_encrypt_block {
             let mut x = ct[0];
             let mut y = ct[1];
 
-            seq!(I in 0..=$rounds {
+            seq_macro::seq!(I in 0..=$rounds {
                 encrypt_round_inline!(x, y, round_keys[I], $alpha, $beta);
             });
 
@@ -76,7 +75,7 @@ macro_rules! impl_encrypt_block_inflight {
             let mut x = ct[0];
             let mut y = ct[1];
 
-            seq!(I in 0..$rounds {
+            seq_macro::seq!(I in 0..$rounds {
                 encrypt_round_inline!(x, y, k, $alpha, $beta);
                 encrypt_round_inline!(l[key_idx!($key_words, I)],
                     k, <$word as From<u8>>::from(I as u8), $alpha, $beta);
