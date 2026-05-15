@@ -20,4 +20,5 @@ file_permissions=(
   ["/root/.zlogin"]="0:0:644"
   ["/root/tune.sh"]="0:0:755"
   ["/root/activate-rust.sh"]="0:0:755"
+  ["/root/speck/b"]="0:0:755"
 )

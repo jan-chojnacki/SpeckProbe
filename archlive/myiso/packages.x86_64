@@ -5,7 +5,6 @@ amd-ucode
 
 # base system (explicit, replaces base metapackage)
 linux
-linux-firmware
 mkinitcpio
 mkinitcpio-archiso
 filesystem
@@ -24,6 +23,7 @@ grep
 sed
 procps-ng
 shadow
+vim
 
 # compression (initramfs xz + squashfs zstd)
 gzip

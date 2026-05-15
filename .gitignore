@@ -12,3 +12,4 @@ bench.toml
 /config
 archlive/out
 archlive/work
+/vendor
