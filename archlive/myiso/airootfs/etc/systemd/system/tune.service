@@ -1,7 +1,8 @@
 [Unit]
-After=sysinit.target
-Before=getty.target
+Description=Static performance tuning (offline)
 DefaultDependencies=no
+After=sysinit.target systemd-sysctl.service
+Before=getty.target
 
 [Service]
 Type=oneshot

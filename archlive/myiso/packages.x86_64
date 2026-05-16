@@ -1,5 +1,6 @@
 # bootloader
 amd-ucode
+systemd-sysvcompat
 
 # base system (explicit, replaces base metapackage)
 linux
@@ -25,7 +26,6 @@ vim
 zstd
 
 # performance/diagnostic tools
-cpupower
 hwloc
 numactl
 perf
