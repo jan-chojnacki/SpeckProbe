@@ -1,6 +1,5 @@
 [Unit]
-Description=Stop udevd after boot (no hotplug needed on live)
-After=multi-user.target tune.service
+Description=Stop udevd after boot
 Requires=multi-user.target
 
 [Service]

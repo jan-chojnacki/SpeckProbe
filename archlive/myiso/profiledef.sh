@@ -17,8 +17,8 @@ bootstrap_tarball_compression=('zstd' '-c' '-T0' '--auto-threads=logical' '--lon
 file_permissions=(
   ["/etc/shadow"]="0:0:400"
   ["/root"]="0:0:750"
-  ["/root/.zlogin"]="0:0:644"
+  ["/root/.bash_profile"]="0:0:644"
+  ["/root/rust.sh"]="0:0:755"
   ["/root/tune.sh"]="0:0:755"
-  ["/root/activate-rust.sh"]="0:0:755"
   ["/root/speck/b"]="0:0:755"
 )

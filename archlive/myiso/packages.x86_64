@@ -1,6 +1,4 @@
 # bootloader
-efibootmgr
-edk2-shell
 amd-ucode
 
 # base system (explicit, replaces base metapackage)
@@ -11,13 +9,11 @@ filesystem
 glibc
 gcc-libs
 systemd
-systemd-sysvcompat
 
 # core tools
 bash
 coreutils
 util-linux
-sudo
 findutils
 grep
 sed
@@ -26,21 +22,19 @@ shadow
 vim
 
 # compression (initramfs xz + squashfs zstd)
-gzip
-xz
 zstd
 
 # performance/diagnostic tools
 cpupower
 hwloc
 numactl
+perf
 
 # build tools for cargo deps
 gcc
 make
 pkgconf
 clang
-lld
 mold
 rust
 
