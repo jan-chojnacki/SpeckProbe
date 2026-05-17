@@ -20,5 +20,5 @@ file_permissions=(
   ["/root/.bash_profile"]="0:0:644"
   ["/root/rust.sh"]="0:0:755"
   ["/root/tune.sh"]="0:0:755"
-  ["/root/speck/b"]="0:0:755"
+  ["/root/run.sh"]="0:0:755"
 )

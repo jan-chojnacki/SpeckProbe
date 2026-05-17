@@ -1,8 +1,6 @@
-# bootloader
 amd-ucode
 systemd-sysvcompat
 
-# base system (explicit, replaces base metapackage)
 linux
 mkinitcpio
 mkinitcpio-archiso
@@ -11,7 +9,6 @@ glibc
 gcc-libs
 systemd
 
-# core tools
 bash
 coreutils
 util-linux
@@ -22,15 +19,12 @@ procps-ng
 shadow
 vim
 
-# compression (initramfs xz + squashfs zstd)
 zstd
 
-# performance/diagnostic tools
 hwloc
 numactl
 perf
 
-# build tools for cargo deps
 gcc
 make
 pkgconf
@@ -38,6 +32,5 @@ clang
 mold
 rust
 
-# IPC
 dbus-broker
 dbus-broker-units
