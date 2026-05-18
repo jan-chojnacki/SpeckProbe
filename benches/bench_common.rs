@@ -1,12 +1,23 @@
 use criterion::Criterion;
 use std::time::Duration;
 
-pub fn criterion_config() -> Criterion {
+pub fn criterion_slow_config() -> Criterion {
     Criterion::default()
-        .warm_up_time(Duration::from_millis(500))
-        .measurement_time(Duration::from_secs(3))
-        .sample_size(10)
-        .nresamples(1_000)
+        .warm_up_time(Duration::from_secs(3))
+        .measurement_time(Duration::from_secs(5))
+        .sample_size(30)
+        .nresamples(100_000)
+        .confidence_level(0.95)
+        .significance_level(0.05)
+        .noise_threshold(0.02)
+}
+
+pub fn criterion_fast_config() -> Criterion {
+    Criterion::default()
+        .warm_up_time(Duration::from_secs(3))
+        .measurement_time(Duration::from_secs(5))
+        .sample_size(100)
+        .nresamples(100_000)
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)

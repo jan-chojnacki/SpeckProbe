@@ -1,7 +1,7 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_config;
+use bench_common::criterion_fast_config;
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
@@ -194,7 +194,7 @@ fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
     name = benches;
-    config = criterion_config();
+    config = criterion_fast_config();
     targets = benchmark
 }
 

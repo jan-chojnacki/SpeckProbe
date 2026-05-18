@@ -1,7 +1,7 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_config;
+use bench_common::criterion_slow_config;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 use criterion::Throughput;
 use criterion::{Criterion, criterion_group, criterion_main};
@@ -159,7 +159,7 @@ fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
     name = benches;
-    config = criterion_config();
+    config = criterion_slow_config();
     targets = benchmark
 }
 

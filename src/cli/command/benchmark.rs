@@ -33,7 +33,6 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
             .step_by(config.step)
             .take(config.samples - 1);
         for bits in dense.chain(sparse) {
-            dbg!(bits);
             let duration = run_pass(&t, bits)?;
             records.push(BenchmarkRecord {
                 bits_measured: bits,
