@@ -241,8 +241,15 @@ pub fn display_benchmark_info(config: &BenchmarkConfig, output_path: &Path, tota
     println!(
         "{}",
         bullet()
-            .label("Bits")
-            .value(config.bits.to_string())
+            .label("Samples")
+            .value(config.samples.to_string())
+            .render(width)
+    );
+    println!(
+        "{}",
+        bullet()
+            .label("Step")
+            .value(config.step.to_string())
             .render(width)
     );
     println!(

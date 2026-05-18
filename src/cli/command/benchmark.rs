@@ -17,10 +17,7 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
     let config = load_config::<BenchmarkConfig>(&config_path)?;
     let targets = targets_from_config(&config);
 
-    let total_passes: usize = targets
-        .iter()
-        .map(|t| config.bits.saturating_sub(t.suffix_bytes * 8))
-        .sum();
+    let total_passes = targets.len() * (config.step + config.samples);
 
     display_banner();
     display_benchmark_info(&config, &output_path, total_passes);
@@ -30,7 +27,13 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
     let mut records: Vec<BenchmarkRecord> = Vec::new();
 
     for t in targets {
-        for bits in (t.suffix_bytes * 8 + 1)..=config.bits {
+        let min_bits = t.suffix_bytes * 8 + clog2(num_cpus::get() as u32) as usize;
+        let dense = min_bits..(min_bits + config.step);
+        let sparse = (min_bits + config.step..)
+            .step_by(config.step)
+            .take(config.samples - 1);
+        for bits in dense.chain(sparse) {
+            dbg!(bits);
             let duration = run_pass(&t, bits)?;
             records.push(BenchmarkRecord {
                 bits_measured: bits,
@@ -51,6 +54,10 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
     pb.finish();
     save_benchmark_records(&records, &output_path)?;
     Ok(())
+}
+
+fn clog2(n: u32) -> u32 {
+    u32::BITS - n.saturating_sub(1).leading_zeros()
 }
 
 struct BenchmarkTarget {

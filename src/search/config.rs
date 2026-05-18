@@ -48,13 +48,13 @@ pub struct SearchConfig {
 pub fn sample() -> SearchConfig {
     SearchConfig {
         cipher_mode: CipherMode::Ecb,
-        speck_version: SpeckVersion::Speck32_64,
+        speck_version: SpeckVersion::Speck64_128,
         cipher_function: CipherFunction::EncryptInflight,
-        suffix_bytes_size: 3,
+        suffix_bytes_size: 2,
         num_threads: num_cpus::get(),
         backend_hint: BackendHint::Auto,
-        start: vec![0; 5],
-        end: vec![255, 15, 0, 0, 0],
+        start: vec![0; 14],
+        end: vec![255, 255, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         data: vec![[0, 0], [1, 1]],
         expected: vec![[0, 0], [1, 1]],
         iv: None,

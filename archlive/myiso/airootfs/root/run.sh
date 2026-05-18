@@ -53,9 +53,16 @@ echo ">>> sample configs"
 
 echo ">>> perf record"
 rm -f ./perf.data
-perf record -F 999 -e cycles:pp --call-graph=dwarf -o ./perf.data -- \
+perf record -F 999 -e cycles:pp --call-graph=dwarf --buildid-all -o ./perf.data -- \
     "$BIN" search ./config/search.toml
-mv ./perf.data "$DATA_DIR/perf.data"
+
+cp /proc/kallsyms ./kallsyms
+cp /proc/modules  ./modules
+
+perf archive ./perf.data
+
+chmod 0644 ./perf.data ./perf.data.tar.bz2 ./kallsyms ./modules
+mv ./perf.data ./perf.data.tar.bz2 ./kallsyms ./modules "$DATA_DIR/"
 
 echo ">>> speck-probe benchmark"
 mkdir -p ./output
