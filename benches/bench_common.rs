@@ -10,6 +10,7 @@ pub fn criterion_slow_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
+        .without_plots()
 }
 
 pub fn criterion_fast_config() -> Criterion {
@@ -21,6 +22,7 @@ pub fn criterion_fast_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
+        .without_plots()
 }
 
 #[macro_export]
