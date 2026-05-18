@@ -53,8 +53,10 @@ echo ">>> sample configs"
 
 echo ">>> perf record"
 rm -f ./perf.data
+boost 0
 perf record -F 999 -e cycles:pp --call-graph=dwarf --buildid-all -o ./perf.data -- \
     "$BIN" search ./config/search.toml
+boost 1
 
 cp /proc/kallsyms ./kallsyms
 cp /proc/modules  ./modules
@@ -66,7 +68,9 @@ mv ./perf.data ./perf.data.tar.bz2 ./kallsyms ./modules "$DATA_DIR/"
 
 echo ">>> speck-probe benchmark"
 mkdir -p ./output
+boost 0
 "$BIN" benchmark ./config/benchmark.toml -o ./output/system.csv
+boost 1
 mv ./output/system.csv "$DATA_DIR/system.csv"
 
 echo ">>> cargo bench --no-run"
