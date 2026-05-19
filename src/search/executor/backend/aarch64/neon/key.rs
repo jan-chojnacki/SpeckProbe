@@ -162,8 +162,8 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES,
     }
 
     pub fn update(&mut self, v: [u64; LANES]) {
-        for i in 0..LANES {
-            let suffix = v[i].to_le_bytes();
+        for (i, v) in v.iter().enumerate().take(LANES) {
+            let suffix = v.to_le_bytes();
             self.bytes[i][..Self::SUFFIX].copy_from_slice(&suffix[..Self::SUFFIX]);
         }
     }
@@ -177,7 +177,7 @@ impl<const LANES: usize, const BYTES: usize, const PREFIX: usize> NEONKey<LANES,
         &self.bytes
     }
 
-    pub fn to_vec(&self) -> [Vec<u8>; LANES] {
+    pub fn to_vec(self) -> [Vec<u8>; LANES] {
         self.as_bytes().map(|b| b.to_vec())
     }
 }

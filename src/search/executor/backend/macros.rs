@@ -132,6 +132,7 @@ macro_rules! define_search {
     }};
 }
 
+#[cfg(target_arch = "x86_64")]
 macro_rules! impl_x86_simd_key {
     ($name:ident, $align:expr, $feature:tt, $vector:ty, $vector_size:expr, $set_zero:path, $load:path) => {
         const VECTOR_SIZE: usize = $vector_size;
@@ -706,4 +707,5 @@ macro_rules! impl_x86_simd_key {
 
 pub(crate) use define_backend_dispatch;
 pub(crate) use define_search;
+#[cfg(target_arch = "x86_64")]
 pub(crate) use impl_x86_simd_key;
