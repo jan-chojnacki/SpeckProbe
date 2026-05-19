@@ -1,6 +1,7 @@
 use criterion::Criterion;
 use std::time::Duration;
 
+#[allow(dead_code)]
 pub fn criterion_slow_config() -> Criterion {
     Criterion::default()
         .warm_up_time(Duration::from_secs(3))
@@ -10,9 +11,10 @@ pub fn criterion_slow_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
-        .without_plots()
+    // .without_plots()
 }
 
+#[allow(dead_code)]
 pub fn criterion_fast_config() -> Criterion {
     Criterion::default()
         .warm_up_time(Duration::from_secs(3))
@@ -22,7 +24,7 @@ pub fn criterion_fast_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
-        .without_plots()
+    // .without_plots()
 }
 
 #[macro_export]
@@ -107,23 +109,9 @@ macro_rules! define_engine_bench {
 
                 g.throughput(Throughput::Elements(end.saturating_add(1)));
 
-                g.bench_function(criterion::BenchmarkId::new("encrypt", format!("{}/{}", $prefix, I)), |b| {
-                    b.iter(|| {
-                        $encrypt(black_box(task), black_box(&mut out));
-                        black_box(&out);
-                    })
-                });
-
                 g.bench_function(criterion::BenchmarkId::new("encrypt_inflight", format!("{}/{}", $prefix, I)), |b| {
                     b.iter(|| {
                         $encrypt_inflight(black_box(task), black_box(&mut out));
-                        black_box(&out);
-                    })
-                });
-
-                g.bench_function(criterion::BenchmarkId::new("decrypt", format!("{}/{}", $prefix, I)), |b| {
-                    b.iter(|| {
-                        $decrypt(black_box(task), black_box(&mut out));
                         black_box(&out);
                     })
                 });

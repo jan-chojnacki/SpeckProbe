@@ -23,7 +23,6 @@ zstd
 
 hwloc
 numactl
-perf
 
 gcc
 make

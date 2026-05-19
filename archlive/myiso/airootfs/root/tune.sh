@@ -8,9 +8,7 @@ for e in /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference; do
     echo performance > "$e" 2>/dev/null || true
 done
 
-sysctl -q -w kernel.perf_event_paranoid=-1 2>/dev/null || true
-sysctl -q -w kernel.kptr_restrict=0        2>/dev/null || true
-sysctl -q -w kernel.numa_balancing=0       2>/dev/null || true
+sysctl -q -w kernel.numa_balancing=0 2>/dev/null || true
 
 echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null || true
 

@@ -34,11 +34,7 @@ pub fn sample() -> BenchmarkConfig {
             Speck128_192,
             Speck128_256,
         ],
-        cipher_functions: vec![
-            CipherFunction::Encrypt,
-            CipherFunction::EncryptInflight,
-            CipherFunction::Decrypt,
-        ],
+        cipher_functions: vec![CipherFunction::EncryptInflight],
         #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
         backend_hints: vec![
             BackendHint::Avx512,
@@ -62,6 +58,6 @@ pub fn sample() -> BenchmarkConfig {
         backend_hints: vec![BackendHint::Neon, BackendHint::Scalar],
         #[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
         backend_hints: vec![BackendHint::Scalar],
-        suffix_bytes_values: vec![1, 2, 3],
+        suffix_bytes_values: vec![1, 2],
     }
 }

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034
 
 iso_name="archbtw"
 iso_label="ARCHBTW"
-iso_publisher="archbench <https://example.org>"
 iso_application="Arch Benchmark Tooling Workspace"
 iso_version="1.0.0"
 install_dir="arch"

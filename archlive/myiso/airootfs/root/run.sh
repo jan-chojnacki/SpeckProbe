@@ -13,10 +13,6 @@ VENDOR_CFG=(
   --config 'source.crates-io.replace-with="vendored-sources"'
   --config "source.vendored-sources.directory=\"$SPECK_DIR/vendor\""
 )
-PERF_CFG=(
-  --config 'profile.release.strip=false'
-  --config 'profile.release.debug=2'
-)
 
 [[ -d "$SPECK_DIR" ]] || { echo "missing $SPECK_DIR"; exit 1; }
 mountpoint -q "$DATA_ROOT" || mount "$DATA_ROOT" || {
@@ -41,30 +37,14 @@ CORE1_CPUS="$(lscpu -p=CPU,CORE | awk -F, '!/^#/ && $2==1 {print $1}' | paste -s
 
 cd "$SPECK_DIR"
 
-echo ">>> build (release, offline, vendored, debug=2, strip=false)"
-cargo --offline "${VENDOR_CFG[@]}" "${PERF_CFG[@]}" build --release
+echo ">>> build"
+cargo --offline "${VENDOR_CFG[@]}" build --release
 
 BIN="$SPECK_DIR/target/release/speck-probe"
 [[ -x "$BIN" ]] || { echo "binary missing: $BIN"; exit 1; }
 
-echo ">>> sample configs"
-"$BIN" sample search    --force ./config/search.toml
+echo ">>> sample config"
 "$BIN" sample benchmark --force ./config/benchmark.toml
-
-echo ">>> perf record"
-rm -f ./perf.data
-boost 0
-perf record -F 999 -e cycles:pp --call-graph=dwarf --buildid-all -o ./perf.data -- \
-    "$BIN" search ./config/search.toml
-boost 1
-
-cp /proc/kallsyms ./kallsyms
-cp /proc/modules  ./modules
-
-perf archive ./perf.data
-
-chmod 0644 ./perf.data ./perf.data.tar.bz2 ./kallsyms ./modules
-mv ./perf.data ./perf.data.tar.bz2 ./kallsyms ./modules "$DATA_DIR/"
 
 echo ">>> speck-probe benchmark"
 mkdir -p ./output
