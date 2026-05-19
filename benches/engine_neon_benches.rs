@@ -21,9 +21,8 @@ define_engine_bench!(
     bytes = 8,
     word = uint16x8_t,
     prefix = "32_64",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_32_64,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_32_64,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_32_64
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_32_64,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -33,9 +32,8 @@ define_engine_bench!(
     bytes = 9,
     word = uint32x4_t,
     prefix = "48_72",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_48_72,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_48_72,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_48_72
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_48_72,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -45,9 +43,8 @@ define_engine_bench!(
     bytes = 12,
     word = uint32x4_t,
     prefix = "48_96",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_48_96,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_48_96,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_48_96
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_48_96,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -57,9 +54,8 @@ define_engine_bench!(
     bytes = 12,
     word = uint32x4_t,
     prefix = "64_96",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_64_96,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_64_96,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_64_96
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_64_96,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -69,9 +65,8 @@ define_engine_bench!(
     bytes = 16,
     word = uint32x4_t,
     prefix = "64_128",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_64_128,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_64_128,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_64_128
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_64_128,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -81,9 +76,8 @@ define_engine_bench!(
     bytes = 12,
     word = uint64x2_t,
     prefix = "96_96",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_96_96,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_96_96,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_96_96
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_96_96,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -93,9 +87,8 @@ define_engine_bench!(
     bytes = 18,
     word = uint64x2_t,
     prefix = "96_144",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_96_144,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_96_144,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_96_144
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_96_144,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -105,9 +98,8 @@ define_engine_bench!(
     bytes = 16,
     word = uint64x2_t,
     prefix = "128_128",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_128_128,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_128_128,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_128_128
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_128_128,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -117,9 +109,8 @@ define_engine_bench!(
     bytes = 24,
     word = uint64x2_t,
     prefix = "128_192",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_128_192,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_128_192,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_128_192
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_128_192,
+    function_name = "encrypt_inflight"
 );
 
 define_engine_bench!(
@@ -129,9 +120,8 @@ define_engine_bench!(
     bytes = 32,
     word = uint64x2_t,
     prefix = "128_256",
-    encrypt = speck_probe::search::executor::backend::neon_search_encrypt_128_256,
-    encrypt_inflight = speck_probe::search::executor::backend::neon_search_encrypt_inflight_128_256,
-    decrypt = speck_probe::search::executor::backend::neon_search_decrypt_128_256
+    function = speck_probe::search::executor::backend::neon_search_encrypt_inflight_128_256,
+    function_name = "encrypt_inflight"
 );
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]

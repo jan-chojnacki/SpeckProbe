@@ -18,8 +18,6 @@ VENDOR_CFG=(
 mountpoint -q "$DATA_ROOT" || mount "$DATA_ROOT" || {
   echo "DATA partition not mounted at $DATA_ROOT"; exit 1; }
 mkdir -p "$DATA_DIR"
-command -v perf >/dev/null  || { echo "perf missing"; exit 1; }
-command -v cargo >/dev/null || { echo "cargo missing"; exit 1; }
 
 boost() {
   local v="$1"
@@ -43,16 +41,6 @@ cargo --offline "${VENDOR_CFG[@]}" build --release
 BIN="$SPECK_DIR/target/release/speck-probe"
 [[ -x "$BIN" ]] || { echo "binary missing: $BIN"; exit 1; }
 
-echo ">>> sample config"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-
-echo ">>> speck-probe benchmark"
-mkdir -p ./output
-boost 0
-"$BIN" benchmark ./config/benchmark.toml -o ./output/system.csv
-boost 1
-mv ./output/system.csv "$DATA_DIR/system.csv"
-
 echo ">>> cargo bench --no-run"
 cargo --offline "${VENDOR_CFG[@]}" bench --no-run
 
@@ -67,6 +55,16 @@ echo ">>> extract-criterion"
     -o ./output/criterion.csv \
     --clear-output
 mv ./output/criterion.csv "$DATA_DIR/criterion.csv"
+
+echo ">>> sample config"
+"$BIN" sample benchmark --force ./config/benchmark.toml
+
+echo ">>> speck-probe benchmark"
+mkdir -p ./output
+boost 0
+"$BIN" benchmark ./config/benchmark.toml -o ./output/system.csv
+boost 1
+mv ./output/system.csv "$DATA_DIR/system.csv"
 
 sync
 echo ">>> done — results in $DATA_DIR"

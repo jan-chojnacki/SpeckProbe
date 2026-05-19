@@ -16,7 +16,7 @@ file_permissions=(
   ["/etc/shadow"]="0:0:400"
   ["/root"]="0:0:750"
   ["/root/.bash_profile"]="0:0:644"
-  ["/root/rust.sh"]="0:0:755"
   ["/root/tune.sh"]="0:0:755"
   ["/root/run.sh"]="0:0:755"
+  ["/root/speck/offline.sh"]="0:0:755"
 )

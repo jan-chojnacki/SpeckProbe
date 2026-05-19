@@ -21,9 +21,6 @@ vim
 
 zstd
 
-hwloc
-numactl
-
 gcc
 make
 pkgconf

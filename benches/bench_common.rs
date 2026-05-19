@@ -11,7 +11,7 @@ pub fn criterion_slow_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
-    // .without_plots()
+        .without_plots()
 }
 
 #[allow(dead_code)]
@@ -24,7 +24,7 @@ pub fn criterion_fast_config() -> Criterion {
         .confidence_level(0.95)
         .significance_level(0.05)
         .noise_threshold(0.02)
-    // .without_plots()
+        .without_plots()
 }
 
 #[macro_export]
@@ -88,9 +88,8 @@ macro_rules! define_engine_bench {
         bytes = $bytes:expr,
         word = $word:ty,
         prefix = $prefix:literal,
-        encrypt = $encrypt:path,
-        encrypt_inflight = $encrypt_inflight:path,
-        decrypt = $decrypt:path
+        function = $function:path,
+        function_name = $function_name:literal
     ) => {
         $(#[$meta])*
         fn $fn_name(g: &mut criterion::BenchmarkGroup<criterion::measurement::WallTime>) {
@@ -109,9 +108,9 @@ macro_rules! define_engine_bench {
 
                 g.throughput(Throughput::Elements(end.saturating_add(1)));
 
-                g.bench_function(criterion::BenchmarkId::new("encrypt_inflight", format!("{}/{}", $prefix, I)), |b| {
+                g.bench_function(criterion::BenchmarkId::new($function_name, format!("{}/{}", $prefix, I)), |b| {
                     b.iter(|| {
-                        $encrypt_inflight(black_box(task), black_box(&mut out));
+                        $function(black_box(task), black_box(&mut out));
                         black_box(&out);
                     })
                 });

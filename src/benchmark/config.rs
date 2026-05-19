@@ -19,7 +19,7 @@ pub struct BenchmarkConfig {
 
 pub fn sample() -> BenchmarkConfig {
     BenchmarkConfig {
-        samples: 3,
+        samples: 4,
         step: 4,
         cipher_modes: vec![CipherMode::Ecb, CipherMode::Cbc],
         speck_versions: vec![
