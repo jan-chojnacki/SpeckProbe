@@ -13,3 +13,5 @@ bench.toml
 archlive/out
 archlive/work
 /vendor
+/analysis/csv/
+/analysis/svg/

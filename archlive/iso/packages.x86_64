@@ -30,3 +30,5 @@ rust
 
 dbus-broker
 dbus-broker-units
+
+turbostat

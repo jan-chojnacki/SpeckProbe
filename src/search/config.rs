@@ -54,7 +54,7 @@ pub fn sample() -> SearchConfig {
         num_threads: num_cpus::get(),
         backend_hint: BackendHint::Auto,
         start: vec![0; 14],
-        end: vec![255, 255, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        end: vec![255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         data: vec![[0, 0], [1, 1]],
         expected: vec![[0, 0], [1, 1]],
         iv: None,
