@@ -23,7 +23,7 @@ trap cleanup EXIT
 trap 'exit 130' INT TERM
 
 pm_start() {
-  sudo powermetrics --samplers cpu_power,thermal -i 1000 -o "$LOG_DIR/$1" >/dev/null 2>&1 &
+  sudo powermetrics --samplers cpu_power,thermal -i 100 -o "$LOG_DIR/$1" >/dev/null 2>&1 &
   PM_PID=$!; sleep 1
 }
 pm_stop() {

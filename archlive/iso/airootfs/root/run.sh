@@ -33,7 +33,7 @@ push_out() {
 TS_PID=""
 ts_start() {
   modprobe msr 2>/dev/null || true
-  taskset -c 0 turbostat --interval 1 --quiet \
+  taskset -c 0 turbostat --interval 0.1 --quiet \
     --show CoreTmp,PkgWatt,Bzy_MHz,Avg_MHz,CPU \
     --out "$LOG_DIR/$1" &
   TS_PID=$!
