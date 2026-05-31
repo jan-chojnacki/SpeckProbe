@@ -2,9 +2,14 @@
 mod bench_common;
 
 use bench_common::criterion_slow_config;
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
+#[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+use criterion::Throughput;
+#[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
 use speck_probe::search::domain::key::Key;
+#[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
 use speck_probe::search::domain::task::Task;
+#[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
 use std::hint::black_box;
 
 #[cfg(target_arch = "x86_64")]

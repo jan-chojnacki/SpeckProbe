@@ -2,7 +2,10 @@
 mod bench_common;
 
 use bench_common::criterion_fast_config;
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
+#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+use criterion::Throughput;
+#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 use std::hint::black_box;
 
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
