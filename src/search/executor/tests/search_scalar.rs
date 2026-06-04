@@ -18,6 +18,8 @@ macro_rules! search_tests {
             #[rstest::rstest]
             #[case($pt, $ct, $v, $v)]
             #[case($pt, $ct, $v - RANGE, $v + RANGE)]
+            #[case($pt, $ct, $v, $v + RANGE)]
+            #[case($pt, $ct, $v - RANGE, $v)]
             fn encrypt_test(
                 #[case] data: [$word; 2],
                 #[case] expected: [$word; 2],
@@ -41,6 +43,8 @@ macro_rules! search_tests {
             #[rstest::rstest]
             #[case($pt, $ct, $v, $v)]
             #[case($pt, $ct, $v - RANGE, $v + RANGE)]
+            #[case($pt, $ct, $v, $v + RANGE)]
+            #[case($pt, $ct, $v - RANGE, $v)]
             fn encrypt_inflight_test(
                 #[case] data: [$word; 2],
                 #[case] expected: [$word; 2],
@@ -64,6 +68,8 @@ macro_rules! search_tests {
             #[rstest::rstest]
             #[case($ct, $pt, $v, $v)]
             #[case($ct, $pt, $v - RANGE, $v + RANGE)]
+            #[case($ct, $pt, $v, $v + RANGE)]
+            #[case($ct, $pt, $v - RANGE, $v)]
             fn decrypt_test(
                 #[case] data: [$word; 2],
                 #[case] expected: [$word; 2],
