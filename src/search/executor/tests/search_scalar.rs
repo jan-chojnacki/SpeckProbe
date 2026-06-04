@@ -1,99 +1,7 @@
-macro_rules! search_tests {
-    (
-        mod $mod_name:ident,
-        encrypt:   $enc:path,
-        inflight:  $inf:path,
-        decrypt:   $dec:path,
-        v:         $v:expr,
-        prefix:    $prefix:expr,
-        key_bytes: $kb:expr,
-        pt:        $pt:expr,
-        ct:        $ct:expr,
-        word:      $word:ty,
-    ) => {
-        #[cfg(test)]
-        mod $mod_name {
-            const RANGE: u64 = 1000;
-
-            #[rstest::rstest]
-            #[case($pt, $ct, $v, $v)]
-            #[case($pt, $ct, $v - RANGE, $v + RANGE)]
-            #[case($pt, $ct, $v, $v + RANGE)]
-            #[case($pt, $ct, $v - RANGE, $v)]
-            fn encrypt_test(
-                #[case] data: [$word; 2],
-                #[case] expected: [$word; 2],
-                #[case] start: u64,
-                #[case] end: u64,
-            ) {
-                let mut out = Vec::new();
-                $enc(
-                    $crate::search::domain::task::Task {
-                        prefix: $prefix,
-                        start,
-                        end,
-                        data,
-                        expected,
-                    },
-                    &mut out,
-                );
-                assert!(out.iter().any(|k| k.as_bytes() == ($kb as &[u8])));
-            }
-
-            #[rstest::rstest]
-            #[case($pt, $ct, $v, $v)]
-            #[case($pt, $ct, $v - RANGE, $v + RANGE)]
-            #[case($pt, $ct, $v, $v + RANGE)]
-            #[case($pt, $ct, $v - RANGE, $v)]
-            fn encrypt_inflight_test(
-                #[case] data: [$word; 2],
-                #[case] expected: [$word; 2],
-                #[case] start: u64,
-                #[case] end: u64,
-            ) {
-                let mut out = Vec::new();
-                $inf(
-                    $crate::search::domain::task::Task {
-                        prefix: $prefix,
-                        start,
-                        end,
-                        data,
-                        expected,
-                    },
-                    &mut out,
-                );
-                assert!(out.iter().any(|k| k.as_bytes() == ($kb as &[u8])));
-            }
-
-            #[rstest::rstest]
-            #[case($ct, $pt, $v, $v)]
-            #[case($ct, $pt, $v - RANGE, $v + RANGE)]
-            #[case($ct, $pt, $v, $v + RANGE)]
-            #[case($ct, $pt, $v - RANGE, $v)]
-            fn decrypt_test(
-                #[case] data: [$word; 2],
-                #[case] expected: [$word; 2],
-                #[case] start: u64,
-                #[case] end: u64,
-            ) {
-                let mut out = Vec::new();
-                $dec(
-                    $crate::search::domain::task::Task {
-                        prefix: $prefix,
-                        start,
-                        end,
-                        data,
-                        expected,
-                    },
-                    &mut out,
-                );
-                assert!(out.iter().any(|k| k.as_bytes() == ($kb as &[u8])));
-            }
-        }
-    };
-}
+use super::common::search_tests;
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_32_64,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_32_64,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_32_64,
@@ -103,10 +11,12 @@ search_tests! {
     key_bytes: &[0x18u8, 0x19, 0x10, 0x11, 0x08, 0x09, 0x00, 0x01],
     pt:        [0x6574_u16, 0x694c],
     ct:        [0xa868_u16, 0x42f2],
+    converter: std::convert::identity,
     word:      u16,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_48_72,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_48_72,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_48_72,
@@ -116,10 +26,12 @@ search_tests! {
     key_bytes: &[0x10u8, 0x11, 0x12, 0x08, 0x09, 0x0a, 0x00, 0x01, 0x02],
     pt:        [0x20796c_u32, 0x6c6172],
     ct:        [0xc049a5_u32, 0x385adc],
+    converter: std::convert::identity,
     word:      u32,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_48_96,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_48_96,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_48_96,
@@ -129,10 +41,12 @@ search_tests! {
     key_bytes: &[0x18u8, 0x19, 0x1a, 0x10, 0x11, 0x12, 0x08, 0x09, 0x0a, 0x00, 0x01, 0x02],
     pt:        [0x6d2073_u32, 0x696874],
     ct:        [0x735e10_u32, 0xb6445d],
+    converter: std::convert::identity,
     word:      u32,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_64_96,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_64_96,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_64_96,
@@ -142,10 +56,12 @@ search_tests! {
     key_bytes: &[0x10u8, 0x11, 0x12, 0x13, 0x08, 0x09, 0x0a, 0x0b, 0x00, 0x01, 0x02, 0x03],
     pt:        [0x74614620_u32, 0x736e6165],
     ct:        [0x9f7952ec_u32, 0x4175946c],
+    converter: std::convert::identity,
     word:      u32,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_64_128,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_64_128,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_64_128,
@@ -155,10 +71,12 @@ search_tests! {
     key_bytes: &[0x18u8, 0x19, 0x1a, 0x1b, 0x10, 0x11, 0x12, 0x13, 0x08, 0x09, 0x0a, 0x0b, 0x00, 0x01, 0x02, 0x03],
     pt:        [0x3b726574_u32, 0x7475432d],
     ct:        [0x8c6fa548_u32, 0x454e028b],
+    converter: std::convert::identity,
     word:      u32,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_96_96,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_96_96,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_96_96,
@@ -168,10 +86,12 @@ search_tests! {
     key_bytes: &[0x08u8, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05],
     pt:        [0x65776f68202c_u64, 0x656761737520],
     ct:        [0x9e4d09ab7178_u64, 0x62bdde8f79aa],
+    converter: std::convert::identity,
     word:      u64,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_96_144,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_96_144,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_96_144,
@@ -181,10 +101,12 @@ search_tests! {
     key_bytes: &[0x10u8, 0x11, 0x12, 0x13, 0x14, 0x15, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05],
     pt:        [0x656d6974206e_u64, 0x69202c726576],
     ct:        [0x2bf31072228a_u64, 0x7ae440252ee6],
+    converter: std::convert::identity,
     word:      u64,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_128_128,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_128_128,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_128_128,
@@ -194,10 +116,12 @@ search_tests! {
     key_bytes: &[0x08u8, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07],
     pt:        [0x6c61766975716520_u64, 0x7469206564616d20],
     ct:        [0xa65d985179783265_u64, 0x7860fedf5c570d18],
+    converter: std::convert::identity,
     word:      u64,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_128_192,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_128_192,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_128_192,
@@ -207,10 +131,12 @@ search_tests! {
     key_bytes: &[0x10u8, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07],
     pt:        [0x7261482066656968_u64, 0x43206f7420746e65],
     ct:        [0x1be4cf3a13135566_u64, 0xf9bc185de03c1886],
+    converter: std::convert::identity,
     word:      u64,
 }
 
 search_tests! {
+    #[cfg(test)]
     mod scalar_search_128_256,
     encrypt:   crate::search::executor::backend::scalar_search_encrypt_128_256,
     inflight:  crate::search::executor::backend::scalar_search_encrypt_inflight_128_256,
@@ -220,5 +146,6 @@ search_tests! {
     key_bytes: &[0x18u8, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07],
     pt:        [0x65736f6874206e49_u64, 0x202e72656e6f6f70],
     ct:        [0x4109010405c0f53e_u64, 0x4eeeb48d9c188f43],
+    converter: std::convert::identity,
     word:      u64,
 }

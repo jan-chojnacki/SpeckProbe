@@ -1,3 +1,4 @@
+pub mod common;
 mod dispatch_avx2;
 mod dispatch_avx512;
 mod dispatch_neon;

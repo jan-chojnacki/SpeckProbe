@@ -1,112 +1,7 @@
-macro_rules! search_tests {
-    (
-        mod $mod_name:ident,
-        encrypt:   $enc:path,
-        inflight:  $inf:path,
-        decrypt:   $dec:path,
-        v:         $v:expr,
-        prefix:    $prefix:expr,
-        key_bytes: $kb:expr,
-        pt:        $pt:expr,
-        ct:        $ct:expr,
-        converter: $conv:path,
-        word:      $word:ty,
-    ) => {
-        #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
-        mod $mod_name {
-            const RANGE: u64 = 1000;
-
-            #[rstest::rstest]
-            #[case($pt, $ct, $v, $v)]
-            #[case($pt, $ct, $v - RANGE, $v + RANGE)]
-            #[case($pt, $ct, $v, $v + RANGE)]
-            #[case($pt, $ct, $v - RANGE, $v)]
-            fn encrypt_test(
-                #[case] data: [$word; 2],
-                #[case] expected: [$word; 2],
-                #[case] start: u64,
-                #[case] end: u64,
-            ) {
-                unsafe {
-                    let mut out = Vec::new();
-                    let data = $conv(data);
-                    let expected = $conv(expected);
-                    $enc(
-                        crate::search::domain::task::Task {
-                            prefix: $prefix,
-                            start,
-                            end,
-                            data,
-                            expected,
-                        },
-                        &mut out,
-                    );
-                    assert!(out.iter().any(|k| k.as_bytes() == ($kb as &[u8])));
-                }
-            }
-
-            #[rstest::rstest]
-            #[case($pt, $ct, $v, $v)]
-            #[case($pt, $ct, $v - RANGE, $v + RANGE)]
-            #[case($pt, $ct, $v, $v + RANGE)]
-            #[case($pt, $ct, $v - RANGE, $v)]
-            fn encrypt_inflight_test(
-                #[case] data: [$word; 2],
-                #[case] expected: [$word; 2],
-                #[case] start: u64,
-                #[case] end: u64,
-            ) {
-                unsafe {
-                    let mut out = Vec::new();
-                    let data = $conv(data);
-                    let expected = $conv(expected);
-                    $inf(
-                        crate::search::domain::task::Task {
-                            prefix: $prefix,
-                            start,
-                            end,
-                            data,
-                            expected,
-                        },
-                        &mut out,
-                    );
-                    assert!(out.iter().any(|k| k.as_bytes() == ($kb as &[u8])));
-                }
-            }
-
-            #[rstest::rstest]
-            #[case($ct, $pt, $v, $v)]
-            #[case($ct, $pt, $v - RANGE, $v + RANGE)]
-            #[case($ct, $pt, $v, $v + RANGE)]
-            #[case($ct, $pt, $v - RANGE, $v)]
-            fn decrypt_test(
-                #[case] data: [$word; 2],
-                #[case] expected: [$word; 2],
-                #[case] start: u64,
-                #[case] end: u64,
-            ) {
-                unsafe {
-                    let mut out = Vec::new();
-                    let data = $conv(data);
-                    let expected = $conv(expected);
-                    $dec(
-                        crate::search::domain::task::Task {
-                            prefix: $prefix,
-                            start,
-                            end,
-                            data,
-                            expected,
-                        },
-                        &mut out,
-                    );
-                    assert!(out.iter().any(|k| k.as_bytes() == ($kb as &[u8])));
-                }
-            }
-        }
-    };
-}
+use super::common::search_tests;
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_32_64,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_32_64,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_32_64,
@@ -121,6 +16,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_48_72,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_48_72,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_48_72,
@@ -135,6 +31,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_48_96,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_48_96,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_48_96,
@@ -149,6 +46,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_64_96,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_64_96,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_64_96,
@@ -163,6 +61,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_64_128,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_64_128,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_64_128,
@@ -177,6 +76,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_96_96,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_96_96,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_96_96,
@@ -191,6 +91,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_96_144,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_96_144,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_96_144,
@@ -205,6 +106,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_128_128,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_128_128,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_128_128,
@@ -219,6 +121,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_128_192,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_128_192,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_128_192,
@@ -233,6 +136,7 @@ search_tests! {
 }
 
 search_tests! {
+    #[cfg(all(test, target_arch = "x86_64", target_feature = "sse2"))]
     mod sse2_search_128_256,
     encrypt:   crate::search::executor::backend::sse2_search_encrypt_128_256,
     inflight:  crate::search::executor::backend::sse2_search_encrypt_inflight_128_256,
