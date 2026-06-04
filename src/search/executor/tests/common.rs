@@ -17,7 +17,6 @@ macro_rules! search_tests {
         mod $mod_name {
             const RANGE: u64 = 1000;
 
-            #[allow(unused_unsafe)]
             #[rstest::rstest]
             #[case($pt, $ct, $v, $v)]
             #[case($pt, $ct, $v - RANGE, $v + RANGE)]
@@ -29,6 +28,7 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
+                #[allow(unused_unsafe)]
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
@@ -47,7 +47,6 @@ macro_rules! search_tests {
                 }
             }
 
-            #[allow(unused_unsafe)]
             #[rstest::rstest]
             #[case($pt, $ct, $v, $v)]
             #[case($pt, $ct, $v - RANGE, $v + RANGE)]
@@ -59,6 +58,7 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
+                #[allow(unused_unsafe)]
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
@@ -77,7 +77,6 @@ macro_rules! search_tests {
                 }
             }
 
-            #[allow(unused_unsafe)]
             #[rstest::rstest]
             #[case($ct, $pt, $v, $v)]
             #[case($ct, $pt, $v - RANGE, $v + RANGE)]
@@ -89,6 +88,7 @@ macro_rules! search_tests {
                 #[case] start: u64,
                 #[case] end: u64,
             ) {
+                #[allow(unused_unsafe)]
                 unsafe {
                     let mut out = Vec::new();
                     let data = $conv(data);
