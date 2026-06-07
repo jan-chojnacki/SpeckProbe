@@ -34,7 +34,19 @@ macro_rules! dispatch_tests {
                         backend_hint: BackendHint::Neon,
                     },
                     search_space: SearchSpace {
-                        start: ($key_prefix as &[u8]).to_vec(),
+                        start: {
+                            let mut s = ($key_prefix as &[u8]).to_vec();
+                            let mut borrow: u32 = 36;
+                            for b in s.iter_mut() {
+                                if borrow == 0 {
+                                    break;
+                                }
+                                let v = *b as u32 + 256 - borrow;
+                                *b = (v % 256) as u8;
+                                borrow = u32::from(v < 256);
+                            }
+                            s
+                        },
                         end: ($key_prefix as &[u8]).to_vec(),
                         data: vec![data],
                         expected: vec![expected],
