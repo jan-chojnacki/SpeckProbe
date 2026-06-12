@@ -36,8 +36,6 @@ sudo -v
 sudo renice -n -20 -p "$$" >/dev/null 2>&1 || true
 caffeinate -dimsu -w "$$" & CAFFEINATE_PID=$!
 
-LPM="$(pmset -g 2>/dev/null | awk '/lowpowermode/{print $2; exit}')"; LPM="${LPM:-0}"
-sudo pmset -a lowpowermode 1 >/dev/null 2>&1 && RESTORE+=("sudo pmset -a lowpowermode $LPM")
 NAP="$(pmset -g 2>/dev/null | awk '/powernap/{print $2; exit}')"
 [[ -n "$NAP" ]] && sudo pmset -a powernap 0 >/dev/null 2>&1 && RESTORE+=("sudo pmset -a powernap $NAP")
 mdutil -s / 2>/dev/null | grep -qi enabled && sudo mdutil -a -i off >/dev/null 2>&1 && RESTORE+=("sudo mdutil -a -i on")
@@ -94,7 +92,10 @@ BENCH_DIR="$LOG_DIR/benchmark-parts"
 mkdir -p "$BENCH_DIR"
 SYS_CSV="$LOG_DIR/system.csv"
 
-mapfile -t VERSIONS < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
+VERSIONS=()
+while IFS= read -r v; do
+  VERSIONS+=("$v")
+done < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
 N=${#VERSIONS[@]}; I=0
 
 for V in "${VERSIONS[@]}"; do
