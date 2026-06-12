@@ -36,8 +36,6 @@ sudo -v
 sudo renice -n -20 -p "$$" >/dev/null 2>&1 || true
 caffeinate -dimsu -w "$$" & CAFFEINATE_PID=$!
 
-LPM="$(pmset -g 2>/dev/null | awk '/lowpowermode/{print $2; exit}')"; LPM="${LPM:-0}"
-sudo pmset -a lowpowermode 1 >/dev/null 2>&1 && RESTORE+=("sudo pmset -a lowpowermode $LPM")
 NAP="$(pmset -g 2>/dev/null | awk '/powernap/{print $2; exit}')"
 [[ -n "$NAP" ]] && sudo pmset -a powernap 0 >/dev/null 2>&1 && RESTORE+=("sudo pmset -a powernap $NAP")
 mdutil -s / 2>/dev/null | grep -qi enabled && sudo mdutil -a -i off >/dev/null 2>&1 && RESTORE+=("sudo mdutil -a -i on")
