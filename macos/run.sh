@@ -92,7 +92,10 @@ BENCH_DIR="$LOG_DIR/benchmark-parts"
 mkdir -p "$BENCH_DIR"
 SYS_CSV="$LOG_DIR/system.csv"
 
-mapfile -t VERSIONS < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
+VERSIONS=()
+while IFS= read -r v; do
+  VERSIONS+=("$v")
+done < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
 N=${#VERSIONS[@]}; I=0
 
 for V in "${VERSIONS[@]}"; do
