@@ -55,9 +55,11 @@ fi
 cd "$SPECK_DIR"
 
 echo ">>> build"
-cargo build --release
+cargo build --release && cargo bench --no-run
 BIN="$SPECK_DIR/target/release/speck-probe"
 [[ -x "$BIN" ]] || { echo "binary missing: $BIN"; exit 1; }
+
+sleep 120
 
 echo ">>> backend clock-drop probes"
 "$BIN" sample search --force ./config/search.toml
@@ -67,10 +69,9 @@ for BK in Scalar Neon; do
   pm_start "pm-search-${BK}.txt"
   "$BIN" search "$CFG"
   pm_stop
-done
 
-echo ">>> cargo bench --no-run"
-cargo bench --no-run
+  sleep 60
+done
 
 echo ">>> cargo bench"
 pm_start "pm-bench.txt"
@@ -83,13 +84,42 @@ echo ">>> extract-criterion"
     -o "$LOG_DIR/criterion.csv" \
     --clear-output
 
+sleep 60
+
 echo ">>> sample config"
 "$BIN" sample benchmark --force ./config/benchmark.toml
 
 echo ">>> speck-probe benchmark"
-pm_start "pm-system.txt"
-"$BIN" benchmark ./config/benchmark.toml -o "$LOG_DIR/system.csv"
-pm_stop
+BENCH_DIR="$LOG_DIR/benchmark-parts"
+mkdir -p "$BENCH_DIR"
+SYS_CSV="$LOG_DIR/system.csv"
+
+mapfile -t VERSIONS < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
+N=${#VERSIONS[@]}; I=0
+
+for V in "${VERSIONS[@]}"; do
+  I=$((I+1))
+  VCFG="./config/benchmark-${V}.toml"
+  sed "/^speck_versions = \[/,/^]/c\\
+speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
+  echo ">>> speck-probe benchmark [$I/$N] $V"
+  pm_start "pm-system-${V}.txt"
+  "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
+  pm_stop
+  [[ $I -lt $N ]] && sleep 60
+done
+
+: > "$SYS_CSV"; HDR=0
+for V in "${VERSIONS[@]}"; do
+  f="$BENCH_DIR/system-${V}.csv"
+  [[ -f "$f" ]] || continue
+  if [[ $HDR -eq 0 ]]; then
+    cat "$f" >> "$SYS_CSV"
+    HDR=1
+  else
+    tail -n +2 "$f" >> "$SYS_CSV"
+  fi
+done
 
 echo ">>> done — results in $LOG_DIR"
 ls -la "$LOG_DIR"
