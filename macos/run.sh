@@ -67,7 +67,6 @@ for BK in Scalar Neon; do
   pm_start "pm-search-${BK}.txt"
   "$BIN" search "$CFG"
   pm_stop
-
   sleep 120
 done
 
