@@ -68,7 +68,7 @@ for BK in Scalar Neon; do
   "$BIN" search "$CFG"
   pm_stop
 
-  sleep 60
+  sleep 120
 done
 
 echo ">>> cargo bench"
@@ -82,7 +82,7 @@ echo ">>> extract-criterion"
     -o "$LOG_DIR/criterion.csv" \
     --clear-output
 
-sleep 60
+sleep 120
 
 echo ">>> sample config"
 "$BIN" sample benchmark --force ./config/benchmark.toml
@@ -107,7 +107,7 @@ speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
   pm_start "pm-system-${V}.txt"
   "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
   pm_stop
-  [[ $I -lt $N ]] && sleep 60
+  [[ $I -lt $N ]] && sleep 120
 done
 
 : > "$SYS_CSV"; HDR=0
