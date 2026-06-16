@@ -121,5 +121,48 @@ for V in "${VERSIONS[@]}"; do
   fi
 done
 
+sleep 120
+
+echo ">>> speck-compare"
+CMP_CFG="./config/benchmark-compare.toml"
+sed -e '/^cipher_modes = \[/,/^]/c\
+cipher_modes = ["Ecb"]' \
+    -e '/^backend_hints = \[/,/^]/c\
+backend_hints = ["Auto"]' \
+    -e '/^suffix_bytes_values = \[/,/^]/c\
+suffix_bytes_values = [2]' \
+    ./config/benchmark.toml > "$CMP_CFG"
+
+CMP_DIR="$LOG_DIR/compare-parts"
+mkdir -p "$CMP_DIR"
+CMP_CSV="$LOG_DIR/compare.csv"
+
+CMP_VERSIONS=(Speck32_64 Speck48_72 Speck64_96 Speck128_128)
+CN=${#CMP_VERSIONS[@]}; CI=0
+
+for V in "${CMP_VERSIONS[@]}"; do
+  CI=$((CI+1))
+  VCFG="./config/benchmark-compare-${V}.toml"
+  sed "/^speck_versions = \[/,/^]/c\\
+speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
+  echo ">>> speck-compare [$CI/$CN] $V"
+  pm_start "pm-compare-${V}.txt"
+  "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${V}.csv"
+  pm_stop
+  [[ $CI -lt $CN ]] && sleep 60
+done
+
+: > "$CMP_CSV"; CHDR=0
+for V in "${CMP_VERSIONS[@]}"; do
+  f="$CMP_DIR/compare-${V}.csv"
+  [[ -f "$f" ]] || continue
+  if [[ $CHDR -eq 0 ]]; then
+    cat "$f" >> "$CMP_CSV"
+    CHDR=1
+  else
+    tail -n +2 "$f" >> "$CMP_CSV"
+  fi
+done
+
 echo ">>> done — results in $LOG_DIR"
 ls -la "$LOG_DIR"

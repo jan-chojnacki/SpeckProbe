@@ -106,5 +106,22 @@ boost 1
 ts_stop
 push_out "turbostat-system.txt" "system.csv"
 
+echo ">>> speck-compare"
+CMP_CFG="./config/benchmark-compare.toml"
+sed -e '/^cipher_modes = \[/,/^]/c\
+cipher_modes = ["Ecb"]' \
+    -e '/^backend_hints = \[/,/^]/c\
+backend_hints = ["Auto"]' \
+    -e '/^speck_versions = \[/,/^]/c\
+speck_versions = ["Speck32_64", "Speck48_72", "Speck64_96", "Speck128_128"]' \
+    -e '/^suffix_bytes_values = \[/,/^]/c\
+suffix_bytes_values = [2]' \
+    ./config/benchmark.toml > "$CMP_CFG"
+ts_start "turbostat-compare.txt"
+boost 1
+"$BIN" benchmark "$CMP_CFG" -o "$LOG_DIR/compare.csv"
+ts_stop
+push_out "turbostat-compare.txt" "compare.csv"
+
 echo ">>> done — results in $DATA_DIR"
 ls -la "$DATA_DIR"

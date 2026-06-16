@@ -1,4 +1,4 @@
-use crate::search::executor::{BackendHint, CipherFunction};
+use crate::search::executor::{BackendHint, CipherFunction, CipherMode};
 use crate::speck::SpeckVersion;
 use serde::Serialize;
 
@@ -8,6 +8,7 @@ pub struct BenchmarkRecord {
     pub benchmark: &'static str,
     pub backend: BackendHint,
     pub architecture: &'static str,
+    pub cipher_mode: CipherMode,
     pub function: CipherFunction,
     pub version: SpeckVersion,
     pub suffix: usize,

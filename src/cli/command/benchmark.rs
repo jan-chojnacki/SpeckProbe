@@ -39,6 +39,7 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
                 benchmark: "system",
                 backend: t.backend_hint,
                 architecture,
+                cipher_mode: t.cipher_mode,
                 function: t.cipher_function,
                 version: t.speck_version,
                 suffix: t.suffix_bytes,
