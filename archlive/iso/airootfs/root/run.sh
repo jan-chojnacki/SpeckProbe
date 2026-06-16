@@ -77,10 +77,8 @@ for BK in Scalar Sse2 Avx2 Avx512; do
   ts_stop
   boost 1
   push_out "turbostat-search-${BK}.txt"
-  sleep 120
+  sleep 60
 done
-
-sleep 120
 
 echo ">>> cargo bench"
 ts_start "turbostat-bench.txt"
@@ -97,7 +95,7 @@ echo ">>> extract-criterion"
     --clear-output
 push_out "criterion.csv"
 
-sleep 120
+sleep 60
 
 echo ">>> sample config"
 "$BIN" sample benchmark --force ./config/benchmark.toml
@@ -120,9 +118,12 @@ for V in "${VERSIONS[@]}"; do
 speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
   echo ">>> speck-probe benchmark [$I/$N] $V"
   ts_start "turbostat-system-${V}.txt"
+  boost 0
   "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
+  boost 1
   ts_stop
-  [[ $I -lt $N ]] && sleep 120
+  push_out "turbostat-system-${V}.txt"
+  [[ $I -lt $N ]] && sleep 60
 done
 
 : > "$SYS_CSV"; HDR=0
@@ -136,15 +137,16 @@ for V in "${VERSIONS[@]}"; do
     tail -n +2 "$f" >> "$SYS_CSV"
   fi
 done
+push_out "system.csv"
 
-sleep 120
+sleep 60
 
 echo ">>> speck-compare"
 CMP_CFG="./config/benchmark-compare.toml"
 sed -e '/^cipher_modes = \[/,/^]/c\
 cipher_modes = ["Ecb"]' \
     -e '/^backend_hints = \[/,/^]/c\
-backend_hints = ["Auto"]' \
+backend_hints = ["Avx2", "Avx512"]' \
     -e '/^suffix_bytes_values = \[/,/^]/c\
 suffix_bytes_values = [2]' \
     ./config/benchmark.toml > "$CMP_CFG"
@@ -165,7 +167,8 @@ speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
   ts_start "turbostat-compare-${V}.txt"
   "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${V}.csv"
   ts_stop
-  [[ $CI -lt $CN ]] && sleep 120
+  push_out "turbostat-compare-${V}.txt"
+  [[ $CI -lt $CN ]] && sleep 60
 done
 
 : > "$CMP_CSV"; CHDR=0
@@ -179,7 +182,7 @@ for V in "${CMP_VERSIONS[@]}"; do
     tail -n +2 "$f" >> "$CMP_CSV"
   fi
 done
-
+push_out "compare.csv"
 
 echo ">>> done — results in $DATA_DIR"
 ls -la "$DATA_DIR"

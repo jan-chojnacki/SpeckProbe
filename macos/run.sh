@@ -128,7 +128,7 @@ CMP_CFG="./config/benchmark-compare.toml"
 sed -e '/^cipher_modes = \[/,/^]/c\
 cipher_modes = ["Ecb"]' \
     -e '/^backend_hints = \[/,/^]/c\
-backend_hints = ["Auto"]' \
+backend_hints = ["Neon"]' \
     -e '/^suffix_bytes_values = \[/,/^]/c\
 suffix_bytes_values = [2]' \
     ./config/benchmark.toml > "$CMP_CFG"
