@@ -97,18 +97,45 @@ echo ">>> extract-criterion"
     --clear-output
 push_out "criterion.csv"
 
+sleep 120
+
 echo ">>> sample config"
 "$BIN" sample benchmark --force ./config/benchmark.toml
 
-sleep 120
-
 echo ">>> speck-probe benchmark"
-ts_start "turbostat-system.txt"
-boost 0
-"$BIN" benchmark ./config/benchmark.toml -o "$LOG_DIR/system.csv"
-boost 1
-ts_stop
-push_out "turbostat-system.txt" "system.csv"
+BENCH_DIR="$LOG_DIR/benchmark-parts"
+mkdir -p "$BENCH_DIR"
+SYS_CSV="$LOG_DIR/system.csv"
+
+VERSIONS=()
+while IFS= read -r v; do
+  VERSIONS+=("$v")
+done < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
+N=${#VERSIONS[@]}; I=0
+
+for V in "${VERSIONS[@]}"; do
+  I=$((I+1))
+  VCFG="./config/benchmark-${V}.toml"
+  sed "/^speck_versions = \[/,/^]/c\\
+speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
+  echo ">>> speck-probe benchmark [$I/$N] $V"
+  pm_start "turbostat-system-${V}.txt"
+  "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
+  pm_stop
+  [[ $I -lt $N ]] && sleep 120
+done
+
+: > "$SYS_CSV"; HDR=0
+for V in "${VERSIONS[@]}"; do
+  f="$BENCH_DIR/system-${V}.csv"
+  [[ -f "$f" ]] || continue
+  if [[ $HDR -eq 0 ]]; then
+    cat "$f" >> "$SYS_CSV"
+    HDR=1
+  else
+    tail -n +2 "$f" >> "$SYS_CSV"
+  fi
+done
 
 sleep 120
 
