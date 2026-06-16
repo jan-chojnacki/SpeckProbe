@@ -149,7 +149,7 @@ speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
   pm_start "pm-compare-${V}.txt"
   "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${V}.csv"
   pm_stop
-  [[ $CI -lt $CN ]] && sleep 60
+  [[ $CI -lt $CN ]] && sleep 120
 done
 
 : > "$CMP_CSV"; CHDR=0
