@@ -149,6 +149,7 @@ cipher_modes = ["Ecb"]' \
 backend_hints = ["Avx2", "Avx512"]' \
     -e '/^suffix_bytes_values = \[/,/^]/c\
 suffix_bytes_values = [2]' \
+    -e 's/^samples = .*/samples = 5/' \
     ./config/benchmark.toml > "$CMP_CFG"
 
 CMP_DIR="$LOG_DIR/compare-parts"
