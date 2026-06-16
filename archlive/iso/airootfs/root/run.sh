@@ -119,9 +119,9 @@ for V in "${VERSIONS[@]}"; do
   sed "/^speck_versions = \[/,/^]/c\\
 speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
   echo ">>> speck-probe benchmark [$I/$N] $V"
-  pm_start "turbostat-system-${V}.txt"
+  ts_start "turbostat-system-${V}.txt"
   "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
-  pm_stop
+  ts_stop
   [[ $I -lt $N ]] && sleep 120
 done
 
@@ -162,9 +162,9 @@ for V in "${CMP_VERSIONS[@]}"; do
   sed "/^speck_versions = \[/,/^]/c\\
 speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
   echo ">>> speck-compare [$CI/$CN] $V"
-  pm_start "turbostat-compare-${V}.txt"
+  ts_start "turbostat-compare-${V}.txt"
   "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${V}.csv"
-  pm_stop
+  ts_stop
   [[ $CI -lt $CN ]] && sleep 120
 done
 
