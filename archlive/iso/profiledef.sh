@@ -18,5 +18,4 @@ file_permissions=(
   ["/root/.bash_profile"]="0:0:644"
   ["/root/tune.sh"]="0:0:755"
   ["/root/run.sh"]="0:0:755"
-  ["/root/speck/offline.sh"]="0:0:755"
 )

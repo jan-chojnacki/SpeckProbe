@@ -24,7 +24,6 @@ cp -a "$REPO_ROOT/benches"     "$SPECK_DST/"
 cp -a "$REPO_ROOT/vendor"      "$SPECK_DST/"
 
 cp -a "$REPO_ROOT/.cargo/config.toml" "$SPECK_DST/.cargo/config.toml"
-cp -a "$REPO_ROOT/offline.sh" "$SPECK_DST/"
 cat "$REPO_ROOT/vendor-config-snippet.toml" >> "$SPECK_DST/.cargo/config.toml"
 
 echo ">>> offline check"
