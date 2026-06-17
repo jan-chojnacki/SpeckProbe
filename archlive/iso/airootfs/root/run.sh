@@ -97,10 +97,8 @@ push_out "criterion_x86.csv"
 
 sleep 60
 
-echo ">>> sample config"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-
 echo ">>> speck-probe benchmark"
+"$BIN" sample benchmark --force ./config/benchmark.toml
 BENCH_DIR="$LOG_DIR/benchmark-parts"
 mkdir -p "$BENCH_DIR"
 SYS_CSV="$LOG_DIR/system_x86.csv"
@@ -142,6 +140,7 @@ push_out "system_x86.csv"
 sleep 60
 
 echo ">>> speck-compare"
+"$BIN" sample benchmark --force ./config/benchmark.toml
 CMP_DIR="$LOG_DIR/compare-parts"
 mkdir -p "$CMP_DIR"
 

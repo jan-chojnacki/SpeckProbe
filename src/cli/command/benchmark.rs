@@ -17,7 +17,7 @@ pub fn execute(config_path: PathBuf, output_path: PathBuf) -> Result<(), ProbeEr
     let config = load_config::<BenchmarkConfig>(&config_path)?;
     let targets = targets_from_config(&config);
 
-    let total_passes = targets.len() * (config.step + config.samples);
+    let total_passes = targets.len() * (config.step - 1 + config.samples);
 
     display_banner();
     display_benchmark_info(&config, &output_path, total_passes);

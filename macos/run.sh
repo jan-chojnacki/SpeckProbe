@@ -83,10 +83,8 @@ echo ">>> extract-criterion"
 
 sleep 120
 
-echo ">>> sample config"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-
 echo ">>> speck-probe benchmark"
+"$BIN" sample benchmark --force ./config/benchmark.toml
 BENCH_DIR="$LOG_DIR/benchmark-parts"
 mkdir -p "$BENCH_DIR"
 SYS_CSV="$LOG_DIR/system_aarch64.csv"
