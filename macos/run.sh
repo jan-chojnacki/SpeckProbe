@@ -122,6 +122,7 @@ done
 sleep 120
 
 echo ">>> speck-compare"
+"$BIN" sample benchmark --force ./config/benchmark.toml
 CMP_CFG="./config/benchmark-compare.toml"
 sed -e '/^cipher_modes = \[/,/^]/c\
 cipher_modes = ["Ecb"]' \
