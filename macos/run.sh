@@ -78,7 +78,7 @@ pm_stop
 echo ">>> extract-criterion"
 "$BIN" extract-criterion \
     -i ./target/criterion/ \
-    -o "$LOG_DIR/criterion.csv" \
+    -o "$LOG_DIR/criterion_aarch64.csv" \
     --clear-output
 
 sleep 120
@@ -89,7 +89,7 @@ echo ">>> sample config"
 echo ">>> speck-probe benchmark"
 BENCH_DIR="$LOG_DIR/benchmark-parts"
 mkdir -p "$BENCH_DIR"
-SYS_CSV="$LOG_DIR/system.csv"
+SYS_CSV="$LOG_DIR/system_aarch64.csv"
 
 VERSIONS=()
 while IFS= read -r v; do
@@ -136,7 +136,7 @@ suffix_bytes_values = [2]' \
 
 CMP_DIR="$LOG_DIR/compare-parts"
 mkdir -p "$CMP_DIR"
-CMP_CSV="$LOG_DIR/compare.csv"
+CMP_CSV="$LOG_DIR/compare_aarch64.csv"
 
 CMP_VERSIONS=(Speck32_64 Speck48_72 Speck64_96 Speck128_128)
 CN=${#CMP_VERSIONS[@]}; CI=0

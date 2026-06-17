@@ -91,9 +91,9 @@ push_out "turbostat-bench.txt"
 echo ">>> extract-criterion"
 "$BIN" extract-criterion \
     -i ./target/criterion/ \
-    -o "$LOG_DIR/criterion.csv" \
+    -o "$LOG_DIR/criterion_x86.csv" \
     --clear-output
-push_out "criterion.csv"
+push_out "criterion_x86.csv"
 
 sleep 60
 
@@ -103,7 +103,7 @@ echo ">>> sample config"
 echo ">>> speck-probe benchmark"
 BENCH_DIR="$LOG_DIR/benchmark-parts"
 mkdir -p "$BENCH_DIR"
-SYS_CSV="$LOG_DIR/system.csv"
+SYS_CSV="$LOG_DIR/system_x86.csv"
 
 VERSIONS=()
 while IFS= read -r v; do
@@ -137,7 +137,7 @@ for V in "${VERSIONS[@]}"; do
     tail -n +2 "$f" >> "$SYS_CSV"
   fi
 done
-push_out "system.csv"
+push_out "system_x86.csv"
 
 sleep 60
 
@@ -154,7 +154,7 @@ suffix_bytes_values = [2]' \
 
 CMP_DIR="$LOG_DIR/compare-parts"
 mkdir -p "$CMP_DIR"
-CMP_CSV="$LOG_DIR/compare.csv"
+CMP_CSV="$LOG_DIR/compare_x86.csv"
 
 CMP_VERSIONS=(Speck32_64 Speck48_72 Speck64_96 Speck128_128)
 CN=${#CMP_VERSIONS[@]}; CI=0
@@ -183,7 +183,7 @@ for V in "${CMP_VERSIONS[@]}"; do
     tail -n +2 "$f" >> "$CMP_CSV"
   fi
 done
-push_out "compare.csv"
+push_out "compare_x86.csv"
 
 echo ">>> done — results in $DATA_DIR"
 ls -la "$DATA_DIR"
