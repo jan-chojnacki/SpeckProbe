@@ -16,7 +16,6 @@ pub enum Commands {
     Search {
         #[arg(default_value = "./config/search.toml")]
         config_path: PathBuf,
-
         #[arg(short, long)]
         spurious: bool,
     },

@@ -142,48 +142,57 @@ push_out "system_x86.csv"
 sleep 60
 
 echo ">>> speck-compare"
-CMP_CFG="./config/benchmark-compare.toml"
-sed -e '/^cipher_modes = \[/,/^]/c\
-cipher_modes = ["Ecb"]' \
-    -e '/^backend_hints = \[/,/^]/c\
-backend_hints = ["Avx2", "Avx512"]' \
-    -e '/^suffix_bytes_values = \[/,/^]/c\
-suffix_bytes_values = [2]' \
-    -e 's/^samples = .*/samples = 5/' \
-    ./config/benchmark.toml > "$CMP_CFG"
-
 CMP_DIR="$LOG_DIR/compare-parts"
 mkdir -p "$CMP_DIR"
-CMP_CSV="$LOG_DIR/compare_x86.csv"
 
 CMP_VERSIONS=(Speck32_64 Speck48_72 Speck64_96 Speck128_128)
-CN=${#CMP_VERSIONS[@]}; CI=0
+CMP_BACKENDS=(Avx2 Avx512)
 
-for V in "${CMP_VERSIONS[@]}"; do
-  CI=$((CI+1))
-  VCFG="./config/benchmark-compare-${V}.toml"
-  sed "/^speck_versions = \[/,/^]/c\\
+BN=${#CMP_BACKENDS[@]}; BI=0
+for BK in "${CMP_BACKENDS[@]}"; do
+  BI=$((BI+1))
+  CMP_CFG="./config/benchmark-compare-${BK}.toml"
+  sed -e '/^cipher_modes = \[/,/^]/c\
+cipher_modes = ["Ecb"]' \
+      -e "/^backend_hints = \[/,/^]/c\\
+backend_hints = [\"${BK}\"]" \
+      -e '/^suffix_bytes_values = \[/,/^]/c\
+suffix_bytes_values = [2]' \
+      -e 's/^samples = .*/samples = 7/' \
+      -e 's/^step = .*/step = 3/' \
+      ./config/benchmark.toml > "$CMP_CFG"
+
+  CMP_CSV="$LOG_DIR/compare_x86_${BK}.csv"
+  CN=${#CMP_VERSIONS[@]}; CI=0
+
+  for V in "${CMP_VERSIONS[@]}"; do
+    CI=$((CI+1))
+    VCFG="./config/benchmark-compare-${BK}-${V}.toml"
+    sed "/^speck_versions = \[/,/^]/c\\
 speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
-  echo ">>> speck-compare [$CI/$CN] $V"
-  ts_start "turbostat-compare-${V}.txt"
-  "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${V}.csv"
-  ts_stop
-  push_out "turbostat-compare-${V}.txt"
-  [[ $CI -lt $CN ]] && sleep 60
-done
+    echo ">>> speck-compare [${BK}] [$CI/$CN] $V"
+    ts_start "turbostat-compare-${BK}-${V}.txt"
+    "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${BK}-${V}.csv"
+    ts_stop
+    push_out "turbostat-compare-${BK}-${V}.txt"
+    [[ $CI -lt $CN ]] && sleep 60
+  done
 
-: > "$CMP_CSV"; CHDR=0
-for V in "${CMP_VERSIONS[@]}"; do
-  f="$CMP_DIR/compare-${V}.csv"
-  [[ -f "$f" ]] || continue
-  if [[ $CHDR -eq 0 ]]; then
-    cat "$f" >> "$CMP_CSV"
-    CHDR=1
-  else
-    tail -n +2 "$f" >> "$CMP_CSV"
-  fi
+  : > "$CMP_CSV"; CHDR=0
+  for V in "${CMP_VERSIONS[@]}"; do
+    f="$CMP_DIR/compare-${BK}-${V}.csv"
+    [[ -f "$f" ]] || continue
+    if [[ $CHDR -eq 0 ]]; then
+      cat "$f" >> "$CMP_CSV"
+      CHDR=1
+    else
+      tail -n +2 "$f" >> "$CMP_CSV"
+    fi
+  done
+  push_out "compare_x86_${BK}.csv"
+
+  [[ $BI -lt $BN ]] && sleep 60
 done
-push_out "compare_x86.csv"
 
 echo ">>> done — results in $DATA_DIR"
 ls -la "$DATA_DIR"
