@@ -2,9 +2,9 @@
 mod bench_common;
 
 use bench_common::criterion_engine_config;
+use criterion::{Criterion, criterion_group, criterion_main};
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
-use criterion::{Throughput, SamplingMode};
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{SamplingMode, Throughput};
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 use speck_probe::search::domain::key::Key;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]

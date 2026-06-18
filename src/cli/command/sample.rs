@@ -8,19 +8,9 @@ pub fn handle_sample_search(path: PathBuf, force: bool) -> Result<(), ProbeError
     execute_search(path, force)
 }
 
-pub fn handle_sample_benchmark(path: PathBuf, force: bool) -> Result<(), ProbeError> {
-    execute_benchmark(path, force)
-}
-
 fn execute_search(path: PathBuf, force: bool) -> Result<(), ProbeError> {
     prepare_path(&path, force)?;
     store::save_config(&crate::search::sample(), &path)?;
-    Ok(())
-}
-
-fn execute_benchmark(path: PathBuf, force: bool) -> Result<(), ProbeError> {
-    prepare_path(&path, force)?;
-    store::save_config(&crate::benchmark::sample(), &path)?;
     Ok(())
 }
 
