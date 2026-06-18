@@ -1,11 +1,9 @@
-use crate::benchmark::BenchmarkConfig;
 use crate::search::executor::{
     BackendHint, CipherConfig, DispatchOutput, RuntimeConfig, SearchSpace,
 };
 use colored::Colorize;
 use console::{Alignment, pad_str};
 use std::fmt;
-use std::path::Path;
 use terminal_size::{Width, terminal_size};
 use textwrap::{Options, fill};
 
@@ -71,10 +69,6 @@ fn format_key_hex(bytes: &[u8]) -> String {
         .map(|b| format!("{b:02x}"))
         .collect::<Vec<_>>()
         .join(" ")
-}
-
-fn join_display<T: fmt::Display>(items: impl Iterator<Item = T>) -> String {
-    items.map(|v| v.to_string()).collect::<Vec<_>>().join(", ")
 }
 
 fn prepend_bytes(key: Vec<u8>, count: usize, fill: u8) -> Vec<u8> {
@@ -226,75 +220,6 @@ pub fn display_info(
         let iv = format_key_hex(&iv_bytes);
         println!("{}", bullet().label("IV").value(&iv).render(width));
     }
-}
-
-pub fn display_benchmark_info(config: &BenchmarkConfig, output_path: &Path, total_passes: usize) {
-    let width = terminal_width();
-    let bullet = || Line::new(" •".cyan());
-
-    let versions = join_display(config.speck_versions.iter());
-    let modes = join_display(config.cipher_modes.iter());
-    let functions = join_display(config.cipher_functions.iter());
-    let backends = join_display(config.backend_hints.iter());
-    let suffixes = join_display(config.suffix_bytes_values.iter());
-
-    println!(
-        "{}",
-        bullet()
-            .label("Samples")
-            .value(config.samples.to_string())
-            .render(width)
-    );
-    println!(
-        "{}",
-        bullet()
-            .label("Step")
-            .value(config.step.to_string())
-            .render(width)
-    );
-    println!(
-        "{}",
-        bullet()
-            .label("Speck versions")
-            .value(&versions)
-            .render(width)
-    );
-    println!(
-        "{}",
-        bullet().label("Cipher modes").value(&modes).render(width)
-    );
-    println!(
-        "{}",
-        bullet()
-            .label("Cipher functions")
-            .value(&functions)
-            .render(width)
-    );
-    println!(
-        "{}",
-        bullet().label("Backends").value(&backends).render(width)
-    );
-    println!(
-        "{}",
-        bullet()
-            .label("Suffix bytes")
-            .value(&suffixes)
-            .render(width)
-    );
-    println!(
-        "{}",
-        bullet()
-            .label("Total passes")
-            .value(total_passes.to_string())
-            .render(width)
-    );
-    println!(
-        "{}",
-        bullet()
-            .label("Output")
-            .value(output_path.display().to_string())
-            .render(width)
-    );
 }
 
 pub fn print_error(err: &dyn std::error::Error) {

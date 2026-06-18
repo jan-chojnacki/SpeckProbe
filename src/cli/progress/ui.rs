@@ -116,7 +116,3 @@ fn build_progress_bar_inner(len: u64, bar_width: usize, show_msg: bool) -> Progr
 pub fn build_progress_bar(len: u64) -> ProgressBar {
     build_progress_bar_inner(len, 36, true)
 }
-
-pub fn build_benchmark_progress_bar(len: u64) -> ProgressBar {
-    build_progress_bar_inner(len, 51, false)
-}

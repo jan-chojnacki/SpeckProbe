@@ -1,6 +1,6 @@
 use clap::Parser;
 use speck_probe::cli::{
-    self, Args, Commands, SampleCommand, benchmark, encrypt, extract_criterion, sample, search,
+    self, Args, Commands, SampleCommand, encrypt, extract_criterion, sample, search,
 };
 use speck_probe::error::ProbeError;
 
@@ -19,10 +19,6 @@ fn run() -> Result<(), ProbeError> {
             config_path,
             spurious,
         } => search::execute(config_path, spurious)?,
-        Commands::Benchmark {
-            config_path,
-            output_path,
-        } => benchmark::execute(config_path, output_path)?,
         Commands::ExtractCriterion {
             criterion_path,
             output_path,
@@ -38,9 +34,6 @@ fn run() -> Result<(), ProbeError> {
         Commands::Sample { command: s } => match s {
             SampleCommand::Search { config_path, force } => {
                 sample::handle_sample_search(config_path, force)?
-            }
-            SampleCommand::Benchmark { config_path, force } => {
-                sample::handle_sample_benchmark(config_path, force)?
             }
         },
     }

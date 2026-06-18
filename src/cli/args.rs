@@ -19,12 +19,6 @@ pub enum Commands {
         #[arg(short, long)]
         spurious: bool,
     },
-    Benchmark {
-        #[arg(default_value = "./config/benchmark.toml")]
-        config_path: PathBuf,
-        #[arg(short, long, default_value = "./output/system.csv")]
-        output_path: PathBuf,
-    },
     Encrypt {
         #[arg(short, long)]
         speck_version: SpeckVersion,
@@ -55,12 +49,6 @@ pub enum Commands {
 pub enum SampleCommand {
     Search {
         #[arg(default_value = "./config/search.toml")]
-        config_path: PathBuf,
-        #[arg(short, long)]
-        force: bool,
-    },
-    Benchmark {
-        #[arg(default_value = "./config/benchmark.toml")]
         config_path: PathBuf,
         #[arg(short, long)]
         force: bool,

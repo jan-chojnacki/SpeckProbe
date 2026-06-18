@@ -14,7 +14,6 @@ const BANNER: &str = r#"
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-pub use command::benchmark;
 pub use command::encrypt;
 pub use command::extract_criterion;
 pub use command::sample;
