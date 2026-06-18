@@ -1,12 +1,20 @@
 use crate::bench_common::{create_targets, criterion_system_config, run_system_benchmarks};
-use criterion::{Criterion, SamplingMode, Throughput, criterion_group, criterion_main};
-use speck_probe::search::executor::BackendHint::{Avx2, Avx512, Scalar, Sse2};
+use criterion::{criterion_group, criterion_main, Criterion, SamplingMode, Throughput};
+#[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
+use speck_probe::search::executor::BackendHint::Avx2;
+#[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
+use speck_probe::search::executor::BackendHint::Avx512;
+#[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
+use speck_probe::search::executor::BackendHint::Neon;
+use speck_probe::search::executor::BackendHint::Scalar;
+#[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+use speck_probe::search::executor::BackendHint::Sse2;
 use speck_probe::search::executor::CipherMode;
 use speck_probe::search::executor::CipherMode::{Cbc, Ecb};
 use speck_probe::speck::SpeckVersion;
 use speck_probe::speck::SpeckVersion::{
-    Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
-    Speck128_128, Speck128_192, Speck128_256,
+    Speck128_128, Speck128_192, Speck128_256, Speck32_64, Speck48_72, Speck48_96, Speck64_128,
+    Speck64_96, Speck96_144, Speck96_96,
 };
 
 #[path = "bench_common.rs"]
@@ -45,7 +53,7 @@ fn benchmark_scalar(c: &mut Criterion) {
 }
 
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
-fn benchmark_sse2(c: &mut Criterion) {
+fn benchmark_neon(c: &mut Criterion) {
     let mut g = c.benchmark_group("system/neon");
 
     g.sampling_mode(SamplingMode::Flat);
