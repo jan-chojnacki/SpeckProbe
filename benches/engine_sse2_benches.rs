@@ -2,9 +2,9 @@
 mod bench_common;
 
 use bench_common::criterion_engine_config;
-#[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
-use criterion::{Throughput, SamplingMode};
 use criterion::{Criterion, criterion_group, criterion_main};
+#[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
+use criterion::{SamplingMode, Throughput};
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 use speck_probe::search::domain::key::Key;
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]

@@ -1,5 +1,5 @@
 use crate::bench_common::{create_targets, criterion_compare_config, run_system_benchmarks};
-use criterion::{criterion_group, criterion_main, Criterion, SamplingMode, Throughput};
+use criterion::{Criterion, SamplingMode, Throughput, criterion_group, criterion_main};
 #[cfg(all(target_arch = "x86_64", target_feature = "avx512bw"))]
 use speck_probe::search::executor::BackendHint::Avx512;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
@@ -7,7 +7,7 @@ use speck_probe::search::executor::BackendHint::Neon;
 use speck_probe::search::executor::CipherMode;
 use speck_probe::search::executor::CipherMode::Ecb;
 use speck_probe::speck::SpeckVersion;
-use speck_probe::speck::SpeckVersion::{Speck128_128, Speck32_64, Speck48_72, Speck64_96};
+use speck_probe::speck::SpeckVersion::{Speck32_64, Speck48_72, Speck64_96, Speck128_128};
 
 #[path = "bench_common.rs"]
 mod bench_common;
