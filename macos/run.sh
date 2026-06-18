@@ -87,11 +87,13 @@ for BK in scalar neon; do
 done
 
 echo ">>> cargo bench system"
-for BK in scalar neon; do
-  pm_start "pm-system-${BK}.txt"
-  cargo bench system/"${BK}"
-  pm_stop
-  sleep 60
+for MO in ecb cbc; do
+  for BK in scalar neon; do
+    pm_start "pm-system-${BK}-${MO}.txt"
+    cargo bench system/"${BK}"/"${MO}"
+    pm_stop
+    sleep 120
+  done
 done
 
 echo ">>> cargo bench compare"
@@ -99,7 +101,7 @@ for VE in 32_64 48_72 64_96 128_128; do
   pm_start "pm-compare-${VE}.txt"
   cargo bench compare/neon/ecb/"${VE}"
   pm_stop
-  sleep 60
+  sleep 120
 done
 
 echo ">>> extract-criterion"
