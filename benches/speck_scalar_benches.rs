@@ -1,11 +1,11 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_fast_config;
+use bench_common::criterion_speck_config;
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use std::hint::black_box;
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_32_64_bench,
     prefix = "32_64",
     key = [0, 0, 0, 0],
@@ -15,7 +15,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_32_64
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_48_72_bench,
     prefix = "48_72",
     key = [0, 0, 0],
@@ -25,7 +25,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_48_72
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_48_96_bench,
     prefix = "48_96",
     key = [0, 0, 0, 0],
@@ -35,7 +35,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_48_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_64_96_bench,
     prefix = "64_96",
     key = [0, 0, 0],
@@ -45,7 +45,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_64_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_64_128_bench,
     prefix = "64_128",
     key = [0, 0, 0, 0],
@@ -55,7 +55,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_64_128
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_96_96_bench,
     prefix = "96_96",
     key = [0, 0],
@@ -65,7 +65,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_96_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_96_144_bench,
     prefix = "96_144",
     key = [0, 0, 0],
@@ -75,7 +75,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_96_144
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_128_128_bench,
     prefix = "128_128",
     key = [0, 0],
@@ -85,7 +85,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_128_128
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_128_192_bench,
     prefix = "128_192",
     key = [0, 0, 0],
@@ -95,7 +95,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::scalar_decrypt_block_128_192
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     scalar_128_256_bench,
     prefix = "128_256",
     key = [0, 0, 0, 0],
@@ -125,7 +125,7 @@ fn benchmark(c: &mut Criterion) {
 
 criterion_group! {
     name = benches;
-    config = criterion_fast_config();
+    config = criterion_speck_config();
     targets = benchmark
 }
 

@@ -28,7 +28,7 @@ pub struct RuntimeRequest {
     pub internal_config: InternalConfig,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct RuntimeConfig {
     pub suffix_bytes_size: usize,
     pub num_threads: usize,
@@ -40,7 +40,7 @@ pub struct InternalConfig {
     pub cli_tx: Option<Sender<TaskDone>>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct CipherConfig {
     pub cipher_mode: CipherMode,
     pub speck_version: SpeckVersion,

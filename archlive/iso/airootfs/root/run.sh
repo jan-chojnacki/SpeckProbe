@@ -80,13 +80,48 @@ for BK in Scalar Sse2 Avx2 Avx512; do
   sleep 60
 done
 
-echo ">>> cargo bench"
-ts_start "turbostat-bench.txt"
-boost 0
-taskset -c "$CORE1_CPUS" chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench
+echo ">>> cargo bench speck"
+for BK in scalar sse2 avx2 avx512; do
+  ts_start "turbostat-speck-${BK}.txt"
+  boost 0
+  taskset -c "$CORE1_CPUS" chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench speck/"${BK}"
+  boost 1
+  ts_stop
+  push_out "turbostat-speck-${BK}.txt"
+  sleep 60
+done
+
+echo ">>> cargo bench engine"
+for BK in scalar sse2 avx2 avx512; do
+  ts_start "turbostat-engine-${BK}.txt"
+  boost 0
+  taskset -c "$CORE1_CPUS" chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench engine/"${BK}"
+  boost 1
+  ts_stop
+  push_out "turbostat-engine-${BK}.txt"
+  sleep 60
+done
+
+echo ">>> cargo bench system"
+for BK in scalar sse2 avx2 avx512; do
+  ts_start "turbostat-system-${BK}.txt"
+  boost 0
+  chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench system/"${BK}"
+  boost 1
+  ts_stop
+  push_out "turbostat-system-${BK}.txt"
+  sleep 60
+done
+
+echo ">>> cargo bench compare"
 boost 1
-ts_stop
-push_out "turbostat-bench.txt"
+for VE in 32_64 48_72 64_96 128_128; do
+  ts_start "turbostat-compare-${VE}.txt"
+  chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench compare/avx512/ecb/"${VE}"
+  ts_stop
+  push_out "turbostat-compare-${VE}.txt"
+  sleep 60
+done
 
 echo ">>> extract-criterion"
 "$BIN" extract-criterion \
@@ -94,104 +129,6 @@ echo ">>> extract-criterion"
     -o "$LOG_DIR/criterion_x86.csv" \
     --clear-output
 push_out "criterion_x86.csv"
-
-sleep 60
-
-echo ">>> speck-probe benchmark"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-BENCH_DIR="$LOG_DIR/benchmark-parts"
-mkdir -p "$BENCH_DIR"
-SYS_CSV="$LOG_DIR/system_x86.csv"
-
-VERSIONS=()
-while IFS= read -r v; do
-  VERSIONS+=("$v")
-done < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
-N=${#VERSIONS[@]}; I=0
-
-for V in "${VERSIONS[@]}"; do
-  I=$((I+1))
-  VCFG="./config/benchmark-${V}.toml"
-  sed "/^speck_versions = \[/,/^]/c\\
-speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
-  echo ">>> speck-probe benchmark [$I/$N] $V"
-  ts_start "turbostat-system-${V}.txt"
-  boost 0
-  "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
-  boost 1
-  ts_stop
-  push_out "turbostat-system-${V}.txt"
-  [[ $I -lt $N ]] && sleep 60
-done
-
-: > "$SYS_CSV"; HDR=0
-for V in "${VERSIONS[@]}"; do
-  f="$BENCH_DIR/system-${V}.csv"
-  [[ -f "$f" ]] || continue
-  if [[ $HDR -eq 0 ]]; then
-    cat "$f" >> "$SYS_CSV"
-    HDR=1
-  else
-    tail -n +2 "$f" >> "$SYS_CSV"
-  fi
-done
-push_out "system_x86.csv"
-
-sleep 60
-
-echo ">>> speck-compare"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-CMP_DIR="$LOG_DIR/compare-parts"
-mkdir -p "$CMP_DIR"
-
-CMP_VERSIONS=(Speck32_64 Speck48_72 Speck64_96 Speck128_128)
-CMP_BACKENDS=(Avx2 Avx512)
-
-BN=${#CMP_BACKENDS[@]}; BI=0
-for BK in "${CMP_BACKENDS[@]}"; do
-  BI=$((BI+1))
-  CMP_CFG="./config/benchmark-compare-${BK}.toml"
-  sed -e '/^cipher_modes = \[/,/^]/c\
-cipher_modes = ["Ecb"]' \
-      -e "/^backend_hints = \[/,/^]/c\\
-backend_hints = [\"${BK}\"]" \
-      -e '/^suffix_bytes_values = \[/,/^]/c\
-suffix_bytes_values = [2]' \
-      -e 's/^samples = .*/samples = 7/' \
-      -e 's/^step = .*/step = 3/' \
-      ./config/benchmark.toml > "$CMP_CFG"
-
-  CMP_CSV="$LOG_DIR/compare_x86_${BK}.csv"
-  CN=${#CMP_VERSIONS[@]}; CI=0
-
-  for V in "${CMP_VERSIONS[@]}"; do
-    CI=$((CI+1))
-    VCFG="./config/benchmark-compare-${BK}-${V}.toml"
-    sed "/^speck_versions = \[/,/^]/c\\
-speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
-    echo ">>> speck-compare [${BK}] [$CI/$CN] $V"
-    ts_start "turbostat-compare-${BK}-${V}.txt"
-    "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${BK}-${V}.csv"
-    ts_stop
-    push_out "turbostat-compare-${BK}-${V}.txt"
-    [[ $CI -lt $CN ]] && sleep 60
-  done
-
-  : > "$CMP_CSV"; CHDR=0
-  for V in "${CMP_VERSIONS[@]}"; do
-    f="$CMP_DIR/compare-${BK}-${V}.csv"
-    [[ -f "$f" ]] || continue
-    if [[ $CHDR -eq 0 ]]; then
-      cat "$f" >> "$CMP_CSV"
-      CHDR=1
-    else
-      tail -n +2 "$f" >> "$CMP_CSV"
-    fi
-  done
-  push_out "compare_x86_${BK}.csv"
-
-  [[ $BI -lt $BN ]] && sleep 60
-done
 
 echo ">>> done — results in $DATA_DIR"
 ls -la "$DATA_DIR"

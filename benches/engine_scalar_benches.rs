@@ -1,8 +1,8 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_slow_config;
-use criterion::{Criterion, Throughput, criterion_group, criterion_main};
+use bench_common::criterion_engine_config;
+use criterion::{Criterion, SamplingMode, Throughput, criterion_group, criterion_main};
 use speck_probe::search::domain::key::Key;
 use speck_probe::search::domain::task::Task;
 use std::hint::black_box;
@@ -116,7 +116,7 @@ fn benchmark(c: &mut Criterion) {
 
 criterion_group! {
     name = benches;
-    config = criterion_slow_config();
+    config = criterion_engine_config();
     targets = benchmark
 }
 

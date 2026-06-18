@@ -79,3 +79,11 @@ harness = false
 [[bench]]
 name = "engine_neon_benches"
 harness = false
+
+[[bench]]
+name = "system_benches"
+harness = false
+
+[[bench]]
+name = "compare_benches"
+harness = false

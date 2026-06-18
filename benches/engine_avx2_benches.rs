@@ -1,10 +1,10 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_slow_config;
+use bench_common::criterion_engine_config;
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 use criterion::Throughput;
-use criterion::{Criterion, criterion_group, criterion_main};
+use criterion::{Criterion, SamplingMode, criterion_group, criterion_main};
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
 use speck_probe::search::domain::key::Key;
 #[cfg(all(target_arch = "x86_64", target_feature = "avx2"))]
@@ -150,7 +150,7 @@ fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
     name = benches;
-    config = criterion_slow_config();
+    config = criterion_engine_config();
     targets = benchmark
 }
 

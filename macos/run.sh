@@ -67,103 +67,46 @@ for BK in Scalar Neon; do
   pm_start "pm-search-${BK}.txt"
   "$BIN" search "$CFG"
   pm_stop
-  sleep 120
+  sleep 60
 done
 
-echo ">>> cargo bench"
-pm_start "pm-bench.txt"
-cargo bench
-pm_stop
+echo ">>> cargo bench speck"
+for BK in scalar neon; do
+  pm_start "pm-speck-${BK}.txt"
+  cargo bench speck/"${BK}"
+  pm_stop
+  sleep 60
+done
+
+echo ">>> cargo bench engine"
+for BK in scalar neon; do
+  pm_start "pm-engine-${BK}.txt"
+  cargo bench engine/"${BK}"
+  pm_stop
+  sleep 60
+done
+
+echo ">>> cargo bench system"
+for BK in scalar neon; do
+  pm_start "pm-system-${BK}.txt"
+  cargo bench system/"${BK}"
+  pm_stop
+  sleep 60
+done
+
+echo ">>> cargo bench compare"
+for VE in 32_64 48_72 64_96 128_128; do
+  pm_start "pm-compare-${VE}.txt"
+  cargo bench compare/neon/ecb/"${VE}"
+  pm_stop
+  sleep 60
+done
 
 echo ">>> extract-criterion"
 "$BIN" extract-criterion \
     -i ./target/criterion/ \
     -o "$LOG_DIR/criterion_aarch64.csv" \
     --clear-output
-
-sleep 120
-
-echo ">>> speck-probe benchmark"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-BENCH_DIR="$LOG_DIR/benchmark-parts"
-mkdir -p "$BENCH_DIR"
-SYS_CSV="$LOG_DIR/system_aarch64.csv"
-
-VERSIONS=()
-while IFS= read -r v; do
-  VERSIONS+=("$v")
-done < <(grep -oE 'Speck[0-9]+_[0-9]+' ./config/benchmark.toml | awk '!seen[$0]++')
-N=${#VERSIONS[@]}; I=0
-
-for V in "${VERSIONS[@]}"; do
-  I=$((I+1))
-  VCFG="./config/benchmark-${V}.toml"
-  sed "/^speck_versions = \[/,/^]/c\\
-speck_versions = [\"$V\"]" ./config/benchmark.toml > "$VCFG"
-  echo ">>> speck-probe benchmark [$I/$N] $V"
-  pm_start "pm-system-${V}.txt"
-  "$BIN" benchmark "$VCFG" -o "$BENCH_DIR/system-${V}.csv"
-  pm_stop
-  [[ $I -lt $N ]] && sleep 120
-done
-
-: > "$SYS_CSV"; HDR=0
-for V in "${VERSIONS[@]}"; do
-  f="$BENCH_DIR/system-${V}.csv"
-  [[ -f "$f" ]] || continue
-  if [[ $HDR -eq 0 ]]; then
-    cat "$f" >> "$SYS_CSV"
-    HDR=1
-  else
-    tail -n +2 "$f" >> "$SYS_CSV"
-  fi
-done
-
-sleep 120
-
-echo ">>> speck-compare"
-"$BIN" sample benchmark --force ./config/benchmark.toml
-CMP_CFG="./config/benchmark-compare.toml"
-sed -e '/^cipher_modes = \[/,/^]/c\
-cipher_modes = ["Ecb"]' \
-    -e '/^backend_hints = \[/,/^]/c\
-backend_hints = ["Neon"]' \
-    -e '/^suffix_bytes_values = \[/,/^]/c\
-suffix_bytes_values = [2]' \
-    -e 's/^samples = .*/samples = 7/' \
-    -e 's/^step = .*/step = 3/' \
-    ./config/benchmark.toml > "$CMP_CFG"
-
-CMP_DIR="$LOG_DIR/compare-parts"
-mkdir -p "$CMP_DIR"
-CMP_CSV="$LOG_DIR/compare_aarch64.csv"
-
-CMP_VERSIONS=(Speck32_64 Speck48_72 Speck64_96 Speck128_128)
-CN=${#CMP_VERSIONS[@]}; CI=0
-
-for V in "${CMP_VERSIONS[@]}"; do
-  CI=$((CI+1))
-  VCFG="./config/benchmark-compare-${V}.toml"
-  sed "/^speck_versions = \[/,/^]/c\\
-speck_versions = [\"$V\"]" "$CMP_CFG" > "$VCFG"
-  echo ">>> speck-compare [$CI/$CN] $V"
-  pm_start "pm-compare-${V}.txt"
-  "$BIN" benchmark "$VCFG" -o "$CMP_DIR/compare-${V}.csv"
-  pm_stop
-  [[ $CI -lt $CN ]] && sleep 120
-done
-
-: > "$CMP_CSV"; CHDR=0
-for V in "${CMP_VERSIONS[@]}"; do
-  f="$CMP_DIR/compare-${V}.csv"
-  [[ -f "$f" ]] || continue
-  if [[ $CHDR -eq 0 ]]; then
-    cat "$f" >> "$CMP_CSV"
-    CHDR=1
-  else
-    tail -n +2 "$f" >> "$CMP_CSV"
-  fi
-done
 
 echo ">>> done — results in $LOG_DIR"
 ls -la "$LOG_DIR"

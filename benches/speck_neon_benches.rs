@@ -1,7 +1,7 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_fast_config;
+use bench_common::criterion_speck_config;
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 use criterion::Throughput;
 use criterion::{Criterion, criterion_group, criterion_main};
@@ -10,7 +10,7 @@ use std::arch::aarch64::{vdupq_n_u16, vdupq_n_u32, vdupq_n_u64};
 #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
 use std::hint::black_box;
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_32_64_bench,
@@ -27,7 +27,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_32_64
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_48_72_bench,
@@ -39,7 +39,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_48_72
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_48_96_bench,
@@ -56,7 +56,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_48_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_64_96_bench,
@@ -68,7 +68,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_64_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_64_128_bench,
@@ -85,7 +85,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_64_128
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_96_96_bench,
@@ -97,7 +97,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_96_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_96_144_bench,
@@ -109,7 +109,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_96_144
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_128_128_bench,
@@ -121,7 +121,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_128_128
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_128_192_bench,
@@ -133,7 +133,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::neon_decrypt_block_128_192
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "aarch64", target_feature = "neon"))]
     #[target_feature(enable = "neon")]
     neon_128_256_bench,
@@ -179,7 +179,7 @@ fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
     name = benches;
-    config = criterion_fast_config();
+    config = criterion_speck_config();
     targets = benchmark
 }
 

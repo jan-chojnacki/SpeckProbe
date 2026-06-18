@@ -1,7 +1,7 @@
 #[path = "bench_common.rs"]
 mod bench_common;
 
-use bench_common::criterion_fast_config;
+use bench_common::criterion_speck_config;
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 use criterion::Throughput;
 use criterion::{Criterion, criterion_group, criterion_main};
@@ -11,7 +11,7 @@ use std::hint::black_box;
 #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
 use std::arch::x86_64::{_mm_set1_epi16, _mm_set1_epi32, _mm_set1_epi64x};
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_32_64_bench,
@@ -28,7 +28,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_32_64
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_48_72_bench,
@@ -40,7 +40,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_48_72
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_48_96_bench,
@@ -57,7 +57,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_48_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_64_96_bench,
@@ -69,7 +69,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_64_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_64_128_bench,
@@ -86,7 +86,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_64_128
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_96_96_bench,
@@ -98,7 +98,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_96_96
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_96_144_bench,
@@ -110,7 +110,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_96_144
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_128_128_bench,
@@ -122,7 +122,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_128_128
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_128_192_bench,
@@ -134,7 +134,7 @@ define_cipher_bench!(
     decrypt = speck_probe::speck::sse2_decrypt_block_128_192
 );
 
-define_cipher_bench!(
+define_speck_bench!(
     #[cfg(all(target_arch = "x86_64", target_feature = "sse2"))]
     #[target_feature(enable = "sse2")]
     sse2_128_256_bench,
@@ -181,7 +181,7 @@ fn benchmark(_: &mut Criterion) {}
 
 criterion_group! {
     name = benches;
-    config = criterion_fast_config();
+    config = criterion_speck_config();
     targets = benchmark
 }
 

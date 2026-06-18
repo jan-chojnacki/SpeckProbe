@@ -1,8 +1,28 @@
-use criterion::Criterion;
+use criterion::measurement::WallTime;
+use criterion::{BenchmarkGroup, Criterion};
+use speck_probe::search::executor::CipherMode::Cbc;
+use speck_probe::search::executor::{
+    BackendHint, CipherConfig, CipherFunction, CipherMode, Runtime, RuntimeConfig, SearchSpace,
+};
+use speck_probe::speck::SpeckVersion;
+use std::hint::black_box;
 use std::time::Duration;
 
 #[allow(dead_code)]
-pub fn criterion_slow_config() -> Criterion {
+pub fn criterion_speck_config() -> Criterion {
+    Criterion::default()
+        .warm_up_time(Duration::from_secs(3))
+        .measurement_time(Duration::from_secs(5))
+        .sample_size(100)
+        .nresamples(100_000)
+        .confidence_level(0.95)
+        .significance_level(0.05)
+        .noise_threshold(0.02)
+        .without_plots()
+}
+
+#[allow(dead_code)]
+pub fn criterion_engine_config() -> Criterion {
     Criterion::default()
         .warm_up_time(Duration::from_secs(3))
         .measurement_time(Duration::from_secs(5))
@@ -15,11 +35,24 @@ pub fn criterion_slow_config() -> Criterion {
 }
 
 #[allow(dead_code)]
-pub fn criterion_fast_config() -> Criterion {
+pub fn criterion_system_config() -> Criterion {
     Criterion::default()
         .warm_up_time(Duration::from_secs(3))
         .measurement_time(Duration::from_secs(5))
-        .sample_size(100)
+        .sample_size(30)
+        .nresamples(100_000)
+        .confidence_level(0.95)
+        .significance_level(0.05)
+        .noise_threshold(0.02)
+        .without_plots()
+}
+
+#[allow(dead_code)]
+pub fn criterion_compare_config() -> Criterion {
+    Criterion::default()
+        .warm_up_time(Duration::from_secs(10))
+        .measurement_time(Duration::from_secs(120))
+        .sample_size(30)
         .nresamples(100_000)
         .confidence_level(0.95)
         .significance_level(0.05)
@@ -28,7 +61,7 @@ pub fn criterion_fast_config() -> Criterion {
 }
 
 #[macro_export]
-macro_rules! define_cipher_bench {
+macro_rules! define_speck_bench {
     (
         $(#[$meta:meta])*
         $fn_name:ident,
@@ -93,6 +126,8 @@ macro_rules! define_engine_bench {
     ) => {
         $(#[$meta])*
         fn $fn_name(g: &mut criterion::BenchmarkGroup<criterion::measurement::WallTime>) {
+            g.sampling_mode(SamplingMode::Flat);
+
             seq_macro::seq!(I in 1..=3{
                 let end = $crate::calculate_end!(I);
                 let zero: $word = unsafe { std::mem::zeroed() };
@@ -117,4 +152,120 @@ macro_rules! define_engine_bench {
             });
         }
     };
+}
+
+#[allow(dead_code)]
+pub(crate) struct BenchmarkTarget {
+    pub cipher_mode: CipherMode,
+    pub speck_version: SpeckVersion,
+    pub cipher_function: CipherFunction,
+    pub backend_hint: BackendHint,
+    pub suffix_bytes: usize,
+}
+
+#[allow(dead_code)]
+pub(crate) fn into_runtime_configs(
+    target: &BenchmarkTarget,
+    bits: usize,
+) -> (CipherConfig, RuntimeConfig, SearchSpace) {
+    debug_assert!(bits > 8);
+    debug_assert!(bits < 64);
+
+    let speck_version: SpeckVersion = target.speck_version;
+
+    let start_key = 0u64;
+    let mut start: Vec<u8> = start_key.to_le_bytes().to_vec();
+    let end_key = (1u64 << (bits - target.suffix_bytes * 8)) - 1;
+    let mut end: Vec<u8> = end_key.to_le_bytes().to_vec();
+
+    start.truncate(8 - target.suffix_bytes);
+    end.truncate(8 - target.suffix_bytes);
+
+    for _ in 8..speck_version.key_size_bytes() {
+        start.push(0);
+        end.push(0);
+    }
+
+    let cipher_config = CipherConfig {
+        cipher_mode: target.cipher_mode,
+        speck_version,
+        cipher_function: target.cipher_function,
+    };
+    let runtime_config = RuntimeConfig {
+        suffix_bytes_size: target.suffix_bytes,
+        num_threads: num_cpus::get(),
+        backend_hint: target.backend_hint,
+    };
+    let search_space = SearchSpace {
+        start,
+        end,
+        data: vec![[0, 0], [1, 1]],
+        expected: vec![[0, 0], [1, 1]],
+        iv: {
+            if target.cipher_mode == Cbc {
+                Some([1, 2])
+            } else {
+                None
+            }
+        },
+    };
+
+    (cipher_config, runtime_config, search_space)
+}
+
+#[allow(dead_code)]
+pub(crate) fn create_targets(
+    backend_hint: BackendHint,
+    cipher_modes: &[CipherMode],
+    suffix_bytes: &[usize],
+    speck_versions: &[SpeckVersion],
+) -> Vec<BenchmarkTarget> {
+    let mut targets = Vec::new();
+
+    for version in speck_versions {
+        for mode in cipher_modes {
+            for suffix in suffix_bytes {
+                targets.push(BenchmarkTarget {
+                    cipher_mode: *mode,
+                    speck_version: *version,
+                    cipher_function: CipherFunction::EncryptInflight,
+                    backend_hint,
+                    suffix_bytes: *suffix,
+                });
+            }
+        }
+    }
+
+    targets
+}
+
+#[allow(dead_code)]
+pub(crate) fn run_system_benchmarks(
+    benchmark_targets: Vec<BenchmarkTarget>,
+    mut benchmark_group: BenchmarkGroup<WallTime>,
+    bits: usize,
+) {
+    for t in benchmark_targets {
+        let (cipher_config, runtime_config, search_space) = into_runtime_configs(&t, bits);
+        let mode = t.cipher_mode.to_string().to_lowercase();
+        let version = t.speck_version.to_string();
+        let version = version
+            .strip_prefix("Speck")
+            .unwrap_or(&version)
+            .to_string();
+        let suffix = t.suffix_bytes.to_string();
+
+        benchmark_group.bench_function(
+            criterion::BenchmarkId::new(mode, format!("{}/{}", version, suffix)),
+            |b| {
+                b.iter_batched(
+                    || Runtime::new(cipher_config, runtime_config, search_space.clone()),
+                    |mut runtime| {
+                        black_box(runtime.run().ok());
+                    },
+                    criterion::BatchSize::SmallInput,
+                )
+            },
+        );
+    }
 }
