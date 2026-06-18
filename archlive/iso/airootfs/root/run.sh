@@ -82,33 +82,33 @@ done
 
 echo ">>> cargo bench speck"
 for BK in scalar sse2 avx2 avx512; do
-  ts_start "turbostat-speck-${BK}.txt"
   boost 0
+  ts_start "turbostat-speck-${BK}.txt"
   taskset -c "$CORE1_CPUS" chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench speck/"${BK}"
-  boost 1
   ts_stop
+  boost 1
   push_out "turbostat-speck-${BK}.txt"
   sleep 60
 done
 
 echo ">>> cargo bench engine"
 for BK in scalar sse2 avx2 avx512; do
-  ts_start "turbostat-engine-${BK}.txt"
   boost 0
+  ts_start "turbostat-engine-${BK}.txt"
   taskset -c "$CORE1_CPUS" chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench engine/"${BK}"
-  boost 1
   ts_stop
+  boost 1
   push_out "turbostat-engine-${BK}.txt"
   sleep 60
 done
 
 echo ">>> cargo bench system"
 for BK in scalar sse2 avx2 avx512; do
-  ts_start "turbostat-system-${BK}.txt"
   boost 0
+  ts_start "turbostat-system-${BK}.txt"
   chrt -r 99 cargo --offline "${VENDOR_CFG[@]}" bench system/"${BK}"
-  boost 1
   ts_stop
+  boost 1
   push_out "turbostat-system-${BK}.txt"
   sleep 60
 done
