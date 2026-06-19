@@ -51,19 +51,6 @@ pub fn criterion_system_config() -> Criterion {
         .without_plots()
 }
 
-#[allow(dead_code)]
-pub fn criterion_compare_config() -> Criterion {
-    Criterion::default()
-        .warm_up_time(Duration::from_secs(10))
-        .measurement_time(Duration::from_secs(120))
-        .sample_size(30)
-        .nresamples(100_000)
-        .confidence_level(0.95)
-        .significance_level(0.05)
-        .noise_threshold(0.02)
-        .without_plots()
-}
-
 #[macro_export]
 macro_rules! define_speck_bench {
     (
