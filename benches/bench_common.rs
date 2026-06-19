@@ -1,10 +1,14 @@
 use criterion::measurement::WallTime;
-use criterion::{BenchmarkGroup, Criterion};
-use speck_probe::search::executor::CipherMode::Cbc;
+use criterion::{BenchmarkGroup, Criterion, SamplingMode, Throughput};
+use speck_probe::search::executor::CipherMode::{Cbc, Ecb};
 use speck_probe::search::executor::{
     BackendHint, CipherConfig, CipherFunction, CipherMode, Runtime, RuntimeConfig, SearchSpace,
 };
 use speck_probe::speck::SpeckVersion;
+use speck_probe::speck::SpeckVersion::{
+    Speck32_64, Speck48_72, Speck48_96, Speck64_96, Speck64_128, Speck96_96, Speck96_144,
+    Speck128_128, Speck128_192, Speck128_256,
+};
 use std::hint::black_box;
 use std::time::Duration;
 
@@ -237,6 +241,43 @@ pub(crate) fn create_targets(
     }
 
     targets
+}
+
+#[allow(dead_code)]
+pub(crate) const SYSTEM_BITS: usize = 26;
+#[allow(dead_code)]
+pub(crate) const SYSTEM_SPECK_VERSIONS: [SpeckVersion; 10] = [
+    Speck32_64,
+    Speck48_72,
+    Speck48_96,
+    Speck64_96,
+    Speck64_128,
+    Speck96_96,
+    Speck96_144,
+    Speck128_128,
+    Speck128_192,
+    Speck128_256,
+];
+#[allow(dead_code)]
+pub(crate) const SYSTEM_CIPHER_MODES: [CipherMode; 2] = [Ecb, Cbc];
+#[allow(dead_code)]
+pub(crate) const SYSTEM_SUFFIX_BYTES: [usize; 2] = [1, 2];
+
+#[allow(dead_code)]
+pub(crate) fn run_system_backend(c: &mut Criterion, group: &str, backend_hint: BackendHint) {
+    let mut g = c.benchmark_group(group);
+
+    g.sampling_mode(SamplingMode::Flat);
+    g.throughput(Throughput::Elements(1 << SYSTEM_BITS));
+
+    let targets = create_targets(
+        backend_hint,
+        &SYSTEM_CIPHER_MODES,
+        &SYSTEM_SUFFIX_BYTES,
+        &SYSTEM_SPECK_VERSIONS,
+    );
+
+    run_system_benchmarks(targets, g, SYSTEM_BITS);
 }
 
 #[allow(dead_code)]

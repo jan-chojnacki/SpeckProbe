@@ -73,7 +73,7 @@ done
 echo ">>> cargo bench speck"
 for BK in scalar neon; do
   pm_start "pm-speck-${BK}.txt"
-  cargo bench speck/"${BK}"
+  cargo bench --bench speck_"${BK}"_benches
   pm_stop
   sleep 60
 done
@@ -81,27 +81,21 @@ done
 echo ">>> cargo bench engine"
 for BK in scalar neon; do
   pm_start "pm-engine-${BK}.txt"
-  cargo bench engine/"${BK}"
+  cargo bench --bench engine_"${BK}"_benches
   pm_stop
   sleep 60
 done
 
 echo ">>> cargo bench system"
 for MO in ecb cbc; do
-  for BK in scalar neon; do
-    pm_start "pm-system-${BK}-${MO}.txt"
-    cargo bench system/"${BK}"/"${MO}"
-    pm_stop
-    sleep 120
+  for SUF in 1 2; do
+    for BK in scalar neon; do
+      pm_start "pm-system-${BK}-${MO}-${SUF}.txt"
+      cargo bench --bench system_"${BK}"_benches "system/${BK}/${MO}/.*/${SUF}\$"
+      pm_stop
+      sleep 120
+    done
   done
-done
-
-echo ">>> cargo bench compare"
-for VE in 32_64 48_72 64_96 128_128; do
-  pm_start "pm-compare-${VE}.txt"
-  cargo bench compare/neon/ecb/"${VE}"
-  pm_stop
-  sleep 120
 done
 
 echo ">>> extract-criterion"

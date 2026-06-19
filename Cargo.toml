@@ -81,9 +81,21 @@ name = "engine_neon_benches"
 harness = false
 
 [[bench]]
-name = "system_benches"
+name = "system_scalar_benches"
 harness = false
 
 [[bench]]
-name = "compare_benches"
+name = "system_sse2_benches"
+harness = false
+
+[[bench]]
+name = "system_avx2_benches"
+harness = false
+
+[[bench]]
+name = "system_avx512_benches"
+harness = false
+
+[[bench]]
+name = "system_neon_benches"
 harness = false
