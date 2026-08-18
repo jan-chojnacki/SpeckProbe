@@ -34,7 +34,7 @@ macro_rules! define_backend_dispatch {
                                     run_orchestrator::<$ew, $vw, $bytes, {$bytes - S}, _, _>(
                                         request,
                                         |task, out| $crate::search::executor::backend::[<$simd_prefix search_decrypt_ $version>](task, out),
-                                        $crate::search::executor::backend::[<ecb_validate_encrypt_ $version>],
+                                        $crate::search::executor::backend::[<ecb_validate_decrypt_ $version>],
                                         |__block| ($conv)(__block),
                                     ),
                                 ($crate::speck::SpeckVersion::[<Speck $version>], S, $crate::search::executor::CipherFunction::EncryptInflight, CipherMode::Ecb) =>

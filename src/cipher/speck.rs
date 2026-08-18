@@ -73,7 +73,7 @@ impl SPECK {
     }
 
     pub fn add_pkcs7_padding(&self, data: &[u8]) -> Vec<u8> {
-        let block = self.speck_version.block_size_bytes() * 2;
+        let block = self.speck_version.block_size_bytes();
         let remainder = data.len() % block;
         let padding_size = if remainder == 0 {
             block
