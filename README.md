@@ -2,7 +2,7 @@
 
 A command line tool that brute-force searches the key space of the Speck block cipher against known plaintext and ciphertext pairs, with the cipher implemented on one scalar and four SIMD backends, plus the benchmark harness used to measure them.
 
-![run.png](.github/assets/run.webp)
+![run.png](.github/assets/demo.webp)
 
 ## Overview
 
